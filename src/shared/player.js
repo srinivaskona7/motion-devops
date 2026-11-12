@@ -89,5 +89,6 @@ window.addEventListener("load", function () {
   });
   const q = new URLSearchParams(location.search);
   if (q.has("t")) { gate.remove(); tl.seek(Math.max(0, Math.min(TOTAL, +q.get("t") || 0))); }
+  if (q.has("autoplay")) { gate.remove(); setPlaying(true); }
   sync();
 });
