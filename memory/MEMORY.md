@@ -1,7 +1,14 @@
-# Repository Memory — `motion-devops`
+# Repository Memory — Universal Tech Motion Studio
 
 ## 1. Project Invariants & Purpose
-- **Goal**: Autonomous generation of cinematic, frame-accurate HyperFrames motion explainers for deep DevOps concepts.
+- **Goal**: Autonomous generation of cinematic, frame-accurate HyperFrames motion explainers for **ANY technology concept** (AI/ML & LLMs, Backend Distributed Systems, Databases, Security/Crypto, Frontend/Mobile, Cloud & DevOps).
+- **Universal Technology Coverage**:
+  - `AI & LLMs`: Transformers, Attention, RAG, Quantization, Vector Search.
+  - `Distributed Systems & Backend`: Kafka, Raft, gRPC, Redis, Microservices, Event Sourcing.
+  - `Databases`: PostgreSQL MVCC, LSM-trees vs B-Trees, ClickHouse Columnar, DynamoDB.
+  - `Frontend & Systems`: React Server Components, WebAssembly, WebGL, Browser rendering.
+  - `Security & Networking`: Zero-Knowledge Proofs, OAuth2/OIDC, mTLS, Linux eBPF.
+  - `Cloud & DevOps`: Kubernetes, Istio, Docker, Terraform, Cloud Fabric.
 - **Formats Supported**:
   - `9:16 Vertical` (`1080x1920`): Optimized for YouTube Shorts, Instagram Reels, TikTok.
   - `16:9 Landscape` (`1920x1080`): Optimized for YouTube, technical presentations, documentation.

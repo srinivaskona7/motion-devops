@@ -22,10 +22,17 @@ This repository is optimized for autonomous coding agents (**OpenCode**, **Claud
 
 Every autonomous agent session in this repository has immediate access to these in-repo skills:
 
-1. **`devops-deep-researcher`** ([`.skills/devops-deep-researcher/SKILL.md`](.skills/devops-deep-researcher/SKILL.md)):
-   - Deep production scenario research (e.g. 50k req/sec E-commerce platform on AWS EKS).
-   - In-depth coverage across all 6 DevOps lifecycle stages (Code, CI, Supply Chain, GitOps, IaC/EKS, Day-2 Observability).
-   - Real-world outage breaking points, live `kubectl` terminal fixes, and architectural terminology dictionaries.
+1. **`universal-tech-researcher`** ([`.skills/universal-tech-researcher/SKILL.md`](.skills/universal-tech-researcher/SKILL.md)):
+   - Cross-domain systems research across **ANY software, hardware, or cloud technology**:
+     - *AI & LLMs*: Attention heads, Transformer decoders, RAG vector retrieval, vLLM paging.
+     - *Distributed Systems*: Raft consensus, Kafka log compaction, gRPC Protobuf streams.
+     - *Databases*: Postgres MVCC dead tuples, LSM-tree memtables/SSTables, ClickHouse sparse indexes.
+     - *Security & Cryptography*: Zero-Knowledge Proofs, OAuth2 PKCE, mTLS handshakes.
+     - *Frontend & Runtimes*: React Server Components, V8 JIT compilers, WebAssembly modules.
+     - *Cloud & Infrastructure*: Kubernetes Gateway API, eBPF packet tracing, Istio Ambient mesh.
+
+2. **`devops-deep-researcher`** ([`.skills/devops-deep-researcher/SKILL.md`](.skills/devops-deep-researcher/SKILL.md)):
+   - Production infrastructure scenarios, 6-stage lifecycle, and live EKS platform breakdowns.
 
 2. **`motion-devops-creator`** ([`.skills/motion-devops-creator/SKILL.md`](.skills/motion-devops-creator/SKILL.md)):
    - Complete video lifecycle: Storyboarding (`story.mjs`), HTML/GSAP compilation, headless Playwright layout testing, thumbnail generation, and MP4/ProRes rendering.
