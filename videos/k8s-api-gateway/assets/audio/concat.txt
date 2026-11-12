@@ -1,0 +1,5 @@
+file '/Users/sr20536224wipro.com/Documents/Github-apple/srinew/motion-devops/videos/k8s-api-gateway/assets/audio/s1.wav'
+file '/Users/sr20536224wipro.com/Documents/Github-apple/srinew/motion-devops/videos/k8s-api-gateway/assets/audio/s2.wav'
+file '/Users/sr20536224wipro.com/Documents/Github-apple/srinew/motion-devops/videos/k8s-api-gateway/assets/audio/s3.wav'
+file '/Users/sr20536224wipro.com/Documents/Github-apple/srinew/motion-devops/videos/k8s-api-gateway/assets/audio/s4.wav'
+file '/Users/sr20536224wipro.com/Documents/Github-apple/srinew/motion-devops/videos/k8s-api-gateway/assets/audio/s5.wav'

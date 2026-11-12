@@ -39,9 +39,22 @@ window.addEventListener("load", function () {
   document.body.appendChild(gate);
 
   const pp = ui.querySelector("#pp"), vo = ui.querySelector("#vo"), sk = ui.querySelector("#sk"), tc = ui.querySelector("#tc");
+  
+  // High-fidelity local cloned audio support (from VoiceStudio)
+  const audioTrack = new Audio();
+  audioTrack.src = "assets/audio/narration.mp3";
+  let hasRealAudio = false;
+  audioTrack.addEventListener("canplaythrough", () => {
+    hasRealAudio = true;
+    vo.textContent = "🎙️ Cloned Voice";
+  });
+  audioTrack.addEventListener("error", () => {
+    hasRealAudio = false;
+  });
+
   const tts = "speechSynthesis" in window;
-  if (!tts) { vo.disabled = true; vo.title = "Web Speech API not available in this browser"; }
-  let voice = false, spoken = -1, scrubbing = false;
+  if (!tts && !hasRealAudio) { vo.disabled = true; vo.title = "Audio not available"; }
+  let voice = true, spoken = -1, scrubbing = false;
   const fmt = (s) => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
 
   function sync() {
@@ -49,7 +62,16 @@ window.addEventListener("load", function () {
     for (const c of clips) c.el.style.visibility = t >= c.s && t < c.e ? "visible" : "hidden";
     if (!scrubbing) sk.value = t;
     tc.textContent = fmt(t) + " / " + fmt(TOTAL);
-    if (!voice || tl.paused()) return;
+
+    // Sync cloned master audio track
+    if (hasRealAudio && voice && !tl.paused()) {
+      if (Math.abs(audioTrack.currentTime - t) > 0.25) {
+        audioTrack.currentTime = t;
+      }
+      if (audioTrack.paused) audioTrack.play().catch(() => {});
+    }
+
+    if (!voice || tl.paused() || hasRealAudio) return;
     const i = cues.findIndex((c) => t >= c.s && t < c.e);
     if (i < 0 || i === spoken) return;
     spoken = i;
@@ -59,20 +81,35 @@ window.addEventListener("load", function () {
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
   }
-  const hush = () => { spoken = -1; if (tts) speechSynthesis.cancel(); };
+  const hush = () => { 
+    spoken = -1; 
+    if (hasRealAudio) audioTrack.pause();
+    if (tts) speechSynthesis.cancel(); 
+  };
   tl.eventCallback("onUpdate", sync);
   tl.eventCallback("onComplete", () => setPlaying(false));
 
   function setPlaying(v) {
-    if (v && tl.time() >= TOTAL - 0.05) tl.seek(0);
+    if (v && tl.time() >= TOTAL - 0.05) {
+      tl.seek(0);
+      if (hasRealAudio) audioTrack.currentTime = 0;
+    }
     v ? tl.play() : tl.pause();
     pp.textContent = v ? "❚❚ Pause" : "▶ Play";
+    if (hasRealAudio && voice) {
+      v ? audioTrack.play().catch(() => {}) : audioTrack.pause();
+    }
     if (!v) hush();
   }
   function setVoice(v) {
-    voice = v && tts;
+    voice = v;
     vo.setAttribute("aria-pressed", String(voice));
-    if (!voice) hush();
+    if (hasRealAudio) {
+      if (!voice) audioTrack.pause();
+      else if (!tl.paused()) audioTrack.play().catch(() => {});
+    } else {
+      if (!voice) hush();
+    }
   }
   pp.onclick = () => setPlaying(tl.paused());
   vo.onclick = () => setVoice(!voice);
