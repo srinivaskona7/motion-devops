@@ -1,0 +1,525 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-variables='[{"id":"accent","type":"color","label":"Brand accent","default":"{{ACCENT}}"}]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width={{W}}, height={{H}}" />
+    <title>{{TITLE}} · {{FORMAT_LABEL}}</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      :root {
+        --accent: {{ACCENT}};
+        --k8s-blue: #326ce5;
+        --bg: #070a13;
+        --ink: #e9eef8;
+        --mute: #93a0b8;
+        --dim: #566079;
+        --ok: #22c55e;
+        --bad: #f43f5e;
+        --warn: #f59e0b;
+        --aws-orange: #ff9900;
+        --glass: rgba(255, 255, 255, 0.03);
+        --line: rgba(255, 255, 255, 0.08);
+        --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--bg); }
+      #root {
+        position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden;
+        background: var(--bg); color: var(--ink); font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---------- space backdrop ---------- */
+      .bg-glow {
+        position: absolute; width: 1100px; height: 1100px; left: 50%; top: 10%;
+        margin: -550px 0 0 -550px; border-radius: 50%;
+        background: radial-gradient(circle,
+          color-mix(in srgb, var(--accent) 18%, transparent) 0%,
+          color-mix(in srgb, var(--accent) 4%, transparent) 36%, transparent 68%);
+      }
+      .bg-stars {
+        position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1.2px, transparent 1.4px);
+        background-size: 30px 30px;
+        opacity: 0.6;
+      }
+      .bg-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 26%, transparent 44%, rgba(2, 4, 8, 0.92) 100%); }
+
+      /* ---------- chrome ---------- */
+      .topbar { position: absolute; left: 108px; right: 108px; top: 44px; height: 36px; display: flex; justify-content: space-between; align-items: center; z-index: 40; }
+      .brand { display: flex; align-items: center; gap: 10px; font: 700 17px/1 var(--mono); letter-spacing: 0.14em; }
+      .brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+      .chapters { display: flex; gap: 10px; }
+      .chap { width: 78px; font: 700 11px/1 var(--mono); letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; text-align: center; }
+      .chap b { display: block; height: 3px; border-radius: 2px; margin-top: 6px; background: rgba(255,255,255,0.1); overflow: hidden; }
+      .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; }
+
+      /* ---------- scenes ---------- */
+      .scene { position: absolute; inset: 0; z-index: 10; }
+      .cam { position: absolute; inset: 0; }
+      .head { position: absolute; left: 108px; right: 108px; top: 170px; text-align: center; }
+      .kicker { font: 700 19px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--kc, var(--accent)); }
+      .head h2 { margin-top: 10px; font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; }
+      .head h2 .hw { display: inline-block; }
+      .stage { position: absolute; left: 0; right: 0; top: 340px; height: 1180px; }
+
+      /* packet wires */
+      svg.wires { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
+      .wire { fill: none; stroke: color-mix(in srgb, var(--accent) 55%, transparent); stroke-width: 3; stroke-linecap: round; }
+      .wire.ok { stroke: color-mix(in srgb, var(--ok) 70%, transparent); }
+      .wire.bad { stroke: color-mix(in srgb, var(--bad) 70%, transparent); }
+      .wire.cni { stroke: color-mix(in srgb, var(--aws-orange) 65%, transparent); stroke-dasharray: 7 9; }
+      .bead { fill: #d4e3ff; filter: drop-shadow(0 0 7px var(--accent)); }
+      .bead.ok { fill: #bbf7d0; filter: drop-shadow(0 0 8px var(--ok)); }
+      .bead.bad { fill: #fecdd3; filter: drop-shadow(0 0 7px var(--bad)); }
+      .bead.cni { fill: var(--aws-orange); filter: drop-shadow(0 0 8px var(--aws-orange)); }
+      .wire-label { font: 700 17px var(--mono); fill: var(--mute); letter-spacing: 0.04em; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+
+      /* KodeKloud cluster boundary box */
+      .bound { position: absolute; z-index: 0; }
+      .bound svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+      .bound rect { fill: rgba(50, 108, 229, 0.03); stroke: rgba(50, 108, 229, 0.45); stroke-width: 2; stroke-dasharray: 10 8; }
+      .bound .bl { position: absolute; left: 18px; top: -13px; padding: 4px 12px; background: var(--k8s-blue); color: #fff; font: 700 13px/26px var(--mono); letter-spacing: 0.08em; border-radius: 6px; text-transform: uppercase; }
+
+      /* glassmorphic cards */
+      .card {
+        position: absolute; z-index: 2; padding: 14px 18px 14px 26px; border-radius: 14px;
+        background: var(--glass); backdrop-filter: blur(20px);
+        border: 1px solid var(--bd, var(--line));
+        box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.03), 0 22px 44px -16px rgba(0, 0, 0, 0.8);
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      .card::before {
+        content: ""; position: absolute; left: -1px; top: 12px; bottom: 12px; width: 4px;
+        border-radius: 0 4px 4px 0; background: var(--ind, var(--accent)); box-shadow: 0 0 12px var(--ind, var(--accent));
+      }
+      .card h3 { font: 700 24px/1.1 var(--sans); letter-spacing: -0.015em; white-space: nowrap; }
+      .card h3.m { font-family: var(--mono); font-size: 22px; letter-spacing: -0.02em; }
+      .card .sw { position: relative; margin-top: 6px; height: 24px; font: 400 19px/24px var(--mono); color: var(--mute); white-space: nowrap; }
+      .card .sw > span { position: absolute; left: 0; top: 0; }
+      .card .sw .b, .card .sw .c { opacity: 0; }
+      .t-ok { color: var(--ok); } .t-bad { color: var(--bad); } .t-warn { color: var(--warn); } .t-acc { color: #9db9ff; }
+      .card.chip { padding: 0 20px; border-radius: 30px; flex-direction: row; align-items: center; gap: 10px; font: 700 20px/1 var(--mono); }
+      .card.chip::before { display: none; }
+      .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 9px var(--ok); flex: none; }
+      .ns { position: absolute; z-index: 1; border-radius: 16px; border: 1px dashed var(--line); background: rgba(255,255,255,0.02); }
+
+      /* terminal boxes */
+      .term { position: absolute; z-index: 3; padding: 14px 24px 16px; border-radius: 14px; background: rgba(6, 9, 16, 0.9); border: 1px solid var(--line);
+        box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.03), 0 24px 48px -22px #000; font: 400 20px/32px var(--mono); }
+      .term .bar { display: flex; align-items: center; gap: 8px; height: 28px; margin-bottom: 5px; }
+      .term .bar i { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.14); }
+      .term .bar span { margin-left: 10px; font: 400 15px var(--mono); color: var(--dim); }
+      .term .ln { white-space: pre; height: 32px; }
+      .term .pr { color: var(--ok); } .term .out { color: var(--mute); }
+      .caret { display: inline-block; width: 12px; height: 26px; margin-left: 3px; vertical-align: -4px; background: var(--ink); }
+
+      .badge { position: absolute; z-index: 4; border-radius: 10px; padding: 6px 12px; font: 700 16px var(--mono); color: #fff; box-shadow: 0 0 14px -4px; }
+
+      /* caption HUD */
+      .hud { position: absolute; z-index: 45; left: 108px; right: 108px; top: 1590px; height: 180px; display: flex; align-items: stretch;
+        background: rgba(10, 14, 24, 0.88); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 28px 56px -24px #000; backdrop-filter: blur(20px); }
+      .hud .cc { flex: none; width: 62px; display: grid; place-items: center; border-right: 1px solid var(--line); }
+      .hud .cc span { font: 700 13px var(--mono); letter-spacing: 0.14em; color: var(--accent); padding: 5px 6px; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 6px; }
+      #captions { position: relative; flex: 1; }
+      .cue { position: absolute; inset: 0; display: flex; align-items: center; align-content: center; flex-wrap: wrap; column-gap: 0.27em; padding: 0 24px; font-size: 30px; line-height: 1.22; letter-spacing: -0.008em; }
+      .cue .w { color: rgba(233, 238, 248, 0.4); }
+      .cue .kw { font-weight: 700; }
+
+      /* standalone player chrome lives outside #root and never renders */
+      body.standalone { width: 100vw; height: 100vh; display: grid; place-items: center; background: #03050a; }
+      body.standalone #root { flex: none; transform-origin: 50% 50%; box-shadow: 0 30px 120px rgba(0, 0, 0, 0.6); }
+      .player { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 99; display: flex; gap: 10px; align-items: center;
+        padding: 8px 12px; border-radius: 12px; background: rgba(15, 20, 32, 0.92); border: 1px solid var(--line); backdrop-filter: blur(14px);
+        font: 400 13px var(--mono); color: var(--ink); width: min(620px, 94vw); }
+      .player button { font: inherit; color: var(--ink); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+      .player button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent); }
+      .player input[type="range"] { flex: 1; accent-color: var(--accent); }
+      .gate { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: rgba(4, 6, 11, 0.55); }
+      .gate div { display: flex; gap: 12px; }
+      .gate button { font: 700 17px var(--sans); padding: 16px 26px; border-radius: 12px; cursor: pointer; color: #fff; border: 1px solid var(--line); background: rgba(15, 20, 32, 0.92); }
+      .gate button.primary { background: var(--accent); border-color: transparent; }
+
+      /* human cursor */
+      .human-cursor { position: absolute; left: 50%; top: 115%; width: 68px; height: 68px; z-index: 99; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4)); pointer-events: none; transform-origin: 21% 14%; will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div id="root" class="{{FMT}}" data-composition-id="main" data-start="0" data-duration="{{TOTAL}}" data-width="{{W}}" data-height="{{H}}">
+      <div class="bg-glow"></div>
+      <div class="bg-stars"></div>
+      <div class="bg-vignette"></div>
+
+      <div class="topbar">
+        <div class="brand"><i id="brand-dot"></i>EKS · AWS</div>
+        <div class="chapters">
+          <div class="chap">Breaking<b><u id="ch-s1"></u></b></div>
+          <div class="chap">Architecture<b><u id="ch-s2"></u></b></div>
+          <div class="chap">Networking<b><u id="ch-s3"></u></b></div>
+          <div class="chap">Troubleshoot<b><u id="ch-s4"></u></b></div>
+          <div class="chap">Recap<b><u id="ch-s5"></u></b></div>
+        </div>
+      </div>
+
+      <!-- ===================== S1 · BREAKING POINT ===================== -->
+      <section id="s1" class="scene clip" data-start="{{S1_START}}" data-duration="{{S1_DUR}}" data-track-index="1" data-track-kind="graphics">
+        <div class="cam" id="s1-cam">
+          <div class="head">
+            <div class="kicker hx" id="s1-kick" style="--kc: var(--bad)">01 · The Breaking Point</div>
+            <h2><span class="hw">Self</span> <span class="hw">managed</span> <span class="hw">K8s</span> <span class="hw">is</span> <span class="hw">a</span> <span class="hw">burden.</span></h2>
+          </div>
+          <div class="stage" id="s1-stage">
+            <div class="card" id="s1-client" style="left: 130px; top: 390px; width: 260px; height: 110px"><h3>client</h3><div class="sw"><span class="a t-ok">1.2k rps</span></div></div>
+            <div class="card" id="s1-eks" style="--ind: var(--bad); left: 410px; top: 390px; width: 340px; height: 200px"><h3 class="m">self-managed K8s</h3><div class="sw"><span class="a">etcd · API server · certs</span><span class="b t-bad">you patch it all</span></div></div>
+            <div class="card s1-pod" id="s1-web" style="left: 130px; top: 700px; width: 200px; height: 94px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+            <div class="card s1-pod" id="s1-api" style="left: 370px; top: 700px; width: 200px; height: 94px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+            <div class="card s1-pod" id="s1-pay" style="left: 610px; top: 700px; width: 200px; height: 94px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">CrashLoop</span></div></div>
+            <div class="badge" id="s1-fail" style="left: 765px; top: 400px; background: var(--bad);">etcd quorum lost</div>
+            <div class="badge" id="s1-burden" style="left: 130px; top: 820px; background: var(--warn);">undifferentiated toil</div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire" data-from="s1-client" data-to="s1-eks" data-on="s1-eks" data-axis="x" />
+              <path class="wire" data-from="s1-eks" data-to="s1-web" data-on="s1-eks" data-axis="x" />
+              <path class="wire" data-from="s1-eks" data-to="s1-api" data-on="s1-eks" data-axis="x" />
+              <path class="wire bad" data-from="s1-eks" data-to="s1-pay" data-on="s1-eks" data-axis="x" data-fail="s1-fail" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S2 · EKS ARCHITECTURE ===================== -->
+      <section id="s2" class="scene clip" data-start="{{S2_START}}" data-duration="{{S2_DUR}}" data-track-index="2" data-track-kind="graphics">
+        <div class="cam" id="s2-cam">
+          <div class="head">
+            <div class="kicker hx" id="s2-kick" style="--kc: var(--k8s-blue)">02 · EKS Architecture</div>
+            <h2><span class="hw">AWS</span> <span class="hw">owns</span> <span class="hw">the</span> <span class="hw">control</span> <span class="hw">plane.</span></h2>
+          </div>
+          <div class="stage" id="s2-stage">
+            <div class="ns" id="s2-ns-aws" style="left: 130px; top: 400px; width: 820px; height: 210px"></div>
+            <div class="bound" id="s2-bound-aws" style="left: 180px; top: 440px; width: 720px; height: 130px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="128" rx="16" /></svg>
+              <div class="bl">AWS · EKS control plane</div>
+            </div>
+            <div class="card" id="s2-cp" style="--ind: var(--k8s-blue); left: 230px; top: 460px; width: 300px; height: 90px"><h3 class="m">API server · etcd</h3><div class="sw"><span class="a t-ok">managed · multi-AZ</span></div></div>
+            <div class="card" id="s2-ha" style="--ind: var(--k8s-blue); left: 530px; top: 460px; width: 360px; height: 90px"><h3 class="m">scheduler · controller</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
+            <div class="ns" id="s2-ns-customer" style="left: 130px; top: 660px; width: 820px; height: 210px"></div>
+            <div class="bound" id="s2-bound-customer" style="left: 180px; top: 700px; width: 720px; height: 130px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="128" rx="16" /></svg>
+              <div class="bl">customer VPC · worker nodes</div>
+            </div>
+            <div class="card" id="s2-nodes" style="--ind: var(--aws-orange); left: 230px; top: 720px; width: 300px; height: 90px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">kubelet · kube-proxy</span></div></div>
+            <div class="card" id="s2-vpc" style="--ind: var(--aws-orange); left: 570px; top: 720px; width: 300px; height: 90px"><h3 class="m">VPC · subnets · SG</h3><div class="sw"><span class="a">you configure</span></div></div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire" data-from="s2-cp" data-to="s2-nodes" data-on="s2-cp" data-axis="y" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S3 · NETWORKING & IDENTITY ===================== -->
+      <section id="s3" class="scene clip" data-start="{{S3_START}}" data-duration="{{S3_DUR}}" data-track-index="3" data-track-kind="graphics">
+        <div class="cam" id="s3-cam">
+          <div class="head">
+            <div class="kicker hx" id="s3-kick" style="--kc: var(--aws-orange)">03 · Networking & Identity</div>
+            <h2><span class="hw">VPC</span> <span class="hw">CNI</span> <span class="hw">·</span> <span class="hw">IRSA</span> <span class="hw">·</span> <span class="hw">ALB</span> <span class="hw">Controller.</span></h2>
+          </div>
+          <div class="stage" id="s3-stage">
+            <div class="card" id="s3-cni" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 120px"><h3 class="m">VPC CNI</h3><div class="sw"><span class="a t-acc">pod → VPC IP</span><span class="b t-ok">ENI per pod</span></div></div>
+            <div class="card" id="s3-irsa" style="--ind: var(--aws-orange); left: 550px; top: 400px; width: 340px; height: 120px"><h3 class="m">IRSA</h3><div class="sw"><span class="a t-acc">OIDC trust</span><span class="b t-ok">no long-lived keys</span></div></div>
+            <div class="card" id="s3-alb" style="--ind: var(--aws-orange); left: 130px; top: 560px; width: 340px; height: 120px"><h3 class="m">ALB Controller</h3><div class="sw"><span class="a">AWS Load Balancer · NLB</span><span class="b t-ok">ACM TLS · ingress</span></div></div>
+            <div class="card" id="s3-addons" style="--ind: var(--aws-orange); left: 550px; top: 560px; width: 340px; height: 120px"><h3 class="m">EKS add-ons</h3><div class="sw"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI</span></div></div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire cni" data-from="s3-cni" data-to="s3-alb" data-on="s3-cni" data-axis="x" data-label="CNI" />
+              <path class="wire" data-from="s3-irsa" data-to="s3-addons" data-on="s3-irsa" data-axis="x" data-label="OIDC" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S4 · TROUBLESHOOTING ===================== -->
+      <section id="s4" class="scene clip" data-start="{{S4_START}}" data-duration="{{S4_DUR}}" data-track-index="4" data-track-kind="graphics">
+        <div class="cam" id="s4-cam">
+          <div class="head">
+            <div class="kicker hx" id="s4-kick" style="--kc: var(--bad)">04 · Troubleshooting</div>
+            <h2><span class="hw">kubectl</span> <span class="hw">describe</span> <span class="hw">tells</span> <span class="hw">you</span> <span class="hw">why.</span></h2>
+          </div>
+          <div class="stage" id="s4-stage">
+            <div class="term" id="s4-term" style="left: 130px; top: 400px; width: 820px; height: 220px">
+              <div class="bar"><i></i><i></i><i></i><span>admin-laptop · zsh</span></div>
+              <div class="ln"><span class="pr">$ </span><span id="s4-c1" data-text="kubectl describe pod payments-7x9m2"></span><i class="caret" id="s4-caret"></i></div>
+              <div class="ln out" id="s4-out1">Events:</div>
+              <div class="ln out" id="s4-out2">  Warning  FailedScheduling  2m  0/3 nodes available</div>
+              <div class="ln out s4-crash-out" id="s4-out3">  Warning  FailedCreatePodSandBox  1m  IP exhaustion</div>
+            </div>
+            <div class="card" id="s4-pending" style="--ind: var(--bad); left: 130px; top: 660px; width: 380px; height: 100px"><h3 class="m">Pending</h3><div class="sw"><span class="a t-bad">0/3 nodes available</span></div></div>
+            <div class="card" id="s4-crash" style="--ind: var(--bad); left: 550px; top: 660px; width: 380px; height: 100px"><h3 class="m">CrashLoopBackOff</h3><div class="sw"><span class="a t-bad">exit code 1</span></div></div>
+            <div class="card" id="s4-cni" style="--ind: var(--warn); left: 130px; top: 800px; width: 380px; height: 100px"><h3 class="m">IP exhaustion</h3><div class="sw"><span class="a t-warn">ENI limit reached</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S5 · RECAP ===================== -->
+      <section id="s5" class="scene clip" data-start="{{S5_START}}" data-duration="{{S5_DUR}}" data-track-index="5" data-track-kind="graphics">
+        <div class="cam" id="s5-cam">
+          <div class="head">
+            <div class="kicker hx" id="s5-kick" style="--kc: var(--ok)">05 · Recap & Migration</div>
+            <h2><span class="hw">Move</span> <span class="hw">to</span> <span class="hw">EKS.</span></h2>
+          </div>
+          <div class="stage" id="s5-stage">
+            <div class="card" id="s5-aws" style="--ind: var(--ok); left: 130px; top: 400px; width: 820px; height: 100px"><h3 class="m">AWS owns control plane</h3><div class="sw"><span class="a t-ok">managed · patched · multi-AZ</span></div></div>
+            <div class="card" id="s5-customer" style="--ind: var(--aws-orange); left: 130px; top: 540px; width: 820px; height: 100px"><h3 class="m">You own nodes & workloads</h3><div class="sw"><span class="a t-ok">VPC · IRSA · add-ons · apps</span></div></div>
+            <div class="card chip" id="s5-migrate" style="left: 130px; top: 700px; width: 820px; height: 60px"><i class="dot"></i>eksctl create cluster — stop patching etcd</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CAPTION HUD ===================== -->
+      <div class="hud" id="hud">
+        <div class="cc"><span>CC</span></div>
+        <div id="captions" data-track-kind="captions">
+{{CUES}}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const REVEAL = {{TIMING_JSON}};
+        const SCENES = {{SCENES_JSON}};
+        const TOTAL = {{TOTAL}};
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+        const at = (id) => {
+          if (!(id in REVEAL)) throw new Error("missing reveal mark " + id);
+          return REVEAL[id];
+        };
+        const sc = Object.fromEntries(SCENES.map((s) => [s.id, s]));
+        const C = { ok: "#22c55e", bad: "#f43f5e", warn: "#f59e0b", ink: "#e9eef8" };
+
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+
+        const IN = { opacity: 0, y: 22, filter: "blur(6px)" };
+        const SHOW = { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" };
+        const reveal = (sel, t, extra = {}) => tl.fromTo(sel, { ...IN }, { ...SHOW, ...extra }, t);
+        const state = (id, t, color, swapTo) => {
+          tl.to("#" + id, { "--ind": color, "--bd": color, duration: 0.3, ease: "power2.out" }, t);
+          if (swapTo) {
+            tl.to("#" + id + " .sw > span:not(." + swapTo + ")", { opacity: 0, y: -10, duration: 0.25, ease: "power2.in" }, t);
+            tl.fromTo("#" + id + " .sw ." + swapTo, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, t + 0.12);
+          }
+        };
+        const hit = (id, t, color) =>
+          tl.fromTo("#" + id, { boxShadow: "0 0 0 0px " + color }, { boxShadow: "0 0 0 4px " + color + ", 0 0 46px -4px " + color, duration: 0.22, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+        const type = (id, t0, cps = 26) => {
+          const el = $("#" + id), text = el.dataset.text, o = { n: 0 };
+          const dur = text.length / cps;
+          tl.fromTo(o, { n: 0 }, { n: text.length, duration: dur, ease: "none", onUpdate: () => { el.textContent = text.slice(0, Math.round(o.n)); } }, t0);
+          return t0 + dur;
+        };
+
+        // ---- seams: cut-the-curve vertical between scenes ----
+        const SEAM_Y = 260;
+        SCENES.forEach((s, i) => {
+          const cam = "#" + s.id + "-cam";
+          const next = SCENES[i + 1];
+          if (i > 0) {
+            tl.fromTo(cam, { y: SEAM_Y, opacity: 0.35, filter: "blur(8px)" },
+              { y: 0, filter: "blur(0px)", duration: 0.42, ease: "power4.out", immediateRender: false }, s.start);
+            tl.to(cam, { opacity: 1, duration: 0.18, ease: "power2.out" }, s.start);
+            tl.fromTo($$(cam + " .hw"), { opacity: 0.35, y: 60 }, { opacity: 1, y: 0, duration: 0.36, ease: "power4.out", stagger: 0.045, immediateRender: false }, s.start + 0.04);
+          }
+          if (next) {
+            const cut = next.start;
+            tl.to(cam, { y: -SEAM_Y, filter: "blur(8px)", duration: 0.34, ease: "power4.in" }, cut - 0.34);
+            tl.to(cam, { opacity: 0, duration: 0.28, ease: "power2.in" }, cut - 0.3);
+          }
+          tl.fromTo("#ch-" + s.id, { scaleX: 0 }, { scaleX: 1, duration: s.duration, ease: "none" }, s.start);
+        });
+
+        // ---- human cursor (oversized macOS pointer) ----
+        const cursorEl = document.createElement("div");
+        cursorEl.className = "human-cursor";
+        cursorEl.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M5.5 3.21V20.8c0 .45.54 .67 .85 .35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.86a.5.5 0 0 0-.85 .35z" fill="#ffffff" stroke="#1c1c1c" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+        document.getElementById("root").appendChild(cursorEl);
+
+        // ---- S1 · breaking point ----
+        gsap.set(["#s1-fail", "#s1-burden"], { opacity: 0 });
+        reveal("#s1-client", at("s1-eks"));
+        reveal("#s1-eks", at("s1-eks"));
+        reveal(".s1-pod", at("s1-eks"), { stagger: 0.1 });
+        const f1 = at("s1-fail");
+        state("s1-eks", f1, C.bad, "b");
+        hit("s1-eks", f1, C.bad);
+        tl.fromTo("#s1-fail", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, f1);
+        tl.fromTo("#s1-burden", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, at("s1-burden"));
+        // cursor taps etcd
+        tl.to(cursorEl, { left: 530, top: 480, duration: 0.7, ease: "power3.out" }, f1);
+        tl.to(cursorEl, { scale: 0.82, duration: 0.08, ease: "power2.in" }, f1 + 0.7);
+        tl.to(cursorEl, { scale: 1.0, duration: 0.18, ease: "power2.out" }, f1 + 0.78);
+        tl.to(cursorEl, { top: "115%", duration: 0.5, ease: "power2.in" }, f1 + 1.2);
+
+        // ---- S2 · EKS architecture ----
+        const s2 = sc.s2.start;
+        reveal(["#s2-ns-aws", "#s2-ns-customer"], s2 + 0.4);
+        reveal(["#s2-bound-aws", "#s2-bound-customer"], s2 + 0.6, { stagger: 0.1 });
+        reveal("#s2-cp", at("s2-cp"));
+        reveal("#s2-ha", at("s2-ha"));
+        reveal("#s2-nodes", at("s2-nodes"));
+        reveal("#s2-vpc", at("s2-vpc"));
+        tl.fromTo("#s2-cp .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s2-cp"));
+        tl.fromTo("#s2-ha .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s2-ha"));
+        tl.fromTo("#s2-nodes .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s2-nodes"));
+        tl.fromTo("#s2-vpc .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s2-vpc"));
+
+        // ---- S3 · networking & identity ----
+        const s3 = sc.s3.start;
+        reveal("#s3-cni", at("s3-cni"));
+        reveal("#s3-irsa", at("s3-irsa"));
+        reveal("#s3-alb", at("s3-alb"));
+        reveal("#s3-addons", at("s3-alb") + 0.3);
+        tl.fromTo("#s3-cni .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-cni") + 0.15);
+        tl.fromTo("#s3-irsa .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-irsa") + 0.15);
+        tl.fromTo("#s3-alb .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-alb") + 0.15);
+        tl.fromTo("#s3-addons .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-alb") + 0.45);
+
+        // ---- S4 · troubleshooting ----
+        const s4 = sc.s4.start;
+        gsap.set(["#s4-out1", "#s4-out2", "#s4-out3", "#s4-caret"], { opacity: 0 });
+        reveal("#s4-term", s4 + 0.45);
+        const t1 = type("s4-c1", at("s4-pending"), 20);
+        tl.to("#s4-caret", { opacity: 0, duration: 0.01 }, t1 + 0.35);
+        tl.fromTo(["#s4-out1", "#s4-out2"], { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.1 }, t1 + 0.4);
+        reveal("#s4-pending", at("s4-pending"));
+        state("s4-pending", at("s4-pending"), C.bad, "b");
+        hit("s4-pending", at("s4-pending"), C.bad);
+        const t2 = at("s4-crash");
+        tl.fromTo("#s4-out3", { opacity: 0 }, { opacity: 1, duration: 0.2 }, t2);
+        reveal("#s4-crash", t2);
+        state("s4-crash", t2, C.bad, "b");
+        hit("s4-crash", t2, C.bad);
+        reveal("#s4-cni", at("s4-cni"));
+        state("s4-cni", at("s4-cni"), C.warn, "b");
+        hit("s4-cni", at("s4-cni"), C.warn);
+
+        // ---- S5 · recap ----
+        const s5 = sc.s5.start;
+        reveal("#s5-aws", s5 + 0.4);
+        reveal("#s5-customer", at("s5-customer"));
+        reveal("#s5-migrate", at("s5-migrate"));
+        const fin = at("s5-migrate") + 0.6;
+        tl.fromTo("#s5-migrate .dot", { boxShadow: "0 0 0 0px var(--ok)" }, { boxShadow: "0 0 0 6px var(--ok), 0 0 30px -4px var(--ok)", duration: 0.4, ease: "power2.out", yoyo: true, repeat: 1 }, fin);
+
+        // ---- wires fade in at their marks ----
+        const wires = $$("path.wire");
+        wires.forEach((w) => tl.fromTo(w, { opacity: 0 }, { opacity: w.classList.contains("cni") ? 0.9 : 1, duration: 0.45, ease: "power2.out", immediateRender: true }, at(w.dataset.on)));
+        wires.filter((w) => w.dataset.fail).forEach((w) => tl.to(w, { stroke: "rgba(244,63,94,0.75)", duration: 0.3 }, at(w.dataset.fail)));
+
+        // ---- subtitles ----
+        $$(".cue .w").forEach((w) => {
+          const t = parseFloat(w.dataset.t);
+          tl.fromTo(w, { color: "rgba(233,238,248,0.4)" }, { color: w.classList.contains("kw") ? "#8fb0ff" : "rgba(233,238,248,1)", duration: 0.16, ease: "none", immediateRender: false }, t);
+        });
+        $$(".cue").forEach((cue) => {
+          tl.fromTo(cue, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.24, ease: "power3.out" }, parseFloat(cue.dataset.start));
+        });
+
+        // ---- packets on wires ----
+        const stageOf = (el) => el.closest(".stage");
+        function offsetIn(el, stage) {
+          let x = 0, y = 0, n = el;
+          while (n && n !== stage) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+          return n === stage ? { x, y, w: el.offsetWidth, h: el.offsetHeight } : null;
+        }
+        function route(p) {
+          const a = $("#" + p.dataset.from), b = $("#" + p.dataset.to), stage = stageOf(p);
+          if (!a || !b || !stage || stage.offsetWidth === 0) return false;
+          const A = offsetIn(a, stage), B = offsetIn(b, stage);
+          if (!A || !B) return false;
+          const ac = { x: A.x + A.w / 2, y: A.y + A.h / 2 }, bc = { x: B.x + B.w / 2, y: B.y + B.h / 2 };
+          const dx = bc.x - ac.x, dy = bc.y - ac.y, gap = 8;
+          let s, e, c1, c2;
+          const horiz = p.dataset.axis ? p.dataset.axis === "x" : Math.abs(dx) > Math.abs(dy);
+          if (horiz) {
+            const sx = Math.sign(dx) || 1;
+            s = { x: ac.x + sx * (A.w / 2 + gap), y: ac.y }; e = { x: bc.x - sx * (B.w / 2 + gap), y: bc.y };
+            const k = (e.x - s.x) * 0.5; c1 = { x: s.x + k, y: s.y }; c2 = { x: e.x - k, y: e.y };
+          } else {
+            const sy = Math.sign(dy) || 1;
+            s = { x: ac.x, y: ac.y + sy * (A.h / 2 + gap) }; e = { x: bc.x, y: bc.y - sy * (B.h / 2 + gap) };
+            const k = (e.y - s.y) * 0.5; c1 = { x: s.x, y: s.y + k }; c2 = { x: e.x, y: e.y - k };
+          }
+          const fx = (v) => v.toFixed(1);
+          p.setAttribute("d", `M${fx(s.x)},${fx(s.y)} C${fx(c1.x)},${fx(c1.y)} ${fx(c2.x)},${fx(c2.y)} ${fx(e.x)},${fx(e.y)}`);
+          return true;
+        }
+        const SVGNS = "http://www.w3.org/2000/svg";
+        const packets = wires.map((p) => {
+          const kind = p.classList.contains("ok") ? " ok" : (p.classList.contains("bad") ? " bad" : (p.classList.contains("cni") ? " cni" : ""));
+          const beads = [0, 1, 2, 3, 4].map(() => {
+            const b = document.createElementNS(SVGNS, "circle");
+            b.setAttribute("r", "6"); b.setAttribute("class", "bead" + kind); b.setAttribute("opacity", "0");
+            p.parentNode.appendChild(b);
+            return b;
+          });
+          let label = null;
+          if (p.dataset.label) {
+            label = document.createElementNS(SVGNS, "text");
+            label.setAttribute("class", "wire-label"); label.setAttribute("text-anchor", "middle"); label.setAttribute("opacity", "0");
+            label.textContent = p.dataset.label;
+            p.parentNode.appendChild(label);
+          }
+          return { p, beads, label, kind, on: at(p.dataset.on), fail: p.dataset.fail ? at(p.dataset.fail) : null,
+            scene: sc[p.closest(".scene").id], len: 0, pts: null };
+        });
+        const N = 160;
+        function sample(k) {
+          if (!route(k.p)) return false;
+          const len = k.p.getTotalLength();
+          if (!(len >= 1)) throw new Error("degenerate wire " + k.p.dataset.from + " to " + k.p.dataset.to);
+          k.len = len;
+          k.pts = Array.from({ length: N + 1 }, (_, i) => { const q = k.p.getPointAtLength((i / N) * len); return [q.x, q.y]; });
+          if (k.label) { const m = k.pts[N / 2]; k.label.setAttribute("x", m[0].toFixed(1)); k.label.setAttribute("y", (m[1] - 14).toFixed(1)); }
+          return true;
+        }
+        const unrouted = packets.filter((k) => !sample(k));
+        if (unrouted.length) throw new Error("wires without layout: " + unrouted.map((k) => k.p.dataset.from).join(","));
+        const pointAt = (k, u) => { const f = u * N, i = Math.min(N - 1, Math.floor(f)), r = f - i, a = k.pts[i], b = k.pts[i + 1]; return [a[0] + (b[0] - a[0]) * r, a[1] + (b[1] - a[1]) * r]; };
+        const clock = { t: 0 };
+        const SPEED = 220;
+        function tick() {
+          const t = clock.t;
+          for (const k of packets) {
+            const live = t >= k.scene.start && t < k.scene.start + k.scene.duration;
+            if (!live) continue;
+            if (!k.len) continue;
+            const since = t - k.on;
+            const failed = k.fail !== null && t >= k.fail;
+            const tt = failed ? k.fail - k.on : since;
+            const vis = since <= 0 ? 0 : Math.min(1, since / 0.6);
+            const wireOp = 1;
+            k.beads.forEach((b, j) => {
+              const u = ((((tt * SPEED) / k.len + j / 5) % 1) + 1) % 1;
+              const pt = pointAt(k, u);
+              const edge = failed ? 1 : Math.min(1, u / 0.12, (1 - u) / 0.12);
+              b.setAttribute("cx", pt[0].toFixed(1)); b.setAttribute("cy", pt[1].toFixed(1));
+              b.setAttribute("opacity", (vis * edge * Math.min(1, wireOp * 1.4) * (failed ? 0.8 : 1)).toFixed(3));
+              b.setAttribute("class", "bead" + (failed ? " bad" : k.kind));
+            });
+            if (k.label) k.label.setAttribute("opacity", vis.toFixed(3));
+          }
+        }
+        tl.fromTo(clock, { t: 0 }, { t: TOTAL, duration: TOTAL, ease: "none", onUpdate: tick }, 0);
+
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+
+    <!-- Standalone player: TTS voice toggle + scrubber when opened directly; inert inside HyperFrames. -->
+    <script src="assets/player.js"></script>
+  </body>
+</html>

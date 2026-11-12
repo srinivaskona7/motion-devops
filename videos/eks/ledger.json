@@ -1,0 +1,65 @@
+{
+  "fps": 30,
+  "seams": [
+    {
+      "id": "s1→s2",
+      "cut": 13.257,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s1-cam",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s2-cam",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s2→s3",
+      "cut": 24.229,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s2-cam",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s3-cam",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s3→s4",
+      "cut": 39.2,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s3-cam",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s4-cam",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s4→s5",
+      "cut": 49.029,
+      "technique": "cut-the-curve UP",
+      "exit": {
+        "selector": "#s4-cam",
+        "axis": "y",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s5-cam",
+        "axis": "y",
+        "dir": -1
+      }
+    }
+  ]
+}
