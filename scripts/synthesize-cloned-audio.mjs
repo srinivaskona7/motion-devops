@@ -80,11 +80,54 @@ function getWavDuration(path) {
 
 const FFPROBE = "/opt/homebrew/bin/ffprobe";
 
+// Helper: calculate target visual scene duration matching build-video.mjs
+function calculateSceneDurations(meta, scenes) {
+  const MARK = /\[\[([\w-]+)(?:\|([^\]]+))?\]\]/g;
+  const r2 = (n) => Math.round(n * 1000) / 1000;
+  function tokenise(text) {
+    const words = [];
+    const pushPlain = (chunk) => {
+      const glue = chunk.match(/^[^\s]+/);
+      if (glue && words.length) {
+        words[words.length - 1].w += glue[0];
+        chunk = chunk.slice(glue[0].length);
+      }
+      for (const w of chunk.split(/\s+/).filter(Boolean)) words.push({ w });
+    };
+    let cursor = 0, match;
+    MARK.lastIndex = 0;
+    while ((match = MARK.exec(text))) {
+      pushPlain(text.slice(cursor, match.index));
+      const [, , spoken] = match;
+      if (spoken) {
+        for (const w of spoken.split(/\s+/).filter(Boolean)) words.push({ w });
+      }
+      cursor = match.index + match[0].length;
+    }
+    pushPlain(text.slice(cursor));
+    return words;
+  }
+  let t = 0;
+  const timing = [];
+  for (const [i, sc] of scenes.entries()) {
+    const words = tokenise(sc.narration);
+    const start = t;
+    let dur = meta.lead + words.length / meta.wps + meta.pad;
+    if (i === scenes.length - 1) dur = meta.total - start;
+    timing.push({ id: sc.id, start: r2(start), duration: r2(dur) });
+    t += dur;
+  }
+  return timing;
+}
+
+const plannedScenes = calculateSceneDurations(meta, scenes);
+
 const sceneFiles = [];
 let totalPadded = 0;
 
 for (let i = 0; i < scenes.length; i++) {
   const scene = scenes[i];
+  const visualScene = plannedScenes[i];
   const spoken = prepareSpokenText(scene.narration);
   const rawWav = join(audioDir, `${scene.id}-raw.wav`);
   const outFile = join(audioDir, `${scene.id}.wav`);
@@ -101,7 +144,7 @@ for (let i = 0; i < scenes.length; i++) {
       input: spoken,
       response_format: "wav",
       steps: 32,
-      speed: 0.95
+      speed: 0.90 // Calm educational pace
     })
   });
 
@@ -116,12 +159,13 @@ for (let i = 0; i < scenes.length; i++) {
 
   const spokenDur = getWavDuration(rawWav);
   const lead = meta.lead;
-  const pad = meta.pad;
-  const targetDur = lead + spokenDur + pad;
+  // Pad is dynamically calculated so each scene exactly fills its visual duration!
+  const targetDur = visualScene.duration;
+  const pad = Math.max(0.2, targetDur - lead - spokenDur);
 
-  console.log(`  📊 spoken=${spokenDur.toFixed(3)}s lead=${lead}s pad=${pad}s target=${targetDur.toFixed(3)}s`);
+  console.log(`  📊 spoken=${spokenDur.toFixed(3)}s lead=${lead}s pad=${pad.toFixed(3)}s targetDur=${targetDur.toFixed(3)}s`);
 
-  // --- Step 2: Pad with lead silence + spoken + pad silence ---
+  // --- Step 2: Pad with lead silence + spoken + trailing silence ---
   const silentLead = join(audioDir, `${scene.id}-silent-lead.wav`);
   const silentPad = join(audioDir, `${scene.id}-silent-pad.wav`);
   makeSilentWav(silentLead, lead);

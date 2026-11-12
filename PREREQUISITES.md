@@ -37,6 +37,8 @@ VoiceStudio provides local, private on-device voice cloning with zero cloud API 
    - **Profile ID**: `51c11ae3`
 3. **OpenAI-Compatible Speech Endpoint**:
    `http://127.0.0.1:3900/v1/audio/speech`
+4. **Zero Audio-Visual Drift Standard**:
+   `scripts/synthesize-cloned-audio.mjs` dynamically pads silence per scene based on the compiled `timing.scenes` visual duration (`pad = Math.max(0.2, visualScene.duration - lead - spokenDur)`). Voice synthesis speed is pinned to `0.90` for crystal-clear educational tempo.
 
 ---
 

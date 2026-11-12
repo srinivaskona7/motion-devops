@@ -13,7 +13,12 @@
   - `9:16 Vertical` (`1080x1920`): Optimized for YouTube Shorts, Instagram Reels, TikTok.
   - `16:9 Landscape` (`1920x1080`): Optimized for YouTube, technical presentations, documentation.
 - **Audio Identity**: Local VoiceStudio voice cloning using profile **`Devops`** (`ID: 51c11ae3`).
-- **Pacing Standard**: Educational tempo **1.75 Words Per Second** (`wps: 1.75`).
+- **Pacing Standard**: Educational tempo **1.75 Words Per Second** (`wps: 1.75`) with synthesis voice speed **`0.90`** (`speed: 0.90`) for clear, measured articulation without rush.
+- **Audio-Visual Zero Drift Invariant**: Dynamic padding equation `pad = Math.max(0.2, visualScene.duration - lead - spokenDur)` ensures every scene audio file exactly matches the timeline scene duration, preventing accumulated audio-visual drift across multi-scene reels.
+- **DOM Layout & Clearance Invariants (0 Overlap Guarantee)**:
+  - **Topbar Clearance**: For 7-chapter timelines, `.topbar { left: 80px; right: 80px; }` and `.chap { width: 96px; letter-spacing: 0.08em; }` to fit long uppercase titles (e.g. `TROUBLESHOOT`, `CONTROL PLANE`) without text wrapping or clipping.
+  - **Bound Box Vertical Clearance**: Pill labels (`.bound .bl`) occupy space down to `+20px`. The first card inside any `.bound` MUST start at `top: 430px` or greater (when bound top is 380px/400px) to provide >= 30px clearance.
+  - **Bound Box Stacking Heights**: Stacking 4 cards of 86px height + gaps requires bound container `height >= 480px` to prevent child cards from bursting out through the container boundary.
 
 ---
 
