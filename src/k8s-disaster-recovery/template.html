@@ -96,6 +96,7 @@
 
       .card {
         position: absolute; z-index: 2; padding: 14px 18px 14px 26px; border-radius: 14px;
+        --ind: var(--accent); --bd: var(--line);
         background: var(--glass); border: 2px solid var(--bd, var(--line));
         box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.035), 0 28px 50px -24px rgba(0, 0, 0, 0.9);
         display: flex; flex-direction: column; justify-content: center;
@@ -284,7 +285,7 @@
           </div>
           <div class="stage" id="s3-stage">
             <div class="yaml" id="s3-yaml" style="left: 0; top: 0; width: 840px; height: 314px">
-              <div class="file">pvc-restore.yaml</div>
+              <div class="file">pvc-restore.yaml · excerpt</div>
               <div class="ln"><span class="k">kind:</span> PersistentVolumeClaim</div>
               <div class="ln"><span class="k">metadata:</span></div>
               <div class="ln">  <span class="k">name:</span> payments-restore</div>
@@ -296,7 +297,7 @@
               <div class="ln"><i class="hl" id="s3-hl4"></i><span class="v2">    <span class="k">apiGroup:</span> snapshot.storage.k8s.io</span></div>
             </div>
             <div class="card" id="s3-src" style="--ind: var(--bad); left: 0; top: 352px; width: 360px; height: 106px"><h3 class="m">payments-data</h3><div class="sw"><span class="a t-bad">source · corrupted</span></div></div>
-            <div class="card" id="s3-snap" style="--ind: var(--l2); left: 0; top: 498px; width: 360px; height: 106px"><h3 class="m">payments-nightly</h3><div class="sw"><span class="a">VolumeSnapshot · 02:00</span></div></div>
+            <div class="card" id="s3-snap" style="--ind: var(--l2); left: 0; top: 498px; width: 360px; height: 106px"><h3 class="m">payments-nightly</h3><div class="sw"><span class="a">VolumeSnapshot · 23:00</span></div></div>
             <div class="card" id="s3-dst" style="--ind: var(--l2); left: 480px; top: 425px; width: 360px; height: 106px"><h3 class="m">payments-restore</h3><div class="sw"><span class="a t-acc">cloning…</span><span class="b t-bad">corruption copied</span><span class="c t-ok">restored · clean</span></div></div>
             <div class="card" id="s3-pod" style="--ind: var(--ok); left: 480px; top: 606px; width: 360px; height: 94px"><h3>pod / payments</h3><div class="sw"><span class="a t-ok">Running · mounted</span></div></div>
             <svg class="wires" aria-hidden="true">
@@ -321,7 +322,7 @@
               <div class="ln"><span class="pr">$ </span><span id="s4-c1" data-text="velero restore create --from-backup k8s-daily"></span><i class="caret" id="s4-caret"></i></div>
               <div class="ln out s4-out">Restore request "k8s-daily-20261112021503"</div>
               <div class="ln out s4-out">submitted successfully.</div>
-              <div class="ln" id="s4-phase" style="color: var(--ok)">Phase: Completed · 41/41 items</div>
+              <div class="ln" id="s4-phase" style="color: var(--ok)">$ velero restore get → Completed · 41/41</div>
             </div>
             <div class="card" id="s4-bk" style="--ind: var(--l3); left: 220px; top: 234px; width: 400px; height: 76px; padding-top: 6px; padding-bottom: 6px"><h3 class="m">backup/k8s-daily</h3><div class="sw" style="margin-top: 4px"><span class="a">object storage · 41 items</span></div></div>
             <div class="bound" id="s4-bound" style="left: 0; top: 334px; width: 840px; height: 372px">
@@ -445,7 +446,7 @@
               { [ax]: 0, filter: "blur(0px)", duration: 0.42, ease: "power4.out", immediateRender: false }, s.start);
             tl.to(cam, { opacity: 1, duration: 0.18, ease: "power2.out" }, s.start);
             // header waterfall rides in behind the camera
-            tl.fromTo($$(cam + " .hw"), { opacity: 0.35, x: 60 }, { opacity: 1, x: 0, duration: 0.36, ease: "power4.out", stagger: 0.045, immediateRender: false }, s.start + 0.04);
+            tl.fromTo($$(cam + " .head .hw"), { opacity: 0.35, x: 60 }, { opacity: 1, x: 0, duration: 0.36, ease: "power4.out", stagger: 0.045, immediateRender: false }, s.start + 0.04);
           }
           if (next) {
             const ax = next.id === "s5" ? "y" : "x", d = ax === "y" ? SEAM_Y : SEAM_X;
@@ -480,7 +481,7 @@
         hit("s1-pvc", p, C.bad);
         state("s1-pay", p + 0.45, C.bad, "b");
         tl.fromTo("#s1-bt2", { opacity: 0, x: 16 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, p + 0.1);
-        tl.fromTo("#s1-alert", { opacity: 0.4 }, { opacity: 1, duration: 0.18, yoyo: true, repeat: 1 }, p);
+        tl.fromTo("#s1-alert", { opacity: 0.4 }, { opacity: 1, duration: 0.18, yoyo: true, repeat: 1, immediateRender: false }, p);
         // three layers bring it back
         const th = at("s1-three");
         tl.to("#s1-alert", { opacity: 0, duration: 0.5 }, th - 0.2);

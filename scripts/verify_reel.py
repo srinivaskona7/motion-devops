@@ -130,6 +130,13 @@ with sync_playwright() as p:
     h0 = page.evaluate("() => { const h = document.querySelector('#s1 .head h2'); return getComputedStyle(h).opacity + '|' + h.getBoundingClientRect().height; }")
     if float(h0.split("|")[0]) < 0.99:
         fail("frame0", f"hook headline not visible at t=0 ({h0})")
+    # frame 0 must not carry state from later beats (a later fromTo's immediateRender leaks to t=0)
+    leaks = page.evaluate("""() => {
+      const op = (s) => { const e = document.querySelector(s); return e ? +getComputedStyle(e).opacity : 0; };
+      return ['#s1-alert', '#s1-banner', '#s1-layers', '#s5-final .hw'].filter((s) => op(s) > 0.01);
+    }""")
+    if leaks:
+        fail("frame0", f"later-beat elements visible at t=0: {leaks}")
     page.screenshot(path=str(SNAP / "t000.00.png"))
 
     # sample each scene densely after its entry seam and before its exit seam
