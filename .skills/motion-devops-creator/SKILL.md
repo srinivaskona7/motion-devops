@@ -83,7 +83,31 @@ hyperframes render videos/<slug> --resolution landscape-4k -o renders/<slug>/<sl
 
 ---
 
-## 3. Git Push Invariant (Mandatory)
+#### 3. Professional Video Editing Software Assets (ProRes 4444 / Alpha Transparency)
+For importing directly into **Final Cut Pro**, **DaVinci Resolve**, **Adobe Premiere Pro**, or **After Effects**:
+```bash
+# Export Apple ProRes 4444 with transparent alpha channel:
+node scripts/export-prores.mjs <slug> mov
+
+# Export transparent WebM overlay:
+node scripts/export-prores.mjs <slug> webm
+```
+This enables editing against custom B-roll, 3D backgrounds, or talking-head creator footage without color keying.
+
+---
+
+## 4. Anti-Overlap & Pedagogical Storytelling Laws
+
+To avoid clumsy pacing, ghost overlays, and floating elements:
+1. **Calibrated Narration Rate**: Strictly set `wps: 1.7` to `1.8` (words per second). Never exceed 1.85 wps. Explaining distributed systems requires pauses for visual registration.
+2. **Hard Transition Zero-Overlap**: When revealing overlay cards or summaries (e.g. `Three Layers of DR`), the previous diagram must fully fade out (`opacity: 0`, `filter: blur(8px)`) rather than remaining at semi-transparent opacity.
+3. **Contextual Boundaries**: Every pod and process must reside within a labeled structural card (e.g. `cluster · prod`, `namespace: payments`, or `control-plane`).
+4. **Dramatic Comma**: Always leave a **0.3s to 0.6s stillness** between typing a CLI command and the terminal response popping.
+5. **Moving Traffic Logic**: All packet beads must travel along visible SVG guide wires with state-specific colors (`ok: #22c55e`, `canary: #f59e0b`, `fail: #f43f5e`).
+
+---
+
+## 5. Git Push Invariant (Mandatory)
 Authentication is pre-configured via SSH (`git@github.com:...`).
 Always commit and push using:
 ```bash

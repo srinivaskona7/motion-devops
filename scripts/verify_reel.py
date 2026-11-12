@@ -13,6 +13,7 @@ Checks (exit 1 on any failure):
   captions   at each spoken word exactly one cue is visible and it fits the HUD
   terminal   the Velero terminal ends showing the exact restore command
   seams      at each scene cut only one scene is visible (zero overlap)
+  packets    after a jump-seek each wired scene shows moving traffic packets
 Writes PNG snapshots to videos/<slug>/snapshots/ (git-ignored).
 """
 import json
@@ -75,7 +76,8 @@ PROBE_JS = """(band) => {
   for (const el of scene.querySelectorAll('.card h3, .card .sw span, .term .ln, .yaml .ln')) {
     if (!vis(el)) continue;
     const box = el.closest('.card, .term, .yaml');
-    const eb = el.getBoundingClientRect(), bb = box.getBoundingClientRect();
+    const rg = document.createRange(); rg.selectNodeContents(el);  // text extent, not the block box
+    const eb = rg.getBoundingClientRect(), bb = box.getBoundingClientRect();
     const pad = 10;
     if (eb.right > bb.right - pad + 0.5 && el.textContent.trim()) out.overflow.push(`${box.id}: "${el.textContent.trim().slice(0, 40)}" (${Math.round(eb.right - bb.right + pad)}px)`);
   }
@@ -153,6 +155,15 @@ with sync_playwright() as p:
     for t in keys:
         page.evaluate(SEEK_JS, t)
         page.screenshot(path=str(SNAP / f"t{t:06.2f}.png"))
+
+    # packets: after a jump-seek (how renders and scrubbing move), every wired scene shows live beads
+    for sc_ in info["scenes"]:
+        t = sc_["start"] + sc_["dur"] - 0.6
+        page.evaluate(SEEK_JS, 0)
+        page.evaluate(SEEK_JS, t)
+        n = page.evaluate("(id) => { const w = document.querySelectorAll('#' + id + ' path.wire').length; const b = [...document.querySelectorAll('#' + id + ' circle.bead')].filter((c) => +c.getAttribute('opacity') > 0.5).length; return [w, b]; }", sc_["id"])
+        if n[0] and n[1] < 3:
+            fail("packets", f"t={t:.2f} {sc_['id']}: {n[1]} visible packets on {n[0]} wires after jump-seek")
 
     # captions: exactly one cue visible at every spoken word, and it fits the HUD
     for t in info["words"]:

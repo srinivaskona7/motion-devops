@@ -10,7 +10,9 @@
     "render:1440": "node scripts/render-video.mjs $npm_config_slug 1440",
     "render:4k": "node scripts/render-video.mjs $npm_config_slug 4k",
     "check": "npm run build && cd videos/k8s-pod-scheduling && npx --yes hyperframes@0.9.37 check && cd ../k8s-pod-scheduling-reel && npx --yes hyperframes@0.9.37 check",
-    "test": "node scripts/verify-video.mjs k8s-pod-scheduling"
+    "test": "node scripts/verify-video.mjs k8s-pod-scheduling",
+    "build:dr": "node scripts/build-video.mjs k8s-disaster-recovery",
+    "verify:dr": "npm run build:dr && python3 scripts/verify_reel.py k8s-disaster-recovery && python3 scripts/verify_reel.py k8s-disaster-recovery --self-test && cd videos/k8s-disaster-recovery && npx --yes hyperframes@0.9.37 check && node ~/.claude/skills/motion-doctrine/scripts/seam-gate.mjs verify --ledger ledger.json --project ."
   },
   "devDependencies": {
     "gsap": "3.15.0"

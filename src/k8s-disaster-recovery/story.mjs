@@ -26,10 +26,11 @@ export const meta = {
   formats: ["port"], // 9:16 only, written to videos/k8s-disaster-recovery/
   inline: true, // self-contained index.html
   gsap: "src/shared/vendor/gsap-3.12.5.min.js",
-  wps: 2.2, // narration rate, words per second
-  lead: 0.9, // entry seam before the first word of each scene
-  pad: 1.3, // padding after the last word of each scene
-  total: 90, // target runtime; the last scene holds to fill it
+  seams: { s5: "y" }, // all seams cut LEFT except the rise into the recap (writes ledger.json)
+  wps: 1.8, // narration rate, words per second (calm, educational pacing)
+  lead: 1.0, // entry seam before the first word of each scene
+  pad: 1.4, // padding after the last word of each scene
+  total: 112, // target runtime; matches the calmer pacing smoothly
 };
 
 export const scenes = [

@@ -79,7 +79,7 @@
       .brand { display: flex; align-items: center; gap: 12px; font: 700 20px/1 var(--mono); letter-spacing: 0.14em; }
       .brand i { width: 11px; height: 11px; border-radius: 50%; background: var(--bad); box-shadow: 0 0 12px var(--bad); }
       .chapters { display: flex; gap: 8px; }
-      .chap { width: 92px; font: 700 13px/1 var(--mono); letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; }
+      .chap { width: 92px; font: 700 13px/1 var(--mono); letter-spacing: 0.1em; color: #8590a8; text-transform: uppercase; }
       .chap b { display: block; height: 4px; border-radius: 2px; margin-top: 8px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
       .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; }
 
@@ -132,8 +132,9 @@
         box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.035), 0 30px 60px -26px #000; font: 400 24px/39px var(--mono); }
       .term .bar { display: flex; align-items: center; gap: 9px; height: 30px; margin-bottom: 6px; }
       .term .bar i { width: 13px; height: 13px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); }
-      .term .bar span { margin-left: 12px; font: 400 17px var(--mono); color: var(--dim); }
+      .term .bar span { margin-left: 12px; font: 400 17px var(--mono); color: #8590a8; }
       .term .ln { white-space: pre; height: 39px; }
+      .term.tight { line-height: 36px; } .term.tight .ln { height: 36px; }
       .term .pr { color: var(--ok); }
       .term .out { color: var(--mute); }
       .caret { display: inline-block; width: 13px; height: 28px; margin-left: 3px; vertical-align: -5px; background: var(--ink); }
@@ -153,12 +154,12 @@
 
       .yaml { position: absolute; z-index: 3; padding: 18px 26px; border-radius: 16px; background: rgba(6, 9, 16, 0.92); border: 2px solid var(--line);
         box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.035), 0 30px 60px -26px #000; font: 400 22px/30px var(--mono); }
-      .yaml .ln { position: relative; white-space: pre; height: 30px; color: #c8d3e6; }
+      .yaml .ln { position: relative; z-index: 0; white-space: pre; height: 30px; color: #c8d3e6; }
       .yaml .k { color: #7fa3ff; }
-      .yaml .hl { position: absolute; left: -12px; right: -12px; top: 0; height: 30px; border-radius: 6px; background: color-mix(in srgb, var(--l2) 26%, transparent); opacity: 0; }
+      .yaml .hl { position: absolute; left: -12px; right: -12px; top: 0; height: 30px; border-radius: 6px; background: color-mix(in srgb, var(--l2) 26%, transparent); opacity: 0; z-index: -1; }
       .yaml .v2 { opacity: 0; }
       .yaml .alt { position: absolute; left: 0; top: 0; }
-      .yaml .file { position: absolute; right: 22px; top: 16px; font: 700 17px var(--mono); color: var(--dim); letter-spacing: 0.06em; }
+      .yaml .file { position: absolute; right: 22px; top: 16px; font: 700 17px var(--mono); color: #8590a8; letter-spacing: 0.06em; }
 
       .slabs { position: absolute; left: 0; top: 0; width: 340px; height: 560px; overflow: visible; }
       .slab .top { stroke-width: 2; }
@@ -172,7 +173,7 @@
       .hud { position: absolute; z-index: 40; left: 120px; width: 840px; top: 1170px; height: 150px; display: flex; align-items: stretch;
         background: rgba(10, 14, 24, 0.86); border: 2px solid var(--line); border-radius: 18px; box-shadow: 0 30px 60px -30px #000; }
       .hud .cc { flex: none; width: 70px; display: grid; place-items: center; border-right: 1px solid var(--line); }
-      .hud .cc span { font: 700 15px var(--mono); letter-spacing: 0.14em; color: var(--accent); padding: 6px 7px; border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 7px; }
+      .hud .cc span { font: 700 15px var(--mono); letter-spacing: 0.14em; color: #8fb0ff; padding: 6px 7px; border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 7px; }
       #captions { position: relative; flex: 1; }
       .cue { position: absolute; inset: 0; display: flex; align-items: center; align-content: center; flex-wrap: wrap; column-gap: 0.27em; padding: 0 26px; font-size: 34px; line-height: 1.24; letter-spacing: -0.008em; }
       .cue .w { color: rgba(233, 238, 248, 0.4); }
@@ -194,7 +195,7 @@
     </style>
   </head>
   <body>
-    <div id="root" class="port" data-composition-id="main" data-start="0" data-duration="90" data-width="1080" data-height="1920">
+    <div id="root" class="port" data-composition-id="main" data-start="0" data-duration="112" data-width="1080" data-height="1920">
       <div class="bg-glow" id="glow"></div>
       <div class="bg-dots"></div>
       <div class="floor-wrap"><div class="floor"></div></div>
@@ -202,7 +203,7 @@
 
       <div class="topbar">
         <div class="brand"><i id="brand-dot"></i>K8S · DR</div>
-        <div class="chapters">
+        <div class="chapters" data-layout-ignore>
           <div class="chap">Outage<b><u id="ch-s1"></u></b></div>
           <div class="chap">etcd<b><u id="ch-s2"></u></b></div>
           <div class="chap">Volumes<b><u id="ch-s3"></u></b></div>
@@ -212,7 +213,7 @@
       </div>
 
       <!-- ===================== S1 · OUTAGE ===================== -->
-      <section id="s1" class="scene clip" data-start="0" data-duration="17.2" data-track-index="1" data-track-kind="graphics">
+      <section id="s1" class="scene clip" data-start="0" data-duration="20.733" data-track-index="1" data-track-kind="graphics">
         <div class="cam" id="s1-cam">
           <div class="head">
             <div class="kicker hx" id="s1-kick" style="--kc: var(--bad)">01 · Outage</div>
@@ -224,25 +225,25 @@
                 <svg aria-hidden="true"><rect x="1" y="1" width="838" height="610" rx="22" /></svg>
                 <div class="bl">cluster · prod</div>
               </div>
-              <div class="card chip" id="s1-users" style="left: 290px; top: 0; width: 260px; height: 56px"><i class="dot" style="background: var(--accent); box-shadow: 0 0 10px var(--accent)"></i>users · 1.2k rps</div>
+              <div class="card chip" id="s1-users" style="left: 260px; top: 0; width: 320px; height: 56px; white-space: nowrap; justify-content: center"><i class="dot" style="background: var(--accent); box-shadow: 0 0 10px var(--accent)"></i>users · 1.2k rps</div>
               <div class="banner" id="s1-banner" style="left: 0; top: 0; width: 840px; height: 60px"><b>SEV-1</b><span id="s1-bt1">etcd unreachable</span><span id="s1-bt2" style="color: #fda4af">+ payments-data corrupt</span></div>
-              <div class="card" id="s1-ing" style="left: 270px; top: 118px; width: 300px; height: 92px"><h3>ingress</h3><div class="sw"><span class="a">nginx · :443</span></div></div>
-              <div class="card s1-pod" id="s1-web" style="left: 30px; top: 262px; width: 240px; height: 100px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
-              <div class="card s1-pod" id="s1-apisvc" style="left: 300px; top: 262px; width: 240px; height: 100px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
-              <div class="card s1-pod" id="s1-pay" style="left: 570px; top: 262px; width: 240px; height: 100px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">CrashLoop</span></div></div>
-              <div class="card" id="s1-pvc" style="--ind: var(--l2); left: 570px; top: 414px; width: 240px; height: 100px"><h3 class="m">payments-data</h3><div class="sw"><span class="a">PVC · 50Gi</span><span class="b t-bad">corrupted</span></div></div>
-              <div class="card" id="s1-api" style="left: 30px; top: 566px; width: 240px; height: 100px"><h3 class="m">apiserver</h3><div class="sw"><span class="a t-ok">healthy</span><span class="b t-warn">no etcd</span></div></div>
-              <div class="card" id="s1-etcd" style="--ind: var(--l1); left: 300px; top: 566px; width: 240px; height: 100px"><h3 class="m">etcd</h3><div class="sw"><span class="a t-ok">leader ok</span><span class="b t-bad">disk failed</span></div></div>
+              <div class="card" id="s1-ing" style="left: 270px; top: 110px; width: 300px; height: 86px"><h3>ingress</h3><div class="sw"><span class="a">nginx · :443</span></div></div>
+              <div class="card s1-pod" id="s1-web" style="left: 30px; top: 270px; width: 240px; height: 100px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+              <div class="card s1-pod" id="s1-apisvc" style="left: 300px; top: 270px; width: 240px; height: 100px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+              <div class="card s1-pod" id="s1-pay" style="left: 570px; top: 270px; width: 240px; height: 100px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">CrashLoop</span></div></div>
+              <div class="card" id="s1-pvc" style="--ind: var(--l2); left: 570px; top: 440px; width: 240px; height: 96px"><h3 class="m">payments-data</h3><div class="sw"><span class="a">PVC · 50Gi</span><span class="b t-bad">corrupted</span></div></div>
+              <div class="card" id="s1-api" style="left: 30px; top: 586px; width: 240px; height: 100px"><h3 class="m">apiserver</h3><div class="sw"><span class="a t-ok">healthy</span><span class="b t-warn">no etcd</span></div></div>
+              <div class="card" id="s1-etcd" style="--ind: var(--l1); left: 570px; top: 586px; width: 240px; height: 100px"><h3 class="m">etcd</h3><div class="sw"><span class="a t-ok">leader ok</span><span class="b t-bad">disk failed</span></div></div>
               <svg class="wires" aria-hidden="true">
                 <path class="wire" data-from="s1-users" data-to="s1-ing" data-on="s1-ing" />
                 <path class="wire" data-from="s1-ing" data-to="s1-web" data-on="s1-pods" data-axis="y" />
-                <path class="wire" data-from="s1-web" data-to="s1-apisvc" data-on="s1-pods" data-axis="x" />
-                <path class="wire" data-from="s1-apisvc" data-to="s1-pay" data-on="s1-pods" data-axis="x" data-fail="s1-pvc" />
+                <path class="wire" data-from="s1-ing" data-to="s1-apisvc" data-on="s1-pods" data-axis="y" />
+                <path class="wire" data-from="s1-ing" data-to="s1-pay" data-on="s1-pods" data-axis="y" data-fail="s1-pvc" />
                 <path class="wire" data-from="s1-pay" data-to="s1-pvc" data-on="s1-pods" data-axis="y" data-fail="s1-pvc" />
                 <path class="wire" data-from="s1-api" data-to="s1-etcd" data-on="s1-etcd" data-axis="x" data-fail="s1-fail" />
               </svg>
             </div>
-            <div class="layers" id="s1-layers" style="left: 60px; top: 170px; width: 720px">
+            <div class="layers" id="s1-layers" data-layout-allow-overlap style="left: 60px; top: 170px; width: 720px">
               <div class="lt">Three layers of recovery</div>
               <div class="lrow s1-lr" style="--lc: var(--l1)"><i class="n">1</i><h4>etcd snapshot</h4><span>cluster state</span></div>
               <div class="lrow s1-lr" style="--lc: var(--l2)"><i class="n">2</i><h4>PVC clone · snapshot</h4><span>volume data</span></div>
@@ -254,7 +255,7 @@
       </section>
 
       <!-- ===================== S2 · ETCD SNAPSHOT ===================== -->
-      <section id="s2" class="scene clip" data-start="17.2" data-duration="18.564" data-track-index="2" data-track-kind="graphics">
+      <section id="s2" class="scene clip" data-start="20.733" data-duration="22.4" data-track-index="2" data-track-kind="graphics">
         <div class="cam" id="s2-cam">
           <div class="head">
             <div class="kicker hx" style="--kc: var(--l1)">02 · Layer 1 — cluster state</div>
@@ -268,16 +269,16 @@
               <div class="ln"><span class="pr" id="s2-p2">$ </span><span id="s2-c2" data-text="etcdutl snapshot restore etcd-0212.db \"></span><i class="caret" id="s2-caret2"></i></div>
               <div class="ln"><span id="s2-c3" data-text="    --data-dir /var/lib/etcd-new"></span></div>
             </div>
-            <div class="bound" id="s2-bound" style="left: 0; top: 284px; width: 500px; height: 420px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="498" height="418" rx="22" /></svg>
+            <div class="bound" id="s2-bound" style="left: 0; top: 280px; width: 500px; height: 424px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="498" height="422" rx="22" /></svg>
               <div class="bl">cluster</div>
             </div>
-            <div class="card" id="s2-etcd" style="--ind: var(--l1); left: 30px; top: 318px; width: 440px; height: 100px"><h3 class="m">etcd</h3><div class="sw"><span class="a">keyspace · rev 48213</span></div></div>
-            <div class="card" id="s2-file" style="--ind: var(--l1); left: 30px; top: 456px; width: 440px; height: 100px"><h3 class="m">etcd-0212.db</h3><div class="sw"><span class="a">1 file · every object</span></div></div>
-            <div class="card" id="s2-api" style="--ind: var(--ok); left: 30px; top: 594px; width: 440px; height: 100px"><h3 class="m">kube-apiserver</h3><div class="sw"><span class="a t-ok">all objects back</span></div></div>
-            <div class="abs kicker" id="s2-offl" style="left: 560px; top: 398px; font-size: 18px; --kc: var(--mute)">off-cluster</div>
-            <div class="card" id="s2-bucket" style="--ind: var(--l1); left: 560px; top: 432px; width: 280px; height: 124px"><h3>object storage</h3><div class="sw"><span class="a">s3://dr-backups</span></div></div>
-            <div class="card" id="s2-gap" style="--ind: var(--warn); --bd: color-mix(in srgb, var(--warn) 55%, transparent); left: 560px; top: 594px; width: 280px; height: 100px; border-style: dashed"><h3>PV data</h3><div class="sw"><span class="a t-warn">not in snapshot</span></div></div>
+            <div class="card" id="s2-etcd" style="--ind: var(--l1); left: 30px; top: 310px; width: 440px; height: 90px"><h3 class="m">etcd</h3><div class="sw"><span class="a">keyspace · rev 48213</span></div></div>
+            <div class="card" id="s2-file" style="--ind: var(--l1); left: 30px; top: 460px; width: 440px; height: 90px"><h3 class="m">etcd-0212.db</h3><div class="sw"><span class="a">1 file · every object</span></div></div>
+            <div class="card" id="s2-api" style="--ind: var(--ok); left: 30px; top: 604px; width: 440px; height: 90px"><h3 class="m">kube-apiserver</h3><div class="sw"><span class="a t-ok">all objects back</span></div></div>
+            <div class="abs kicker" id="s2-offl" style="left: 560px; top: 268px; font-size: 18px; --kc: var(--mute)">off-cluster</div>
+            <div class="card" id="s2-bucket" style="--ind: var(--l1); left: 560px; top: 300px; width: 280px; height: 124px"><h3>object storage</h3><div class="sw"><span class="a">s3://dr-backups</span></div></div>
+            <div class="card" id="s2-gap" style="--ind: var(--warn); --bd: color-mix(in srgb, var(--warn) 55%, transparent); left: 560px; top: 604px; width: 280px; height: 90px; border-style: dashed"><h3>PV data</h3><div class="sw"><span class="a t-warn">not in snapshot</span></div></div>
             <svg class="wires" aria-hidden="true">
               <path class="wire" data-from="s2-etcd" data-to="s2-file" data-on="s2-file" data-axis="y" />
               <path class="wire" data-from="s2-file" data-to="s2-bucket" data-on="s2-off" data-axis="x" />
@@ -288,7 +289,7 @@
       </section>
 
       <!-- ===================== S3 · PVC CLONE / VOLUMESNAPSHOT ===================== -->
-      <section id="s3" class="scene clip" data-start="35.764" data-duration="19.473" data-track-index="3" data-track-kind="graphics">
+      <section id="s3" class="scene clip" data-start="43.133" data-duration="23.511" data-track-index="3" data-track-kind="graphics">
         <div class="cam" id="s3-cam">
           <div class="head">
             <div class="kicker hx" style="--kc: var(--l2)">03 · Layer 2 — volume data</div>
@@ -310,9 +311,9 @@
             <div class="card" id="s3-src" style="--ind: var(--bad); left: 0; top: 352px; width: 360px; height: 106px"><h3 class="m">payments-data</h3><div class="sw"><span class="a t-bad">source · corrupted</span></div></div>
             <div class="card" id="s3-snap" style="--ind: var(--l2); left: 0; top: 498px; width: 360px; height: 106px"><h3 class="m">payments-nightly</h3><div class="sw"><span class="a">VolumeSnapshot · 02:00</span></div></div>
             <div class="card" id="s3-dst" style="--ind: var(--l2); left: 480px; top: 425px; width: 360px; height: 106px"><h3 class="m">payments-restore</h3><div class="sw"><span class="a t-acc">cloning…</span><span class="b t-bad">corruption copied</span><span class="c t-ok">restored · clean</span></div></div>
-            <div class="card" id="s3-pod" style="--ind: var(--ok); left: 480px; top: 594px; width: 360px; height: 100px"><h3>pod / payments</h3><div class="sw"><span class="a t-ok">Running · mounted</span></div></div>
+            <div class="card" id="s3-pod" style="--ind: var(--ok); left: 480px; top: 606px; width: 360px; height: 94px"><h3>pod / payments</h3><div class="sw"><span class="a t-ok">Running · mounted</span></div></div>
             <svg class="wires" aria-hidden="true">
-              <path class="wire" id="s3-w-clone" data-from="s3-src" data-to="s3-dst" data-on="s3-src" data-axis="x" data-fail="s3-bad" data-label="clone" />
+              <path class="wire" id="s3-w-clone" data-from="s3-src" data-to="s3-dst" data-on="s3-src" data-axis="x" data-fail="s3-bad" data-dim="s3-snap:0.12" data-label="clone" />
               <path class="wire ok" data-from="s3-snap" data-to="s3-dst" data-on="s3-snap" data-axis="x" data-label="restore" />
               <path class="wire ok" data-from="s3-dst" data-to="s3-pod" data-on="s3-bind" data-axis="y" />
             </svg>
@@ -321,41 +322,41 @@
       </section>
 
       <!-- ===================== S4 · VELERO RESTORE ===================== -->
-      <section id="s4" class="scene clip" data-start="55.236" data-duration="17.2" data-track-index="4" data-track-kind="graphics">
+      <section id="s4" class="scene clip" data-start="66.644" data-duration="20.733" data-track-index="4" data-track-kind="graphics">
         <div class="cam" id="s4-cam">
           <div class="head">
             <div class="kicker hx" style="--kc: var(--l3)">04 · Layer 3 — the whole app</div>
             <h2><span class="hw">One</span> <span class="hw">command</span> <span class="hw">restores</span> <span class="hw">the</span> <span class="hw">namespace.</span></h2>
           </div>
           <div class="stage" id="s4-stage">
-            <div class="term" id="s4-term" style="left: 0; top: 0; width: 840px; height: 238px">
+            <div class="term tight" id="s4-term" style="left: 0; top: 0; width: 840px; height: 216px">
               <div class="bar"><i></i><i></i><i></i><span>ops-laptop · zsh</span></div>
               <div class="ln"><span class="pr">$ </span><span id="s4-c1" data-text="velero restore create --from-backup k8s-daily"></span><i class="caret" id="s4-caret"></i></div>
               <div class="ln out s4-out">Restore request "k8s-daily-20261112021503"</div>
               <div class="ln out s4-out">submitted successfully.</div>
               <div class="ln" id="s4-phase" style="color: var(--ok)">Phase: Completed · 41/41 items</div>
             </div>
-            <div class="card" id="s4-bk" style="--ind: var(--l3); left: 220px; top: 268px; width: 400px; height: 90px"><h3 class="m">backup/k8s-daily</h3><div class="sw"><span class="a">object storage · 41 items</span></div></div>
-            <div class="bound" id="s4-bound" style="left: 0; top: 392px; width: 840px; height: 314px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="838" height="312" rx="22" /></svg>
+            <div class="card" id="s4-bk" style="--ind: var(--l3); left: 220px; top: 234px; width: 400px; height: 76px; padding-top: 6px; padding-bottom: 6px"><h3 class="m">backup/k8s-daily</h3><div class="sw" style="margin-top: 4px"><span class="a">object storage · 41 items</span></div></div>
+            <div class="bound" id="s4-bound" style="left: 0; top: 334px; width: 840px; height: 372px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="838" height="370" rx="22" /></svg>
               <div class="bl">namespace · shop</div>
             </div>
-            <div class="ghost s4-gh" style="left: 270px; top: 420px; width: 300px; height: 80px"></div>
-            <div class="ghost s4-gh" style="left: 30px; top: 520px; width: 240px; height: 80px"></div>
-            <div class="ghost s4-gh" style="left: 300px; top: 520px; width: 240px; height: 80px"></div>
-            <div class="ghost s4-gh" style="left: 570px; top: 520px; width: 240px; height: 80px"></div>
-            <div class="ghost s4-gh" style="left: 570px; top: 616px; width: 240px; height: 80px"></div>
-            <div class="card s4-obj" id="s4-ing" style="--ind: var(--ok); left: 270px; top: 420px; width: 300px; height: 80px; padding-top: 8px; padding-bottom: 8px"><h3>ingress</h3></div>
-            <div class="card s4-obj" id="s4-web" style="--ind: var(--ok); left: 30px; top: 520px; width: 240px; height: 80px"><h3>web</h3></div>
-            <div class="card s4-obj" id="s4-api" style="--ind: var(--ok); left: 300px; top: 520px; width: 240px; height: 80px"><h3>api</h3></div>
-            <div class="card s4-obj" id="s4-pay" style="--ind: var(--ok); left: 570px; top: 520px; width: 240px; height: 80px"><h3>payments</h3></div>
-            <div class="card" id="s4-pvc" style="--ind: var(--l2); left: 570px; top: 616px; width: 240px; height: 80px"><h3 class="m">payments-data</h3></div>
-            <div class="card chip" id="s4-ready" style="left: 30px; top: 628px; width: 400px; height: 56px; --bd: color-mix(in srgb, var(--ok) 50%, transparent)"><i class="dot"></i>shop · all Ready</div>
+            <div class="ghost s4-gh" style="left: 270px; top: 360px; width: 300px; height: 66px"></div>
+            <div class="ghost s4-gh" style="left: 30px; top: 490px; width: 240px; height: 66px"></div>
+            <div class="ghost s4-gh" style="left: 300px; top: 490px; width: 240px; height: 66px"></div>
+            <div class="ghost s4-gh" style="left: 570px; top: 490px; width: 240px; height: 66px"></div>
+            <div class="ghost s4-gh" style="left: 570px; top: 620px; width: 240px; height: 66px"></div>
+            <div class="card s4-obj" id="s4-ing" style="--ind: var(--ok); left: 270px; top: 360px; width: 300px; height: 66px"><h3>ingress</h3></div>
+            <div class="card s4-obj" id="s4-web" style="--ind: var(--ok); left: 30px; top: 490px; width: 240px; height: 66px"><h3>web</h3></div>
+            <div class="card s4-obj" id="s4-api" style="--ind: var(--ok); left: 300px; top: 490px; width: 240px; height: 66px"><h3>api</h3></div>
+            <div class="card s4-obj" id="s4-pay" style="--ind: var(--ok); left: 570px; top: 490px; width: 240px; height: 66px"><h3>payments</h3></div>
+            <div class="card" id="s4-pvc" style="--ind: var(--l2); left: 570px; top: 620px; width: 240px; height: 66px"><h3 class="m">payments-data</h3></div>
+            <div class="card chip" id="s4-ready" style="left: 30px; top: 625px; width: 400px; height: 56px; --bd: color-mix(in srgb, var(--ok) 50%, transparent)"><i class="dot"></i>shop · all Ready</div>
             <svg class="wires" aria-hidden="true">
-              <path class="wire dash" id="s4-w-restore" data-from="s4-bk" data-to="s4-ing" data-on="s4-res" data-axis="y" data-label="restore" />
+              <path class="wire dash" id="s4-w-restore" data-from="s4-bk" data-to="s4-ing" data-on="s4-res" data-axis="y" data-dim="s4-green:0.25" data-label="restore" />
               <path class="wire ok" data-from="s4-ing" data-to="s4-web" data-on="s4-green" data-axis="y" />
-              <path class="wire ok" data-from="s4-web" data-to="s4-api" data-on="s4-green" data-axis="x" />
-              <path class="wire ok" data-from="s4-api" data-to="s4-pay" data-on="s4-green" data-axis="x" />
+              <path class="wire ok" data-from="s4-ing" data-to="s4-api" data-on="s4-green" data-axis="y" />
+              <path class="wire ok" data-from="s4-ing" data-to="s4-pay" data-on="s4-green" data-axis="y" />
               <path class="wire ok" data-from="s4-pay" data-to="s4-pvc" data-on="s4-pv" data-axis="y" />
             </svg>
           </div>
@@ -363,7 +364,7 @@
       </section>
 
       <!-- ===================== S5 · RECAP ===================== -->
-      <section id="s5" class="scene clip" data-start="72.436" data-duration="17.564" data-track-index="5" data-track-kind="graphics">
+      <section id="s5" class="scene clip" data-start="87.378" data-duration="24.622" data-track-index="5" data-track-kind="graphics">
         <div class="cam" id="s5-cam">
           <div class="head">
             <div class="kicker hx" style="--kc: var(--ok)">05 · Recap</div>
@@ -402,39 +403,39 @@
       <div class="hud" id="hud">
         <div class="cc"><span>CC</span></div>
         <div id="captions" data-track-kind="captions">
-        <p id="cue-01" class="cue clip" data-start="0.78" data-duration="0.909" data-track-index="20" data-say="Two A M."><span class="w" data-t="0.9">2</span> <span class="w" data-t="1.355">AM.</span></p>
-        <p id="cue-02" class="cue clip" data-start="1.689" data-duration="3.636" data-track-index="20" data-say="Traffic flows through the ingress to your pods."><span class="w" data-t="1.809">Traffic</span> <span class="w" data-t="2.264">flows</span> <span class="w" data-t="2.718">through</span> <span class="w" data-t="3.173">the</span> <span class="w kw" data-t="3.627">ingress</span> <span class="w" data-t="4.082">to</span> <span class="w" data-t="4.536">your</span> <span class="w kw" data-t="4.991">pods.</span></p>
-        <p id="cue-03" class="cue clip" data-start="5.325" data-duration="2.273" data-track-index="20" data-say="Every object lives in etcd."><span class="w" data-t="5.445">Every</span> <span class="w" data-t="5.9">object</span> <span class="w" data-t="6.355">lives</span> <span class="w" data-t="6.809">in</span> <span class="w kw" data-t="7.264">etcd.</span></p>
-        <p id="cue-04" class="cue clip" data-start="7.598" data-duration="5.909" data-track-index="20" data-say="Then the etcd disk fails, and a bad migration corrupts the payments volume."><span class="w" data-t="7.718">Then</span> <span class="w kw" data-t="8.173">the</span> <span class="w kw" data-t="8.627">etcd</span> <span class="w kw" data-t="9.082">disk</span> <span class="w kw" data-t="9.536">fails,</span> <span class="w" data-t="9.991">and</span> <span class="w" data-t="10.445">a</span> <span class="w" data-t="10.9">bad</span> <span class="w" data-t="11.355">migration</span> <span class="w kw" data-t="11.809">corrupts</span> <span class="w kw" data-t="12.264">the</span> <span class="w kw" data-t="12.718">payments</span> <span class="w kw" data-t="13.173">volume.</span></p>
-        <p id="cue-05" class="cue clip" data-start="13.507" data-duration="3.093" data-track-index="20" data-say="Three layers bring it back."><span class="w kw" data-t="13.627">Three</span> <span class="w kw" data-t="14.082">layers</span> <span class="w" data-t="14.536">bring</span> <span class="w" data-t="14.991">it</span> <span class="w" data-t="15.445">back.</span></p>
-        <p id="cue-06" class="cue clip" data-start="17.98" data-duration="1.818" data-track-index="20" data-say="Layer one, cluster state."><span class="w" data-t="18.1">Layer</span> <span class="w" data-t="18.555">one,</span> <span class="w" data-t="19.009">cluster</span> <span class="w" data-t="19.464">state.</span></p>
-        <p id="cue-07" class="cue clip" data-start="19.798" data-duration="4.546" data-track-index="20" data-say="etcd control snapshot save writes the whole keyspace to one file."><span class="w kw" data-t="19.918">etcdctl</span> <span class="w kw" data-t="20.373">snapshot</span> <span class="w kw" data-t="20.827">save</span> <span class="w" data-t="21.282">writes</span> <span class="w" data-t="21.736">the</span> <span class="w" data-t="22.191">whole</span> <span class="w" data-t="22.645">keyspace</span> <span class="w" data-t="23.1">to</span> <span class="w kw" data-t="23.555">one</span> <span class="w kw" data-t="24.009">file.</span></p>
-        <p id="cue-08" class="cue clip" data-start="24.344" data-duration="2.272" data-track-index="20" data-say="Keep it off the cluster."><span class="w" data-t="24.464">Keep</span> <span class="w" data-t="24.918">it</span> <span class="w kw" data-t="25.373">off</span> <span class="w kw" data-t="25.827">the</span> <span class="w kw" data-t="26.282">cluster.</span></p>
-        <p id="cue-09" class="cue clip" data-start="26.616" data-duration="5" data-track-index="20" data-say="etcd util snapshot restore rebuilds the data directory, and every object returns."><span class="w kw" data-t="26.736">etcdutl</span> <span class="w kw" data-t="27.191">snapshot</span> <span class="w kw" data-t="27.645">restore</span> <span class="w" data-t="28.1">rebuilds</span> <span class="w" data-t="28.555">the</span> <span class="w" data-t="29.009">data</span> <span class="w" data-t="29.464">directory,</span> <span class="w" data-t="29.918">and</span> <span class="w kw" data-t="30.373">every</span> <span class="w kw" data-t="30.827">object</span> <span class="w kw" data-t="31.282">returns.</span></p>
-        <p id="cue-10" class="cue clip" data-start="31.616" data-duration="3.548" data-track-index="20" data-say="But not the bytes inside volumes."><span class="w" data-t="31.736">But</span> <span class="w kw" data-t="32.191">not</span> <span class="w kw" data-t="32.645">the</span> <span class="w kw" data-t="33.1">bytes</span> <span class="w kw" data-t="33.555">inside</span> <span class="w kw" data-t="34.009">volumes.</span></p>
-        <p id="cue-11" class="cue clip" data-start="36.544" data-duration="1.818" data-track-index="20" data-say="Layer two, volume data."><span class="w" data-t="36.664">Layer</span> <span class="w" data-t="37.118">two,</span> <span class="w" data-t="37.573">volume</span> <span class="w" data-t="38.027">data.</span></p>
-        <p id="cue-12" class="cue clip" data-start="38.362" data-duration="5.454" data-track-index="20" data-say="A C S I driver can clone a claim: name payments data as the data source,"><span class="w" data-t="38.482">A</span> <span class="w" data-t="38.936">CSI</span> <span class="w" data-t="39.391">driver</span> <span class="w" data-t="39.845">can</span> <span class="w kw" data-t="40.3">clone</span> <span class="w" data-t="40.755">a</span> <span class="w" data-t="41.209">claim:</span> <span class="w" data-t="41.664">name</span> <span class="w kw" data-t="42.118">payments-data</span> <span class="w" data-t="42.573">as</span> <span class="w" data-t="43.027">the</span> <span class="w kw" data-t="43.482">dataSource,</span></p>
-        <p id="cue-13" class="cue clip" data-start="43.816" data-duration="2.273" data-track-index="20" data-say="same namespace, same storage class."><span class="w" data-t="43.936">same</span> <span class="w" data-t="44.391">namespace,</span> <span class="w" data-t="44.845">same</span> <span class="w" data-t="45.3">storage</span> <span class="w" data-t="45.755">class.</span></p>
-        <p id="cue-14" class="cue clip" data-start="46.089" data-duration="2.727" data-track-index="20" data-say="But a clone copies corruption too."><span class="w" data-t="46.209">But</span> <span class="w" data-t="46.664">a</span> <span class="w" data-t="47.118">clone</span> <span class="w kw" data-t="47.573">copies</span> <span class="w kw" data-t="48.027">corruption</span> <span class="w kw" data-t="48.482">too.</span></p>
-        <p id="cue-15" class="cue clip" data-start="48.816" data-duration="2.728" data-track-index="20" data-say="Restore from last night's Volume Snapshot instead."><span class="w" data-t="48.936">Restore</span> <span class="w" data-t="49.391">from</span> <span class="w" data-t="49.845">last</span> <span class="w" data-t="50.3">night's</span> <span class="w kw" data-t="50.755">VolumeSnapshot</span> <span class="w" data-t="51.209">instead.</span></p>
-        <p id="cue-16" class="cue clip" data-start="51.544" data-duration="3.093" data-track-index="20" data-say="The pod remounts clean data."><span class="w" data-t="51.664">The</span> <span class="w" data-t="52.118">pod</span> <span class="w" data-t="52.573">remounts</span> <span class="w" data-t="53.027">clean</span> <span class="w" data-t="53.482">data.</span></p>
-        <p id="cue-17" class="cue clip" data-start="56.016" data-duration="2.273" data-track-index="20" data-say="Layer three, the whole app."><span class="w" data-t="56.136">Layer</span> <span class="w" data-t="56.591">three,</span> <span class="w" data-t="57.045">the</span> <span class="w" data-t="57.5">whole</span> <span class="w" data-t="57.955">app.</span></p>
-        <p id="cue-18" class="cue clip" data-start="58.289" data-duration="5.455" data-track-index="20" data-say="Velero already saved the shop namespace, manifests and volume snapshots, as K eights daily."><span class="w" data-t="58.409">Velero</span> <span class="w" data-t="58.864">already</span> <span class="w" data-t="59.318">saved</span> <span class="w" data-t="59.773">the</span> <span class="w" data-t="60.227">shop</span> <span class="w" data-t="60.682">namespace,</span> <span class="w" data-t="61.136">manifests</span> <span class="w" data-t="61.591">and</span> <span class="w" data-t="62.045">volume</span> <span class="w" data-t="62.5">snapshots,</span> <span class="w" data-t="62.955">as</span> <span class="w kw" data-t="63.409">k8s-daily.</span></p>
-        <p id="cue-19" class="cue clip" data-start="63.744" data-duration="3.636" data-track-index="20" data-say="One command: velero restore create, from backup K eights daily."><span class="w" data-t="63.864">One</span> <span class="w" data-t="64.318">command:</span> <span class="w kw" data-t="64.773">velero</span> <span class="w kw" data-t="65.227">restore</span> <span class="w kw" data-t="65.682">create,</span> <span class="w kw" data-t="66.136">from</span> <span class="w kw" data-t="66.591">backup</span> <span class="w kw" data-t="67.045">k8s-daily.</span></p>
-        <p id="cue-20" class="cue clip" data-start="67.38" data-duration="4.456" data-track-index="20" data-say="Objects reapply, volumes rehydrate, and traffic turns green."><span class="w" data-t="67.5">Objects</span> <span class="w" data-t="67.955">reapply,</span> <span class="w" data-t="68.409">volumes</span> <span class="w" data-t="68.864">rehydrate,</span> <span class="w" data-t="69.318">and</span> <span class="w kw" data-t="69.773">traffic</span> <span class="w kw" data-t="70.227">turns</span> <span class="w kw" data-t="70.682">green.</span></p>
-        <p id="cue-21" class="cue clip" data-start="73.216" data-duration="2.728" data-track-index="20" data-say="So: etcd snapshots for cluster state."><span class="w" data-t="73.336">So:</span> <span class="w kw" data-t="73.791">etcd</span> <span class="w kw" data-t="74.245">snapshots</span> <span class="w" data-t="74.7">for</span> <span class="w" data-t="75.155">cluster</span> <span class="w" data-t="75.609">state.</span></p>
-        <p id="cue-22" class="cue clip" data-start="75.944" data-duration="1.818" data-track-index="20" data-say="P V C clones for data."><span class="w kw" data-t="76.064">PVC</span> <span class="w kw" data-t="76.518">clones</span> <span class="w" data-t="76.973">for</span> <span class="w" data-t="77.427">data.</span></p>
-        <p id="cue-23" class="cue clip" data-start="77.762" data-duration="4.091" data-track-index="20" data-say="Velero for whole namespaces, even on a new cluster."><span class="w kw" data-t="77.882">Velero</span> <span class="w" data-t="78.336">for</span> <span class="w" data-t="78.791">whole</span> <span class="w" data-t="79.245">namespaces,</span> <span class="w" data-t="79.7">even</span> <span class="w" data-t="80.155">on</span> <span class="w" data-t="80.609">a</span> <span class="w" data-t="81.064">new</span> <span class="w" data-t="81.518">cluster.</span></p>
-        <p id="cue-24" class="cue clip" data-start="81.853" data-duration="5.965" data-track-index="20" data-say="And rehearse the restore, before Two A M does it for you."><span class="w" data-t="81.973">And</span> <span class="w" data-t="82.427">rehearse</span> <span class="w" data-t="82.882">the</span> <span class="w" data-t="83.336">restore,</span> <span class="w" data-t="83.791">before</span> <span class="w" data-t="84.245">2</span> <span class="w" data-t="84.7">AM</span> <span class="w" data-t="85.155">does</span> <span class="w" data-t="85.609">it</span> <span class="w" data-t="86.064">for</span> <span class="w" data-t="86.518">you.</span></p>
+        <p id="cue-01" class="cue clip" data-start="0.88" data-duration="1.111" data-track-index="20" data-say="Two A M."><span class="w" data-t="1">2</span> <span class="w" data-t="1.556">AM.</span></p>
+        <p id="cue-02" class="cue clip" data-start="1.991" data-duration="4.445" data-track-index="20" data-say="Traffic flows through the ingress to your pods."><span class="w" data-t="2.111">Traffic</span> <span class="w" data-t="2.667">flows</span> <span class="w" data-t="3.222">through</span> <span class="w" data-t="3.778">the</span> <span class="w kw" data-t="4.333">ingress</span> <span class="w" data-t="4.889">to</span> <span class="w" data-t="5.444">your</span> <span class="w kw" data-t="6">pods.</span></p>
+        <p id="cue-03" class="cue clip" data-start="6.436" data-duration="2.777" data-track-index="20" data-say="Every object lives in etcd."><span class="w" data-t="6.556">Every</span> <span class="w" data-t="7.111">object</span> <span class="w" data-t="7.667">lives</span> <span class="w" data-t="8.222">in</span> <span class="w kw" data-t="8.778">etcd.</span></p>
+        <p id="cue-04" class="cue clip" data-start="9.213" data-duration="7.223" data-track-index="20" data-say="Then the etcd disk fails, and a bad migration corrupts the payments volume."><span class="w" data-t="9.333">Then</span> <span class="w kw" data-t="9.889">the</span> <span class="w kw" data-t="10.444">etcd</span> <span class="w kw" data-t="11">disk</span> <span class="w kw" data-t="11.556">fails,</span> <span class="w" data-t="12.111">and</span> <span class="w" data-t="12.667">a</span> <span class="w" data-t="13.222">bad</span> <span class="w" data-t="13.778">migration</span> <span class="w kw" data-t="14.333">corrupts</span> <span class="w kw" data-t="14.889">the</span> <span class="w kw" data-t="15.444">payments</span> <span class="w kw" data-t="16">volume.</span></p>
+        <p id="cue-05" class="cue clip" data-start="16.436" data-duration="3.642" data-track-index="20" data-say="Three layers bring it back."><span class="w kw" data-t="16.556">Three</span> <span class="w kw" data-t="17.111">layers</span> <span class="w" data-t="17.667">bring</span> <span class="w" data-t="18.222">it</span> <span class="w" data-t="18.778">back.</span></p>
+        <p id="cue-06" class="cue clip" data-start="21.613" data-duration="2.223" data-track-index="20" data-say="Layer one, cluster state."><span class="w" data-t="21.733">Layer</span> <span class="w" data-t="22.289">one,</span> <span class="w" data-t="22.844">cluster</span> <span class="w" data-t="23.4">state.</span></p>
+        <p id="cue-07" class="cue clip" data-start="23.836" data-duration="5.555" data-track-index="20" data-say="etcd control snapshot save writes the whole keyspace to one file."><span class="w kw" data-t="23.956">etcdctl</span> <span class="w kw" data-t="24.511">snapshot</span> <span class="w kw" data-t="25.067">save</span> <span class="w" data-t="25.622">writes</span> <span class="w" data-t="26.178">the</span> <span class="w" data-t="26.733">whole</span> <span class="w" data-t="27.289">keyspace</span> <span class="w" data-t="27.844">to</span> <span class="w kw" data-t="28.4">one</span> <span class="w kw" data-t="28.956">file.</span></p>
+        <p id="cue-08" class="cue clip" data-start="29.391" data-duration="2.778" data-track-index="20" data-say="Keep it off the cluster."><span class="w" data-t="29.511">Keep</span> <span class="w" data-t="30.067">it</span> <span class="w kw" data-t="30.622">off</span> <span class="w kw" data-t="31.178">the</span> <span class="w kw" data-t="31.733">cluster.</span></p>
+        <p id="cue-09" class="cue clip" data-start="32.169" data-duration="6.111" data-track-index="20" data-say="etcd util snapshot restore rebuilds the data directory, and every object returns."><span class="w kw" data-t="32.289">etcdutl</span> <span class="w kw" data-t="32.844">snapshot</span> <span class="w kw" data-t="33.4">restore</span> <span class="w" data-t="33.956">rebuilds</span> <span class="w" data-t="34.511">the</span> <span class="w" data-t="35.067">data</span> <span class="w" data-t="35.622">directory,</span> <span class="w" data-t="36.178">and</span> <span class="w kw" data-t="36.733">every</span> <span class="w kw" data-t="37.289">object</span> <span class="w kw" data-t="37.844">returns.</span></p>
+        <p id="cue-10" class="cue clip" data-start="38.28" data-duration="4.198" data-track-index="20" data-say="But not the bytes inside volumes."><span class="w" data-t="38.4">But</span> <span class="w kw" data-t="38.956">not</span> <span class="w kw" data-t="39.511">the</span> <span class="w kw" data-t="40.067">bytes</span> <span class="w kw" data-t="40.622">inside</span> <span class="w kw" data-t="41.178">volumes.</span></p>
+        <p id="cue-11" class="cue clip" data-start="44.013" data-duration="2.223" data-track-index="20" data-say="Layer two, volume data."><span class="w" data-t="44.133">Layer</span> <span class="w" data-t="44.689">two,</span> <span class="w" data-t="45.244">volume</span> <span class="w" data-t="45.8">data.</span></p>
+        <p id="cue-12" class="cue clip" data-start="46.236" data-duration="6.666" data-track-index="20" data-say="A C S I driver can clone a claim: name payments data as the data source,"><span class="w" data-t="46.356">A</span> <span class="w" data-t="46.911">CSI</span> <span class="w" data-t="47.467">driver</span> <span class="w" data-t="48.022">can</span> <span class="w kw" data-t="48.578">clone</span> <span class="w" data-t="49.133">a</span> <span class="w" data-t="49.689">claim:</span> <span class="w" data-t="50.244">name</span> <span class="w kw" data-t="50.8">payments-data</span> <span class="w" data-t="51.356">as</span> <span class="w" data-t="51.911">the</span> <span class="w kw" data-t="52.467">dataSource,</span></p>
+        <p id="cue-13" class="cue clip" data-start="52.902" data-duration="2.778" data-track-index="20" data-say="same namespace, same storage class."><span class="w" data-t="53.022">same</span> <span class="w" data-t="53.578">namespace,</span> <span class="w" data-t="54.133">same</span> <span class="w" data-t="54.689">storage</span> <span class="w" data-t="55.244">class.</span></p>
+        <p id="cue-14" class="cue clip" data-start="55.68" data-duration="3.333" data-track-index="20" data-say="But a clone copies corruption too."><span class="w" data-t="55.8">But</span> <span class="w" data-t="56.356">a</span> <span class="w" data-t="56.911">clone</span> <span class="w kw" data-t="57.467">copies</span> <span class="w kw" data-t="58.022">corruption</span> <span class="w kw" data-t="58.578">too.</span></p>
+        <p id="cue-15" class="cue clip" data-start="59.013" data-duration="3.334" data-track-index="20" data-say="Restore from last night's Volume Snapshot instead."><span class="w" data-t="59.133">Restore</span> <span class="w" data-t="59.689">from</span> <span class="w" data-t="60.244">last</span> <span class="w" data-t="60.8">night's</span> <span class="w kw" data-t="61.356">VolumeSnapshot</span> <span class="w" data-t="61.911">instead.</span></p>
+        <p id="cue-16" class="cue clip" data-start="62.347" data-duration="3.642" data-track-index="20" data-say="The pod remounts clean data."><span class="w" data-t="62.467">The</span> <span class="w" data-t="63.022">pod</span> <span class="w" data-t="63.578">remounts</span> <span class="w" data-t="64.133">clean</span> <span class="w" data-t="64.689">data.</span></p>
+        <p id="cue-17" class="cue clip" data-start="67.524" data-duration="2.778" data-track-index="20" data-say="Layer three, the whole app."><span class="w" data-t="67.644">Layer</span> <span class="w" data-t="68.2">three,</span> <span class="w" data-t="68.756">the</span> <span class="w" data-t="69.311">whole</span> <span class="w" data-t="69.867">app.</span></p>
+        <p id="cue-18" class="cue clip" data-start="70.302" data-duration="6.667" data-track-index="20" data-say="Velero already saved the shop namespace, manifests and volume snapshots, as K eights daily."><span class="w" data-t="70.422">Velero</span> <span class="w" data-t="70.978">already</span> <span class="w" data-t="71.533">saved</span> <span class="w" data-t="72.089">the</span> <span class="w" data-t="72.644">shop</span> <span class="w" data-t="73.2">namespace,</span> <span class="w" data-t="73.756">manifests</span> <span class="w" data-t="74.311">and</span> <span class="w" data-t="74.867">volume</span> <span class="w" data-t="75.422">snapshots,</span> <span class="w" data-t="75.978">as</span> <span class="w kw" data-t="76.533">k8s-daily.</span></p>
+        <p id="cue-19" class="cue clip" data-start="76.969" data-duration="4.444" data-track-index="20" data-say="One command: velero restore create, from backup K eights daily."><span class="w" data-t="77.089">One</span> <span class="w" data-t="77.644">command:</span> <span class="w kw" data-t="78.2">velero</span> <span class="w kw" data-t="78.756">restore</span> <span class="w kw" data-t="79.311">create,</span> <span class="w kw" data-t="79.867">from</span> <span class="w kw" data-t="80.422">backup</span> <span class="w kw" data-t="80.978">k8s-daily.</span></p>
+        <p id="cue-20" class="cue clip" data-start="81.413" data-duration="5.309" data-track-index="20" data-say="Objects reapply, volumes rehydrate, and traffic turns green."><span class="w" data-t="81.533">Objects</span> <span class="w" data-t="82.089">reapply,</span> <span class="w" data-t="82.644">volumes</span> <span class="w" data-t="83.2">rehydrate,</span> <span class="w" data-t="83.756">and</span> <span class="w kw" data-t="84.311">traffic</span> <span class="w kw" data-t="84.867">turns</span> <span class="w kw" data-t="85.422">green.</span></p>
+        <p id="cue-21" class="cue clip" data-start="88.258" data-duration="3.333" data-track-index="20" data-say="So: etcd snapshots for cluster state."><span class="w" data-t="88.378">So:</span> <span class="w kw" data-t="88.933">etcd</span> <span class="w kw" data-t="89.489">snapshots</span> <span class="w" data-t="90.044">for</span> <span class="w" data-t="90.6">cluster</span> <span class="w" data-t="91.156">state.</span></p>
+        <p id="cue-22" class="cue clip" data-start="91.591" data-duration="2.222" data-track-index="20" data-say="P V C clones for data."><span class="w kw" data-t="91.711">PVC</span> <span class="w kw" data-t="92.267">clones</span> <span class="w" data-t="92.822">for</span> <span class="w" data-t="93.378">data.</span></p>
+        <p id="cue-23" class="cue clip" data-start="93.813" data-duration="5" data-track-index="20" data-say="Velero for whole namespaces, even on a new cluster."><span class="w kw" data-t="93.933">Velero</span> <span class="w" data-t="94.489">for</span> <span class="w" data-t="95.044">whole</span> <span class="w" data-t="95.6">namespaces,</span> <span class="w" data-t="96.156">even</span> <span class="w" data-t="96.711">on</span> <span class="w" data-t="97.267">a</span> <span class="w" data-t="97.822">new</span> <span class="w" data-t="98.378">cluster.</span></p>
+        <p id="cue-24" class="cue clip" data-start="98.813" data-duration="6.976" data-track-index="20" data-say="And rehearse the restore, before Two A M does it for you."><span class="w" data-t="98.933">And</span> <span class="w" data-t="99.489">rehearse</span> <span class="w" data-t="100.044">the</span> <span class="w" data-t="100.6">restore,</span> <span class="w" data-t="101.156">before</span> <span class="w" data-t="101.711">2</span> <span class="w" data-t="102.267">AM</span> <span class="w" data-t="102.822">does</span> <span class="w" data-t="103.378">it</span> <span class="w" data-t="103.933">for</span> <span class="w" data-t="104.489">you.</span></p>
         </div>
       </div>
     </div>
 
     <script>
       (function () {
-        const REVEAL = {"s1-ing":3.627,"s1-pods":4.991,"s1-etcd":7.264,"s1-fail":8.173,"s1-pvc":11.809,"s1-three":13.627,"s2-cmd":19.918,"s2-file":23.555,"s2-off":25.373,"s2-restore":26.736,"s2-api":30.373,"s2-gap":32.191,"s3-clone":40.3,"s3-src":42.118,"s3-ds":43.482,"s3-bad":47.573,"s3-snap":50.755,"s3-bind":51.664,"s4-bk":63.409,"s4-cmd":64.773,"s4-res":67.5,"s4-pv":68.409,"s4-green":69.773,"s5-a":73.791,"s5-b":76.064,"s5-c":77.882,"s5-t":81.973};
-        const SCENES = [{"id":"s1","start":0,"duration":17.2},{"id":"s2","start":17.2,"duration":18.564},{"id":"s3","start":35.764,"duration":19.473},{"id":"s4","start":55.236,"duration":17.2},{"id":"s5","start":72.436,"duration":17.564}];
-        const TOTAL = 90;
+        const REVEAL = {"s1-ing":4.333,"s1-pods":6,"s1-etcd":8.778,"s1-fail":9.889,"s1-pvc":14.333,"s1-three":16.556,"s2-cmd":23.956,"s2-file":28.4,"s2-off":30.622,"s2-restore":32.289,"s2-api":36.733,"s2-gap":38.956,"s3-clone":48.578,"s3-src":50.8,"s3-ds":52.467,"s3-bad":57.467,"s3-snap":61.356,"s3-bind":62.467,"s4-bk":76.533,"s4-cmd":78.2,"s4-res":81.533,"s4-pv":82.644,"s4-green":84.311,"s5-a":88.933,"s5-b":91.711,"s5-c":93.933,"s5-t":98.933};
+        const SCENES = [{"id":"s1","start":0,"duration":20.733},{"id":"s2","start":20.733,"duration":22.4},{"id":"s3","start":43.133,"duration":23.511},{"id":"s4","start":66.644,"duration":20.733},{"id":"s5","start":87.378,"duration":24.622}];
+        const TOTAL = 112;
         const $ = (s, r = document) => r.querySelector(s);
         const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
         const at = (id) => {
@@ -493,17 +494,20 @@
 
         // ---- S1 · outage (frame 0 already carries the hook line) ----
         gsap.set(["#s1-banner", "#s1-layers", "#s1-bt2"], { opacity: 0 });
-        reveal("#s1-ing", at("s1-ing"));
-        reveal(".s1-pod", at("s1-pods"), { stagger: 0.12 });
-        reveal("#s1-pvc", at("s1-pods") + 0.5);
-        reveal(["#s1-api", "#s1-etcd"], at("s1-etcd"), { stagger: 0.12 });
+        // frame 0 is the thumbnail: the cluster is pre-drawn as a faint ghost, each part sharpens on its word
+        const GHOST = { opacity: 0.16, y: 0, filter: "blur(2px)" };
+        const sharpen = (sel, t, extra = {}) => tl.fromTo(sel, { ...GHOST }, { ...SHOW, ...extra }, t);
+        sharpen("#s1-ing", at("s1-ing"));
+        sharpen(".s1-pod", at("s1-pods"), { stagger: 0.12 });
+        sharpen("#s1-pvc", at("s1-pods") + 0.5);
+        sharpen(["#s1-api", "#s1-etcd"], at("s1-etcd"), { stagger: 0.12 });
         // failure: the etcd disk dies
         const f = at("s1-fail");
         state("s1-etcd", f, C.bad, "b");
         hit("s1-etcd", f, C.bad);
         state("s1-api", f + 0.35, C.warn, "b");
-        tl.to("#s1-users", { opacity: 0, y: -16, duration: 0.25, ease: "power2.in" }, f);
-        tl.fromTo("#s1-banner", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.6)" }, f + 0.1);
+        tl.to("#s1-users", { opacity: 0, y: -16, duration: 0.18, ease: "power2.in" }, f);
+        tl.fromTo("#s1-banner", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.6)", immediateRender: false }, f + 0.18);
         tl.fromTo("#s1-alert", { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 3 }, f);
         tl.to("#s1-alert", { opacity: 0.4, duration: 0.3 }, f + 0.8);
         // a bad migration corrupts the payments volume; payments pod falls over (web/api keep serving)
@@ -516,7 +520,7 @@
         // three layers bring it back
         const th = at("s1-three");
         tl.to("#s1-alert", { opacity: 0, duration: 0.5 }, th - 0.2);
-        tl.to("#s1-dia", { opacity: 0.22, filter: "blur(3px)", duration: 0.45, ease: "power2.out" }, th - 0.1);
+        tl.to("#s1-dia", { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power2.inOut" }, th - 0.1);
         tl.fromTo("#s1-layers", { opacity: 0, y: 30, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out" }, th);
         tl.fromTo(".s1-lr", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out", stagger: 0.14 }, th + 0.15);
 
@@ -553,7 +557,6 @@
         tl.fromTo("#s3-yaml .v2", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, sn + 0.12);
         tl.fromTo("#s3-hl4", { opacity: 0 }, { opacity: 1, duration: 0.3 }, sn + 0.12);
         tl.to("#s3-src", { opacity: 0.35, duration: 0.4 }, sn);
-        tl.to("#s3-w-clone", { opacity: 0.12, duration: 0.4 }, sn);
         reveal("#s3-snap", sn);
         const bd = at("s3-bind");
         state("s3-dst", bd - 0.5, C.ok, "c"); // restore lands, then the pause, then the mount
@@ -577,7 +580,6 @@
         const g = Math.max(at("s4-green"), rs + 1.0);
         tl.fromTo("#s4-phase", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.3 }, g);
         reveal("#s4-ready", g + 0.2);
-        tl.to("#s4-w-restore", { opacity: 0.25, duration: 0.5 }, g);
         tl.to("#brand-dot", { backgroundColor: C.ok, boxShadow: "0 0 12px " + C.ok, duration: 0.4 }, g);
 
         // ---- S5 · recap: layers land bottom-up, then the line ----
@@ -591,6 +593,11 @@
         // ---- wires fade in at their mark ----
         const wires = $$("path.wire");
         wires.forEach((w) => tl.fromTo(w, { opacity: 0 }, { opacity: w.classList.contains("dash") ? 0.9 : 1, duration: 0.45, ease: "power2.out", immediateRender: true }, at(w.dataset.on)));
+        // dimming: data-dim="<mark>:<level>" (the packet tick derives the same value from time)
+        wires.filter((w) => w.dataset.dim).forEach((w) => {
+          const [m, lv] = w.dataset.dim.split(":");
+          tl.to(w, { opacity: +lv, duration: 0.45, ease: "power2.out" }, at(m));
+        });
         wires.filter((w) => w.dataset.fail).forEach((w) => tl.to(w, { stroke: "rgba(244,63,94,0.75)", duration: 0.3 }, at(w.dataset.fail)));
 
         // ---- subtitles: each word lights as it is spoken ----
@@ -647,9 +654,24 @@
             label.textContent = p.dataset.label;
             p.parentNode.appendChild(label);
           }
-          return { p, beads, label, kind, on: at(p.dataset.on), fail: p.dataset.fail ? at(p.dataset.fail) : null,
+          const dim = p.dataset.dim ? { t: at(p.dataset.dim.split(":")[0]), lv: +p.dataset.dim.split(":")[1] } : null;
+          return { p, beads, label, kind, dim, on: at(p.dataset.on), fail: p.dataset.fail ? at(p.dataset.fail) : null,
             scene: sc[p.closest(".scene").id], len: 0 };
         });
+        // geometry is static (cards never move inside a stage): measure once here, never in the render callback
+        const N = 160;
+        function sample(k) {
+          if (!route(k.p)) return false;
+          const len = k.p.getTotalLength();
+          if (!(len >= 1)) throw new Error("degenerate wire " + k.p.dataset.from + " to " + k.p.dataset.to);
+          k.len = len;
+          k.pts = Array.from({ length: N + 1 }, (_, i) => { const q = k.p.getPointAtLength((i / N) * len); return [q.x, q.y]; });
+          if (k.label) { const m = k.pts[N / 2]; k.label.setAttribute("x", m[0].toFixed(1)); k.label.setAttribute("y", (m[1] - 14).toFixed(1)); }
+          return true;
+        }
+        const unrouted = packets.filter((k) => !sample(k));
+        if (unrouted.length) throw new Error("wires without layout: " + unrouted.map((k) => k.p.dataset.from).join(","));
+        const pointAt = (k, u) => { const f = u * N, i = Math.min(N - 1, Math.floor(f)), r = f - i, a = k.pts[i], b = k.pts[i + 1]; return [a[0] + (b[0] - a[0]) * r, a[1] + (b[1] - a[1]) * r]; };
         const carets = $$(".caret").map((el) => ({ el, scene: sc[el.closest(".scene").id] }));
         const clock = { t: 0 };
         const SPEED = 240; // px/s along a wire
@@ -663,25 +685,18 @@
           for (const k of packets) {
             const live = t >= k.scene.start && t < k.scene.start + k.scene.duration;
             if (!live) continue;
-            if (!k.p.dataset.ready) { if (route(k.p)) k.p.dataset.ready = "1"; else continue; }
-            if (!k.len) {
-              k.len = k.p.getTotalLength();
-              if (k.label) {
-                const m = k.p.getPointAtLength(k.len / 2);
-                k.label.setAttribute("x", m.x.toFixed(1)); k.label.setAttribute("y", (m.y - 14).toFixed(1));
-              }
-            }
             const since = t - k.on;
             const failed = k.fail !== null && t >= k.fail;
             // traffic stalls where it fails: beads freeze red at their failure-time position
             const tt = failed ? k.fail - k.on : since;
             const vis = since <= 0 ? 0 : Math.min(1, since / 0.6);
-            const wireOp = parseFloat(getComputedStyle(k.p).opacity) || 0;
+            // never read DOM tween state here: this tween renders before later-starting tweens on a jump-seek
+            const wireOp = (k.dim && t >= k.dim.t) ? 1 - (1 - k.dim.lv) * Math.min(1, (t - k.dim.t) / 0.45) : 1;
             k.beads.forEach((b, j) => {
               const u = ((((tt * SPEED) / k.len + j / 3) % 1) + 1) % 1;
-              const pt = k.p.getPointAtLength(u * k.len);
+              const pt = pointAt(k, u);
               const edge = failed ? 1 : Math.min(1, u / 0.12, (1 - u) / 0.12);
-              b.setAttribute("cx", pt.x.toFixed(1)); b.setAttribute("cy", pt.y.toFixed(1));
+              b.setAttribute("cx", pt[0].toFixed(1)); b.setAttribute("cy", pt[1].toFixed(1));
               b.setAttribute("opacity", (vis * edge * Math.min(1, wireOp * 1.4) * (failed ? 0.8 : 1)).toFixed(3));
               b.setAttribute("class", "bead" + (failed ? " bad" : k.kind));
             });
@@ -787,8 +802,8 @@ window.addEventListener("load", function () {
     setPlaying(tl.paused());
   });
   const q = new URLSearchParams(location.search);
-  if (q.has("autoplay") || q.has("play")) { start(q.get("voice") !== "0"); }
-  else if (q.has("t")) { gate.remove(); tl.seek(Math.max(0, Math.min(TOTAL, +q.get("t") || 0))); }
+  if (q.has("t")) { gate.remove(); tl.seek(Math.max(0, Math.min(TOTAL, +q.get("t") || 0))); }
+  if (q.has("autoplay")) { gate.remove(); setPlaying(true); }
   sync();
 });
 

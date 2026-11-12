@@ -115,6 +115,14 @@ for (const [i, sc] of scenes.entries()) {
   }
   s.duration = r2(dur);
 }
+// durations from rounded starts, so scene N ends exactly where N+1 begins (no 1ms overlap)
+timing.scenes.forEach((s, i, all) => {
+  if (i < all.length - 1) {
+    let d = r2(all[i + 1].start - s.start);
+    while (s.start + d > all[i + 1].start) d = r2(d - 0.001); // float: start+dur must not pass the next start
+    s.duration = d;
+  }
+});
 // cue windows: until the next cue in the scene, else last word + 1.1s (inside the scene)
 for (const s of timing.scenes) {
   const end = s.start + s.duration;
@@ -197,6 +205,20 @@ for (const f of formats) {
   }
   writeFileSync(join(f.dir, "hyperframes.json"), JSON.stringify({ paths: { assets: "assets" }, authoringSkill: "hyperframes" }, null, 2) + "\n");
   writeFileSync(join(f.dir, "meta.json"), JSON.stringify({ id: f.dir.split("/").pop(), name: `${meta.title} (${f.label})` }, null, 2) + "\n");
+}
+
+// ---- 4b. seam ledger (motion-doctrine Seam Gate) from the real cut times ----
+// meta.seams: { <incoming scene id>: "y" } overrides the default leftward x seam.
+if (meta.seams) {
+  const seams = timing.scenes.slice(1).map((s, i) => {
+    const prev = timing.scenes[i];
+    const axis = meta.seams[s.id] ?? "x";
+    return {
+      id: `${prev.id}→${s.id}`, cut: s.start, technique: `cut-the-curve ${axis === "y" ? "UP" : "LEFT"}`,
+      exit: { selector: `#${prev.id}-cam`, axis, dir: -1 }, entry: { selector: `#${s.id}-cam`, axis, dir: -1 },
+    };
+  });
+  writeFileSync(join(formats[0].dir, "ledger.json"), JSON.stringify({ fps: 30, seams }, null, 2) + "\n");
 }
 
 // ---- 5. storyboard doc ----
