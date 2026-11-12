@@ -12,7 +12,7 @@ Ensure these tools are installed and accessible in your `$PATH`:
 |---|---|---|---|
 | **Node.js** | `>= 20.x` (current: `v26.13.0`) | `node -v` | Core build system & GSAP compilation |
 | **npm** | `>= 10.x` | `npm -v` | Dependency management |
-| **FFmpeg** | `>= 7.x` (`/opt/homebrew/bin/ffmpeg`) | `ffmpeg -version` | Audio mixing, silence trimming, video muxing |
+| **FFmpeg** | `>= 7.x` (on `PATH`, or set `FFMPEG`/`FFPROBE`) | `ffmpeg -version` | Audio mixing, silence trimming, video muxing |
 | **HyperFrames CLI** | `v0.9.37` (`which hyperframes`) | `hyperframes --version` | Headless Chromium rendering & frame extraction |
 | **Python** | `>= 3.10` with `playwright` | `python3 -c "import playwright; print('OK')"` | Headless layout and 0-overlap testing |
 | **OpenCode** | Latest (`which opencode`) | `opencode --version` | Autonomous AI coding agent |
@@ -38,7 +38,7 @@ VoiceStudio provides local, private on-device voice cloning with zero cloud API 
 3. **OpenAI-Compatible Speech Endpoint**:
    `http://127.0.0.1:3900/v1/audio/speech`
 4. **Zero Audio-Visual Drift Standard**:
-   `scripts/synthesize-cloned-audio.mjs` dynamically pads silence per scene based on the compiled `timing.scenes` visual duration (`pad = Math.max(0.2, visualScene.duration - lead - spokenDur)`). Voice synthesis speed is pinned to `0.90` for crystal-clear educational tempo.
+   `scripts/synthesize-cloned-audio.mjs` pads silence per scene to the scene windows from `scripts/lib/timing.mjs` (the same module the build uses), `pad = scene.duration - lead - spokenDur`. If any scene's voice outlasts its picture (pad < 0.05 s) it exits 1 without writing `narration.mp3`; it also exits 1 if the master track drifts more than 0.1 s from `meta.total`. Rebuild the slug afterwards so the player picks up the track. Voice synthesis speed is pinned to `0.90` for crystal-clear educational tempo.
 
 ---
 

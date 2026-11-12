@@ -8,9 +8,9 @@
 //   node scripts/render-video.mjs k8s-disaster-recovery 4k portrait
 //   node scripts/render-video.mjs k8s-pod-scheduling 1440 landscape
 
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -30,19 +30,15 @@ if (!existsSync(videoDir)) {
   if (build.status !== 0) process.exit(build.status ?? 1);
 }
 
-// Inspect format from story.mjs if available
-let isPortrait = true;
-const storyPath = join(ROOT, "src", slug, "story.mjs");
-if (existsSync(storyPath)) {
-  try {
-    const { meta } = await import(pathToFileURL(storyPath).href);
-    if (meta?.formats?.length === 1 && meta.formats[0] === "land") {
-      isPortrait = false;
-    }
-  } catch (e) {
-    // fallback
-  }
+// orientation comes from the built composition itself (works for <slug> and <slug>-reel folders)
+const html = readFileSync(join(videoDir, "index.html"), "utf8");
+const rootTag = html.match(/<div id="root"[^>]*>/)?.[0] ?? "";
+const w = +(rootTag.match(/data-width="(\d+)"/)?.[1] ?? 0), h = +(rootTag.match(/data-height="(\d+)"/)?.[1] ?? 0);
+if (!w || !h) {
+  console.error(`videos/${slug}/index.html has no root data-width/data-height`);
+  process.exit(1);
 }
+let isPortrait = h > w;
 
 if (modeArg === "landscape") isPortrait = false;
 if (modeArg === "portrait") isPortrait = true;

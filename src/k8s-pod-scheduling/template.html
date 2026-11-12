@@ -534,15 +534,19 @@
         SCENES.forEach((s, i) => {
           const cam = "#" + s.id + "-cam";
           const first = i === 0;
-          tl.fromTo(cam, { opacity: 0, scale: first ? 1 : 0.9, filter: first ? "blur(0px)" : "blur(14px)" },
-            { opacity: 1, scale: 1, filter: "blur(0px)", duration: first ? 0.8 : 0.7, ease: "power4.out" }, s.start + 0.02);
+          // frame 0 must show the hook headline (frame0 gate): the opening scene is already on
+          // camera at t=0, so only later scenes get a seam entry. Exit tweens stay on every scene.
+          if (!first) {
+            tl.fromTo(cam, { opacity: 0, scale: 0.9, filter: "blur(14px)" },
+              { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.7, ease: "power4.out" }, s.start + 0.02);
+            // waterfall entry for the header: kicker then words
+            tl.fromTo($$(cam + " .hx.kicker"), { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, s.start + 0.15);
+            tl.fromTo($$(cam + " .hw"), { opacity: 0, y: 34, filter: "blur(8px)" },
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power4.out", stagger: 0.07 }, s.start + 0.25);
+          }
           if (i < SCENES.length - 1) {
             tl.to(cam, { opacity: 0, scale: 1.12, filter: "blur(14px)", duration: 0.55, ease: "power4.in" }, s.start + s.duration - 0.58);
           }
-          // waterfall entry for the header: kicker then words
-          tl.fromTo($$(cam + " .hx.kicker"), { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, s.start + 0.15);
-          tl.fromTo($$(cam + " .hw"), { opacity: 0, y: 34, filter: "blur(8px)" },
-            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power4.out", stagger: 0.07 }, s.start + 0.25);
           // chapter tracker fills across the scene
           tl.fromTo("#ch-" + s.id, { scaleX: 0 }, { scaleX: 1, duration: s.duration, ease: "none" }, s.start);
         });

@@ -1,0 +1,17 @@
+# Static gate for every video: built output matches src/, invariants hold, verifiers still fail on bad input.
+# Browser checks (verify_reel.py, hyperframes check, seam-gate) run locally: npm run verify
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm test

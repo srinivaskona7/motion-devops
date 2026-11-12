@@ -5,8 +5,7 @@ description: End-to-end DevOps motion explainer generator for motion-devops repo
 
 # Motion DevOps Creator Skill
 
-This skill governs the complete workflow for generating, testing, and rendering high-production DevOps motion videos inside this repository:
-`/Users/sr20536224wipro.com/Documents/Github-apple/srinew/motion-devops`
+This skill governs the complete workflow for generating, testing, and rendering high-production DevOps motion videos inside the `motion-devops` repository (run every command from the repo root).
 
 ---
 
@@ -25,6 +24,16 @@ Every topic is defined by a clean URL-friendly `<slug>` (e.g. `k8s-api-gateway`,
 
 ## 2. Standard Commands
 
+### Step 0: New concept: scaffold, never start from a blank file
+The request should follow `docs/NEW_CONCEPT_REQUEST.md`; ask for any field that changes the build.
+```bash
+npm run new <slug> "<Title>"          # src/<slug>/ from src/templates/starter, contents stub, build
+node scripts/verify-all.mjs --browser <slug>   # passes untouched; keep it passing after each edit
+```
+Build scenes with `src/shared/stage.js` (`MotionStage.create`): `seams`, `reveal`, `state`, `hit`,
+`type`, `cursor().tap`, `wires`, `captions`. New videos gate wires/labels/balance; never set
+`meta.advisory` on a new video (verify-all refuses it outside the four that predate those checks).
+
 ### Step A: Build HTML Video
 Compile from `src/<slug>` into `videos/<slug>/index.html`:
 ```bash
@@ -40,13 +49,13 @@ open videos/<slug>/index.html
 - Autoplay on load: append `?autoplay=1` (e.g. `open "videos/<slug>/index.html?autoplay=1"`).
 - Scrub timeline: drag the bottom slider or tap `Left/Right` arrow keys.
 
-### Step C: Headless Verification & Integrity Gate
-Run layout and console error auditing:
+### Step C: Verification Gate (done means this is green)
 ```bash
-node scripts/verify-video.mjs <slug>
-# or full HyperFrames check
-cd videos/<slug> && hyperframes check
+node scripts/verify-all.mjs --browser <slug>   # fresh build, static invariants, layout band/overlap/
+                                               # overflow, captions, packets, seams, player, hyperframes check
+npm test                                       # static gate for every video (what CI runs)
 ```
+A video is not done until every line is PASS. Never hand-edit `videos/`: rebuild from `src/`.
 
 ### Step D: Render MP4 Videos (1080p, 1440p, 4K)
 Render the HTML composition to high-bitrate MP4 using the installed `hyperframes` engine:

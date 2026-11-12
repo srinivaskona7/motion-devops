@@ -9,9 +9,13 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const slug = process.argv[2] || "k8s-api-gateway";
+const slug = process.argv[2];
+if (!slug) {
+  console.error("Usage: node scripts/render-with-audio.mjs <slug> [1080|1440|4k] [portrait|landscape]");
+  process.exit(2);
+}
 const resArg = (process.argv[3] || "1080").toLowerCase();
-const modeArg = (process.argv[4] || "portrait").toLowerCase();
+const modeArg = (process.argv[4] || "").toLowerCase(); // empty: render-video.mjs reads the composition size
 
 const rendersDir = join(ROOT, "renders", slug);
 mkdirSync(rendersDir, { recursive: true });
@@ -20,7 +24,7 @@ console.log("\n🎬 RENDERING VIDEO WITH CLONED AUDIO");
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 console.log(`📹 Slug:        ${slug}`);
 console.log(`📺 Resolution:  ${resArg}`);
-console.log(`📐 Aspect:      ${modeArg}`);
+console.log(`📐 Aspect:      ${modeArg || "from composition"}`);
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
 // Step 1: Render video frames via render-video.mjs
@@ -38,11 +42,15 @@ const finalOutput = join(rendersDir, `${slug}-${label}-with-voice.mp4`);
 
 if (!existsSync(audioFile)) {
   console.log(`⚠️ Cloned audio not found at ${audioFile}. Synthesizing now...`);
-  spawnSync("node", [join(ROOT, "scripts", "synthesize-cloned-audio.mjs"), slug, "51c11ae3"], { stdio: "inherit" });
+  const synth = spawnSync("node", [join(ROOT, "scripts", "synthesize-cloned-audio.mjs"), slug, "51c11ae3"], { stdio: "inherit" });
+  if (synth.status !== 0 || !existsSync(audioFile)) {
+    console.error("❌ Voice synthesis failed; not muxing a silent or missing track.");
+    process.exit(1);
+  }
 }
 
 console.log("\nStep 2: Muxing cloned audio track with video...");
-const mux = spawnSync("/opt/homebrew/bin/ffmpeg", [
+const mux = spawnSync(process.env.FFMPEG || "ffmpeg", [
   "-i", rawVideo,
   "-i", audioFile,
   "-c:v", "copy",

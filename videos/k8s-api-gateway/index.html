@@ -69,7 +69,7 @@
       .brand { display: flex; align-items: center; gap: 10px; font: 700 17px/1 var(--mono); letter-spacing: 0.14em; }
       .brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
       .chapters { display: flex; gap: 10px; }
-      .chap { width: 78px; font: 700 11px/1 var(--mono); letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; text-align: center; }
+      .chap { width: 78px; font: 700 11px/1 var(--mono); letter-spacing: 0.1em; color: var(--mute); text-transform: uppercase; text-align: center; }
       .chap b { display: block; height: 3px; border-radius: 2px; margin-top: 6px; background: rgba(255,255,255,0.1); overflow: hidden; }
       .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; }
 
@@ -96,6 +96,8 @@
       .card {
         position: absolute; z-index: 2; padding: 14px 18px 14px 26px; border-radius: 14px;
         background: var(--glass); backdrop-filter: blur(20px);
+        /* declared defaults: tweening an undeclared custom property reverts to transparent on a backward seek */
+        --ind: var(--accent); --bd: var(--line);
         border: 1px solid var(--bd, var(--line));
         box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.03), 0 22px 44px -16px rgba(0, 0, 0, 0.8);
         display: flex; flex-direction: column; justify-content: center;
@@ -109,6 +111,7 @@
       .card .sw { position: relative; margin-top: 6px; height: 24px; font: 400 19px/24px var(--mono); color: var(--mute); white-space: nowrap; }
       .card .sw > span { position: absolute; left: 0; top: 0; }
       .card .sw .b, .card .sw .c { opacity: 0; }
+      .card .sw > span.r { left: auto; right: 0; } /* shown alongside .a, not instead of it */
       .t-ok { color: var(--ok); } .t-bad { color: var(--bad); } .t-warn { color: var(--warn); } .t-acc { color: #9db9ff; }
       .card.chip { padding: 0 20px; border-radius: 30px; flex-direction: row; align-items: center; gap: 10px; font: 700 20px/1 var(--mono); }
       .card.chip::before { display: none; }
@@ -150,6 +153,7 @@
       .gate button { font: 700 17px var(--sans); padding: 16px 26px; border-radius: 12px; cursor: pointer; color: #fff; border: 1px solid var(--line); background: rgba(15, 20, 32, 0.92); }
       .gate button.primary { background: var(--accent); border-color: transparent; }
     </style>
+    <meta name="narration" content="assets/audio/narration.mp3" />
   </head>
   <body>
     <div id="root" class="port" data-composition-id="main" data-start="0" data-duration="60" data-width="1080" data-height="1920">
@@ -177,9 +181,9 @@
           </div>
           <div class="stage" id="s1-stage">
             <div class="card" id="s1-client" style="left: 130px; top: 390px; width: 260px; height: 110px"><h3>client</h3><div class="sw"><span class="a t-ok">1.2k rps</span></div></div>
-            <div class="card" id="s1-ingress" style="--ind: var(--bad); left: 410px; top: 390px; width: 340px; height: 200px"><h3 class="m">ingress · :443</h3><div class="sw"><span class="a">nginx.ingress.kubernetes.io/*</span><span class="b t-bad">annotation typo</span></div></div>
-            <div class="card" id="s1-yaml" style="--ind: var(--warn); left: 410px; top: 605px; width: 340px; height: 56px"><h3 class="m">one YAML for every route</h3></div>
-            <div class="badge" id="s1-fail" style="left: 765px; top: 400px; background: var(--bad);">monolith fails</div>
+            <div class="card" id="s1-ingress" style="--ind: var(--bad); left: 410px; top: 390px; width: 390px; height: 200px"><h3 class="m">ingress · :443</h3><div class="sw"><span class="a">nginx.ingress.kubernetes.io&#47;*</span><span class="b t-bad">annotation typo</span></div></div>
+            <div class="card" id="s1-yaml" style="--ind: var(--warn); left: 410px; top: 605px; width: 390px; height: 56px"><h3 class="m">one YAML for every route</h3></div>
+            <div class="badge" id="s1-fail" style="left: 410px; top: 340px; background: var(--bad);">monolith fails</div>
             <div class="card s1-pod" id="s1-web" style="left: 130px; top: 700px; width: 200px; height: 94px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
             <div class="card s1-pod" id="s1-api" style="left: 370px; top: 700px; width: 200px; height: 94px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
             <div class="card s1-pod" id="s1-pay" style="left: 610px; top: 700px; width: 200px; height: 94px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">502</span></div></div>
@@ -225,7 +229,7 @@
             <div class="ns" id="s3-ns-pay" style="left: 130px; top: 660px; width: 820px; height: 210px"></div>
             <div class="card" id="s3-secure" style="--ind: var(--v1); left: 180px; top: 700px; width: 360px; height: 130px"><h3 class="m">payments</h3><div class="sw"><span class="a">HTTPRoute → prod-gateway</span></div></div>
             <div class="card chip" id="s3-refgrant" style="--ind: var(--ok); left: 180px; top: 900px; width: 520px; height: 60px"><i class="dot"></i>ReferenceGrant · allow payments → prod-gateway</div>
-            <div class="badge" id="s3-ok" style="left: 730px; top: 900px; background: var(--ok);">AttachmentPermitted</div>
+            <div class="badge" id="s3-ok" style="left: 730px; top: 900px; background: var(--ok); color: #052e16;">AttachmentPermitted</div>
             <svg class="wires" aria-hidden="true">
               <path class="wire ok" data-from="s3-secure" data-to="s3-gw" data-on="s3-refgrant" data-axis="y" data-label="allow" />
             </svg>
@@ -242,9 +246,9 @@
           </div>
           <div class="stage" id="s4-stage">
             <div class="card" id="s4-route" style="--ind: var(--gateway); left: 130px; top: 400px; width: 820px; height: 100px"><h3 class="m">HTTPRoute /checkout</h3><div class="sw"><span class="a">backendRefs with weight</span></div></div>
-            <div class="card" id="s4-canary" style="--ind: var(--v1); left: 130px; top: 540px; width: 340px; height: 120px"><h3 class="m">v1 · stable</h3><div class="sw"><span class="a t-acc">weight: 90</span><span class="b t-ok">90%</span></div></div>
+            <div class="card" id="s4-canary" style="--ind: var(--v1); left: 130px; top: 540px; width: 340px; height: 120px"><h3 class="m">v1 · stable</h3><div class="sw"><span class="a t-acc">weight: 90</span><span class="b r t-ok">90%</span></div></div>
             <div class="card" id="s4-v1" style="--ind: var(--v1); left: 130px; top: 700px; width: 340px; height: 100px"><h3>pods v1</h3><div class="sw"><span class="a t-ok">9 replicas</span></div></div>
-            <div class="card" id="s4-v2" style="--ind: var(--v2); left: 550px; top: 540px; width: 340px; height: 120px"><h3 class="m">v2 · canary</h3><div class="sw"><span class="a t-warn">weight: 10</span><span class="b t-ok">10%</span></div></div>
+            <div class="card" id="s4-v2" style="--ind: var(--v2); left: 550px; top: 540px; width: 340px; height: 120px"><h3 class="m">v2 · canary</h3><div class="sw"><span class="a t-warn">weight: 10</span><span class="b r t-ok">10%</span></div></div>
             <div class="card" id="s4-v2pods" style="--ind: var(--v2); left: 550px; top: 700px; width: 340px; height: 100px"><h3>pods v2</h3><div class="sw"><span class="a">1 replica</span></div></div>
             <svg class="wires" aria-hidden="true">
               <path class="wire split" data-from="s4-route" data-to="s4-v1" data-on="s4-canary" data-axis="y" data-label="90%" />
@@ -436,9 +440,12 @@
           return true;
         }
         const SVGNS = "http://www.w3.org/2000/svg";
+        // 4 beads spaced 1/4 apart: the edge fade (u < 0.06 or > 0.94 drops below half) can dim at most one
+        // at any instant, so even a single-wire scene always shows 3 bright packets
+        const BEADS = 4;
         const packets = wires.map((p) => {
           const kind = p.classList.contains("ok") ? " ok" : (p.classList.contains("split") ? " split" : "");
-          const beads = [0, 1, 2].map(() => {
+          const beads = Array.from({ length: BEADS }, () => {
             const b = document.createElementNS(SVGNS, "circle");
             b.setAttribute("r", "6"); b.setAttribute("class", "bead" + kind); b.setAttribute("opacity", "0");
             p.parentNode.appendChild(b);
@@ -451,9 +458,25 @@
             label.textContent = p.dataset.label;
             p.parentNode.appendChild(label);
           }
-          return { p, beads, label, kind, on: at(p.dataset.on), fail: p.dataset.fail ? at(p.dataset.fail) : null,
+          // the wire's resting opacity from its fade-in tween above (vis already ramps it in)
+          const peak = p.classList.contains("dash") || p.classList.contains("split") ? 0.9 : 1;
+          return { p, beads, label, kind, peak, on: at(p.dataset.on), fail: p.dataset.fail ? at(p.dataset.fail) : null,
             scene: sc[p.closest(".scene").id], len: 0 };
         });
+        // geometry is static (cards never move inside a stage): measure once here, never in the render callback
+        const N = 160;
+        function sample(k) {
+          if (!route(k.p)) return false;
+          const len = k.p.getTotalLength();
+          if (!(len >= 1)) throw new Error("degenerate wire " + k.p.dataset.from + " to " + k.p.dataset.to);
+          k.len = len;
+          k.pts = Array.from({ length: N + 1 }, (_, i) => { const q = k.p.getPointAtLength((i / N) * len); return [q.x, q.y]; });
+          if (k.label) { const m = k.pts[N / 2]; k.label.setAttribute("x", m[0].toFixed(1)); k.label.setAttribute("y", (m[1] - 14).toFixed(1)); }
+          return true;
+        }
+        const unrouted = packets.filter((k) => !sample(k));
+        if (unrouted.length) throw new Error("wires without layout: " + unrouted.map((k) => k.p.dataset.from).join(","));
+        const pointAt = (k, u) => { const f = u * N, i = Math.min(N - 1, Math.floor(f)), r = f - i, a = k.pts[i], b = k.pts[i + 1]; return [a[0] + (b[0] - a[0]) * r, a[1] + (b[1] - a[1]) * r]; };
         const clock = { t: 0 };
         const SPEED = 220;
         function tick() {
@@ -461,18 +484,17 @@
           for (const k of packets) {
             const live = t >= k.scene.start && t < k.scene.start + k.scene.duration;
             if (!live) continue;
-            if (!k.p.dataset.ready) { if (route(k.p)) k.p.dataset.ready = "1"; else continue; }
-            if (!k.len) { k.len = k.p.getTotalLength(); if (k.label) { const m = k.p.getPointAtLength(k.len / 2); k.label.setAttribute("x", m.x.toFixed(1)); k.label.setAttribute("y", (m.y - 14).toFixed(1)); } }
             const since = t - k.on;
             const failed = k.fail !== null && t >= k.fail;
             const tt = failed ? k.fail - k.on : since;
             const vis = since <= 0 ? 0 : Math.min(1, since / 0.6);
-            const wireOp = parseFloat(getComputedStyle(k.p).opacity) || 0;
+            // never read DOM tween state here: this tween renders before later-starting tweens on a jump-seek
+            const wireOp = k.peak;
             k.beads.forEach((b, j) => {
-              const u = ((((tt * SPEED) / k.len + j / 3) % 1) + 1) % 1;
-              const pt = k.p.getPointAtLength(u * k.len);
+              const u = ((((tt * SPEED) / k.len + j / BEADS) % 1) + 1) % 1;
+              const pt = pointAt(k, u);
               const edge = failed ? 1 : Math.min(1, u / 0.12, (1 - u) / 0.12);
-              b.setAttribute("cx", pt.x.toFixed(1)); b.setAttribute("cy", pt.y.toFixed(1));
+              b.setAttribute("cx", pt[0].toFixed(1)); b.setAttribute("cy", pt[1].toFixed(1));
               b.setAttribute("opacity", (vis * edge * Math.min(1, wireOp * 1.4) * (failed ? 0.8 : 1)).toFixed(3));
               b.setAttribute("class", "bead" + (failed ? " bad" : k.kind));
             });
@@ -531,8 +553,10 @@ window.addEventListener("load", function () {
   const pp = ui.querySelector("#pp"), vo = ui.querySelector("#vo"), sk = ui.querySelector("#sk"), tc = ui.querySelector("#tc");
   
   // High-fidelity local cloned audio support (from VoiceStudio)
+  // build-video.mjs adds <meta name="narration"> only when the track exists (no 404 otherwise)
+  const narration = document.querySelector('meta[name="narration"]');
   const audioTrack = new Audio();
-  audioTrack.src = "assets/audio/narration.mp3";
+  if (narration) audioTrack.src = narration.content;
   let hasRealAudio = false;
   audioTrack.addEventListener("canplaythrough", () => {
     hasRealAudio = true;

@@ -28,6 +28,12 @@ Production-grade, frame-seekable HyperFrames motion graphics for deep DevOps con
 
 ## 🚀 Quick Start Commands
 
+### 0. Start a new concept
+```bash
+npm run new my-topic "My Topic"   # scaffolds src/my-topic/ from src/templates/starter and builds it
+```
+Fill in [`docs/NEW_CONCEPT_REQUEST.md`](docs/NEW_CONCEPT_REQUEST.md) and hand it to the agent as the prompt.
+
 ### 1. Compile HTML Video
 Compile any concept from `src/<slug>` to `videos/<slug>/index.html`:
 ```bash
@@ -50,9 +56,11 @@ open "videos/<slug>/index.html?autoplay=1"
 - `Left / Right Arrows`: Step backward / forward 1 second.
 - `0-9`: Jump to 0%, 10%, ... 90% of the timeline.
 
-### 3. Verify Layout and Console Health
+### 3. Verify
 ```bash
-node scripts/verify-video.mjs <slug>
+npm test                                     # static gate, every video (also runs in CI)
+npm run verify                               # + headless layout, seams, player, hyperframes check
+node scripts/verify-all.mjs --browser <slug> # one video
 ```
 
 ### 4. Render to High-Quality MP4 (1080p, 1440p, 4K)

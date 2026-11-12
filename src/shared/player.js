@@ -41,8 +41,10 @@ window.addEventListener("load", function () {
   const pp = ui.querySelector("#pp"), vo = ui.querySelector("#vo"), sk = ui.querySelector("#sk"), tc = ui.querySelector("#tc");
   
   // High-fidelity local cloned audio support (from VoiceStudio)
+  // build-video.mjs adds <meta name="narration"> only when the track exists (no 404 otherwise)
+  const narration = document.querySelector('meta[name="narration"]');
   const audioTrack = new Audio();
-  audioTrack.src = "assets/audio/narration.mp3";
+  if (narration) audioTrack.src = narration.content;
   let hasRealAudio = false;
   audioTrack.addEventListener("canplaythrough", () => {
     hasRealAudio = true;

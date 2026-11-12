@@ -17,6 +17,7 @@
 //     aws-load-balancer-controller.
 
 export const meta = {
+  advisory: ["wires", "labels", "balance"], // predates these checks: WARN only, backlog in docs/PIPELINE_FEATURES.md
   slug: "eks",
   title: "Amazon EKS",
   subtitle: "Managed Kubernetes on AWS",

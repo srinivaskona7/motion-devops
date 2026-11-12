@@ -14,11 +14,21 @@ const { meta, scenes } = await import(pathToFileURL(join(ROOT, "src", slug, "sto
 const fails = [];
 const must = (cond, msg) => { if (!cond) fails.push(msg); };
 
-// ids that the narration promises will appear on screen when spoken
 const spokenIds = scenes.flatMap((s) => [...s.narration.matchAll(/\[\[([\w-]+)\|/g)].map((m) => m[1]));
 const allMarks = scenes.flatMap((s) => [...s.narration.matchAll(/\[\[([\w-]+)/g)].map((m) => m[1]));
 
-for (const [dir, w, h] of [[slug, 1920, 1080], [`${slug}-reel`, 1080, 1920]]) {
+// same format → folder mapping as build-video.mjs
+const wanted = meta.formats ?? ["land", "port"];
+const formats = [["land", 1920, 1080], ["port", 1080, 1920]]
+  .filter(([f]) => wanted.includes(f))
+  .map(([f, w, h]) => [wanted.length === 1 || f === "land" ? slug : `${slug}-reel`, w, h]);
+must(formats.length > 0, `meta.formats matched nothing: ${wanted}`);
+
+// third-party code inlined by the build is not ours to police for wall-clock APIs or URLs
+const VENDOR_BLOCK = /<script>\/\* inlined assets\/gsap\.min\.js \*\/[\s\S]*?<\/script>/g;
+const PLAYER_BLOCK = /<script>\/\* inlined assets\/player\.js \*\/[\s\S]*?<\/script>/;
+
+for (const [dir, w, h] of formats) {
   const base = join(OUT, "videos", dir);
   const file = join(base, "index.html");
   if (!existsSync(file)) { fails.push(`${dir}: index.html missing`); continue; }
@@ -30,12 +40,21 @@ for (const [dir, w, h] of [[slug, 1920, 1080], [`${slug}-reel`, 1080, 1920]]) {
   must(rootTag.includes(`data-width="${w}"`) && rootTag.includes(`data-height="${h}"`), `${tag} root is not ${w}x${h}`);
   must(/window\.__timelines\["main"\]\s*=\s*tl/.test(html), `${tag} timeline not registered as __timelines["main"]`);
   must(!/\{\{[A-Z0-9_]+\}\}/.test(html), `${tag} unfilled template tokens`);
-  must(existsSync(join(base, "assets", "gsap.min.js")), `${tag} assets/gsap.min.js missing`);
-  must(!/cdn\.|https?:\/\/(?!www\.w3\.org)/.test(html.replace(/<!--[\s\S]*?-->/g, "")), `${tag} references a network URL`);
+  const inlinedGsap = (html.match(VENDOR_BLOCK) || []).length;
+  const inlinedPlayer = PLAYER_BLOCK.test(html);
+  must(inlinedGsap === 1 || existsSync(join(base, "assets", "gsap.min.js")), `${tag} GSAP neither inlined nor in assets/gsap.min.js`);
+  must(inlinedGsap <= 1, `${tag} GSAP inlined ${inlinedGsap} times`);
+  must(inlinedPlayer || existsSync(join(base, "assets", "player.js")), `${tag} player neither inlined nor in assets/player.js`);
+  const own = html.replace(VENDOR_BLOCK, "");
+  must(!/cdn\.|https?:\/\/(?!www\.w3\.org)/.test(own.replace(/<!--[\s\S]*?-->/g, "")), `${tag} references a network URL`);
 
-  const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]));
-  for (const id of spokenIds) must(ids.has(id), `${tag} narration names #${id} but no such element`);
-  const reveal = JSON.parse(html.match(/const REVEAL = (\{.*?\});/)?.[1] ?? "{}");
+  // every mark must drive something: an element with that id, or a script/markup reference
+  // (at("id"), data-on="id", data-fail="id"). A mark nothing consumes is a promise the film breaks.
+  const ids = new Set([...own.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]));
+  const body = own.replace(/const REVEAL = \{.*?\};/, "").replace(/<p id="cue-[\s\S]*?<\/p>/g, "");
+  const consumed = (id) => ids.has(id) || new RegExp(`["'\`]${id.replace(/[-]/g, "\\-")}["'\`]`).test(body);
+  for (const id of allMarks) must(consumed(id), `${tag} mark ${id} drives nothing (no element, no at()/data-on reference)`);
+  const reveal = JSON.parse(own.match(/const REVEAL = (\{.*?\});/)?.[1] ?? "{}");
   for (const id of allMarks) must(id in reveal, `${tag} mark ${id} has no reveal time`);
   for (const m of html.matchAll(/data-on="([^"]+)"/g)) must(m[1] in reveal, `${tag} wire waits on unknown mark ${m[1]}`);
 
@@ -65,7 +84,7 @@ for (const [dir, w, h] of [[slug, 1920, 1080], [`${slug}-reel`, 1080, 1920]]) {
   }
 
   // the render contract: nothing wall-clock or random in anything the composition loads
-  const scripts = [html, existsSync(join(base, "assets", "player.js")) ? readFileSync(join(base, "assets", "player.js"), "utf8") : ""];
+  const scripts = [own, existsSync(join(base, "assets", "player.js")) ? readFileSync(join(base, "assets", "player.js"), "utf8") : ""];
   for (const src of scripts) {
     for (const bad of ["Date.now", "Math.random", "setTimeout", "setInterval", "requestAnimationFrame", "performance.now", "repeat: -1"]) {
       must(!src.includes(bad), `${tag} uses ${bad}`);
@@ -82,4 +101,4 @@ if (fails.length) {
   console.error(`FAIL ${slug}: ${fails.length} violation(s)\n - ` + fails.join("\n - "));
   process.exit(1);
 }
-console.log(`PASS ${slug}: both formats, ${words} words, ${spokenIds.length} spoken reveals, ${allMarks.length} marks, runtime ${meta.total}s`);
+console.log(`PASS ${slug}: ${formats.map(([d]) => d).join(" + ")}, ${words} words, ${spokenIds.length} spoken reveals, ${allMarks.length} marks, runtime ${meta.total}s`);

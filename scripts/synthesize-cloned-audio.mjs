@@ -13,7 +13,13 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const slug = process.argv[2] || "k8s-api-gateway";
+import { computeTiming } from "./lib/timing.mjs";
+
+const slug = process.argv[2];
+if (!slug) {
+  console.error("usage: node scripts/synthesize-cloned-audio.mjs <slug> [voice_id]");
+  process.exit(2);
+}
 const voiceId = process.argv[3] || "51c11ae3"; // Cloned "Devops" profile
 
 const srcDir = join(ROOT, "src", slug);
@@ -50,7 +56,7 @@ function prepareSpokenText(text) {
 }
 
 // ffmpeg path
-const FFMPEG = "/opt/homebrew/bin/ffmpeg";
+const FFMPEG = process.env.FFMPEG || "ffmpeg"; // on PATH (brew/apt), or set FFMPEG
 
 // Create a silent WAV of `duration` seconds at 24kHz mono (matching TTS output)
 function makeSilentWav(outPath, duration) {
@@ -78,51 +84,14 @@ function getWavDuration(path) {
   return parseFloat(res.stdout.toString().trim()) || 0;
 }
 
-const FFPROBE = "/opt/homebrew/bin/ffprobe";
+const FFPROBE = process.env.FFPROBE || "ffprobe";
 
-// Helper: calculate target visual scene duration matching build-video.mjs
-function calculateSceneDurations(meta, scenes) {
-  const MARK = /\[\[([\w-]+)(?:\|([^\]]+))?\]\]/g;
-  const r2 = (n) => Math.round(n * 1000) / 1000;
-  function tokenise(text) {
-    const words = [];
-    const pushPlain = (chunk) => {
-      const glue = chunk.match(/^[^\s]+/);
-      if (glue && words.length) {
-        words[words.length - 1].w += glue[0];
-        chunk = chunk.slice(glue[0].length);
-      }
-      for (const w of chunk.split(/\s+/).filter(Boolean)) words.push({ w });
-    };
-    let cursor = 0, match;
-    MARK.lastIndex = 0;
-    while ((match = MARK.exec(text))) {
-      pushPlain(text.slice(cursor, match.index));
-      const [, , spoken] = match;
-      if (spoken) {
-        for (const w of spoken.split(/\s+/).filter(Boolean)) words.push({ w });
-      }
-      cursor = match.index + match[0].length;
-    }
-    pushPlain(text.slice(cursor));
-    return words;
-  }
-  let t = 0;
-  const timing = [];
-  for (const [i, sc] of scenes.entries()) {
-    const words = tokenise(sc.narration);
-    const start = t;
-    let dur = meta.lead + words.length / meta.wps + meta.pad;
-    if (i === scenes.length - 1) dur = meta.total - start;
-    timing.push({ id: sc.id, start: r2(start), duration: r2(dur) });
-    t += dur;
-  }
-  return timing;
-}
+// scene windows come from the same module build-video.mjs uses, so audio and picture cannot drift
+const plannedScenes = computeTiming(meta, scenes).timing.scenes;
 
-const plannedScenes = calculateSceneDurations(meta, scenes);
 
 const sceneFiles = [];
+const overruns = [];
 let totalPadded = 0;
 
 for (let i = 0; i < scenes.length; i++) {
@@ -161,7 +130,12 @@ for (let i = 0; i < scenes.length; i++) {
   const lead = meta.lead;
   // Pad is dynamically calculated so each scene exactly fills its visual duration!
   const targetDur = visualScene.duration;
-  const pad = Math.max(0.2, targetDur - lead - spokenDur);
+  const pad = targetDur - lead - spokenDur;
+  if (pad < 0.05) {
+    // a scene whose voice outlasts its picture shifts every later scene: refuse, never drift
+    overruns.push(`${scene.id}: voice ${spokenDur.toFixed(2)}s + lead ${lead}s > scene ${targetDur.toFixed(2)}s`);
+    continue;
+  }
 
   console.log(`  📊 spoken=${spokenDur.toFixed(3)}s lead=${lead}s pad=${pad.toFixed(3)}s targetDur=${targetDur.toFixed(3)}s`);
 
@@ -201,6 +175,12 @@ for (let i = 0; i < scenes.length; i++) {
   for (const f of [rawWav, silentLead, silentPad, padList]) {
     if (existsSync(f)) { const { unlinkSync } = await import("node:fs"); unlinkSync(f); }
   }
+}
+
+if (overruns.length) {
+  console.error(`\n❌ Voice overruns the timeline (narration.mp3 not written):\n  ${overruns.join("\n  ")}\n` +
+    `   Lower meta.wps in src/${slug}/story.mjs (longer scenes) or trim those scenes' words, rebuild, re-synthesize.`);
+  process.exit(1);
 }
 
 // --- Step 3: Concatenate all padded scenes into master narration.mp3 ---
@@ -243,13 +223,17 @@ if (ffmpeg.status === 0) {
       console.log(`   Padded with ${padDur.toFixed(3)}s silence → ${masterDur.toFixed(3)}s`);
     } else {
       console.error(`   ❌ Failed to pad master audio: ${padRes.stderr?.toString() || "unknown"}`);
+      process.exitCode = 1;
     }
   }
-  if (Math.abs(masterDur - meta.total) > 0.5) {
-    console.log(`   ⚠️  Master audio duration differs from video total by >0.5s`);
+  if (Math.abs(masterDur - meta.total) > 0.1) {
+    console.error(`   ❌ Master audio is ${masterDur.toFixed(3)}s, video is ${meta.total}s (>0.1s drift)`);
+    process.exitCode = 1;
   }
+  console.log(`   Rebuild so the player picks up the track: node scripts/build-video.mjs ${slug}`);
 } else {
   console.error("\n❌ FFmpeg concatenation failed\n");
+  process.exitCode = 1;
 }
 
 // Cleanup concat list

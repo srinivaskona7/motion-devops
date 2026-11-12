@@ -19,6 +19,7 @@
 //     natively, with no third-party ingress controller or annotation.
 
 export const meta = {
+  advisory: ["wires", "labels", "balance"], // predates these checks: WARN only, backlog in docs/PIPELINE_FEATURES.md
   slug: "k8s-api-gateway",
   title: "Kubernetes Gateway API",
   accent: "#22d3ee",

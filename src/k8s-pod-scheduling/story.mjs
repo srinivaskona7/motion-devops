@@ -6,6 +6,7 @@
 //   [[id]]               a timing mark on the next spoken word (no text)
 
 export const meta = {
+  advisory: ["labels"], // predates these checks: WARN only, backlog in docs/PIPELINE_FEATURES.md
   slug: "k8s-pod-scheduling",
   title: "Kubernetes Pod Scheduling & Eviction",
   subtitle: "Where a Pod lands, and when it has to leave",

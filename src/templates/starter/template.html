@@ -1,0 +1,295 @@
+<!doctype html>
+<!--
+  Starter 9:16 explainer, scaffolded by: npm run new <slug> "<Title>"
+  Layout rules this starter already satisfies (npm run verify gates them for new videos):
+    - stage content inside x 108..972 and between the topbar and the HUD (top 1590)
+    - each settled diagram centred between its headline and the HUD, filling >= 40% of that space
+      (here: headline bottom ~247px, HUD top 1590px, so diagrams span roughly y 590..1270)
+    - wires connect card edges and cross no other box; labels are placed by stage.js, clear of boxes
+    - every [[mark]] in story.mjs drives an element id or an S.at("mark")
+  Card coordinates are stage-local: the stage starts at y=340.
+-->
+<html
+  lang="en"
+  data-composition-variables='[{"id":"accent","type":"color","label":"Brand accent","default":"{{ACCENT}}"}]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width={{W}}, height={{H}}" />
+    <title>{{TITLE}} · {{FORMAT_LABEL}}</title>
+    <script src="assets/gsap.min.js"></script>
+    <script src="assets/stage.js"></script>
+    <style>
+      :root {
+        --accent: {{ACCENT}};
+        --accent-ink: color-mix(in srgb, var(--accent) 60%, #fff); /* accent for text: readable on the dark bg for any accent */
+        --k8s-blue: #326ce5;
+        --bg: #070a13;
+        --ink: #e9eef8;
+        --mute: #93a0b8;
+        --ok: #22c55e;
+        --bad: #f43f5e;
+        --warn: #f59e0b;
+        --glass: rgba(255, 255, 255, 0.03);
+        --line: rgba(255, 255, 255, 0.08);
+        --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--bg); }
+      #root {
+        position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden;
+        background: var(--bg); color: var(--ink); font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---------- backdrop ---------- */
+      .bg-glow {
+        position: absolute; width: 1100px; height: 1100px; left: 50%; top: 10%;
+        margin: -550px 0 0 -550px; border-radius: 50%;
+        background: radial-gradient(circle,
+          color-mix(in srgb, var(--accent) 18%, transparent) 0%,
+          color-mix(in srgb, var(--accent) 4%, transparent) 36%, transparent 68%);
+      }
+      .bg-stars { position: absolute; inset: 0; background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1.2px, transparent 1.4px); background-size: 30px 30px; opacity: 0.6; }
+      .bg-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 26%, transparent 44%, rgba(2, 4, 8, 0.92) 100%); }
+
+      /* ---------- chrome ---------- */
+      .topbar { position: absolute; left: 80px; right: 80px; top: 44px; height: 36px; display: flex; justify-content: space-between; align-items: center; z-index: 40; }
+      .brand { display: flex; align-items: center; gap: 10px; font: 700 17px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
+      .brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+      .chapters { display: flex; gap: 12px; }
+      .chap { width: 120px; font: 700 11px/1 var(--mono); letter-spacing: 0.08em; color: var(--mute); text-transform: uppercase; text-align: center; }
+      .chap b { display: block; height: 3px; border-radius: 2px; margin-top: 6px; background: rgba(255,255,255,0.1); overflow: hidden; }
+      .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; }
+
+      /* ---------- scenes ---------- */
+      .scene { position: absolute; inset: 0; z-index: 10; }
+      .cam { position: absolute; inset: 0; }
+      .head { position: absolute; left: 108px; right: 108px; top: 170px; text-align: center; }
+      .kicker { font: 700 19px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--kc, var(--accent-ink)); }
+      .head h2 { margin-top: 10px; font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; }
+      .head h2 .hw { display: inline-block; }
+      .stage { position: absolute; left: 0; right: 0; top: 340px; height: 1180px; }
+
+      /* wires (geometry, packets and labels come from src/shared/stage.js) */
+      svg.wires { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
+      .wire { fill: none; stroke: color-mix(in srgb, var(--accent) 55%, transparent); stroke-width: 3; stroke-linecap: round; }
+      .wire.ok { stroke: color-mix(in srgb, var(--ok) 70%, transparent); }
+      .wire.bad { stroke: color-mix(in srgb, var(--bad) 70%, transparent); }
+      .bead { fill: #d4e3ff; filter: drop-shadow(0 0 7px var(--accent)); }
+      .bead.ok { fill: #bbf7d0; filter: drop-shadow(0 0 8px var(--ok)); }
+      .bead.bad { fill: #fecdd3; filter: drop-shadow(0 0 7px var(--bad)); }
+      .wire-label { font: 700 17px var(--mono); fill: var(--mute); letter-spacing: 0.04em; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; }
+
+      /* boundary box (cluster / namespace / account) */
+      .bound { position: absolute; z-index: 0; border-radius: 16px; background: rgba(50, 108, 229, 0.03); border: 2px dashed rgba(50, 108, 229, 0.45); }
+      .bound .bl { position: absolute; left: 18px; top: -14px; padding: 0 12px; background: var(--k8s-blue); color: #fff; font: 700 13px/26px var(--mono); letter-spacing: 0.08em; border-radius: 6px; text-transform: uppercase; }
+
+      /* cards */
+      .card {
+        /* declared defaults: state() tweens these, and an undeclared start reverts to transparent on a backward seek */
+        --ind: var(--accent); --bd: var(--line);
+        position: absolute; z-index: 2; padding: 14px 18px 14px 26px; border-radius: 14px;
+        background: var(--glass); backdrop-filter: blur(20px);
+        border: 1px solid var(--bd, var(--line));
+        box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.03), 0 22px 44px -16px rgba(0, 0, 0, 0.8);
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      .card::before {
+        content: ""; position: absolute; left: -1px; top: 12px; bottom: 12px; width: 4px;
+        border-radius: 0 4px 4px 0; background: var(--ind, var(--accent)); box-shadow: 0 0 12px var(--ind, var(--accent));
+      }
+      .card h3 { font: 700 26px/1.1 var(--sans); letter-spacing: -0.015em; white-space: nowrap; }
+      .card h3.m { font-family: var(--mono); font-size: 24px; letter-spacing: -0.02em; }
+      .card .sw { position: relative; margin-top: 8px; height: 26px; font: 400 20px/26px var(--mono); color: var(--mute); white-space: nowrap; }
+      .card .sw > span { position: absolute; left: 0; top: 0; }
+      .card .sw .b { opacity: 0; }
+      .t-ok { color: var(--ok); } .t-bad { color: var(--bad); } .t-warn { color: var(--warn); } .t-acc { color: #9db9ff; }
+      .card.chip { padding: 0 24px; border-radius: 36px; flex-direction: row; align-items: center; gap: 12px; font: 700 22px/1 var(--mono); }
+      .card.chip::before { display: none; }
+      .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 9px var(--ok); flex: none; }
+
+      /* terminal */
+      .term { position: absolute; z-index: 3; padding: 14px 24px 16px; border-radius: 14px; background: rgba(6, 9, 16, 0.9); border: 1px solid var(--line);
+        box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.03), 0 24px 48px -22px #000; font: 400 21px/34px var(--mono); }
+      .term .bar { display: flex; align-items: center; gap: 8px; height: 28px; margin-bottom: 6px; }
+      .term .bar i { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.14); }
+      .term .bar span { margin-left: 10px; font: 400 15px var(--mono); color: var(--mute); }
+      .term .ln { white-space: pre; height: 34px; }
+      .term .pr { color: var(--ok); } .term .out { color: var(--mute); }
+      .caret { display: inline-block; width: 12px; height: 26px; margin-left: 3px; vertical-align: -4px; background: var(--ink); }
+
+      /* badges: short alerts placed beside (never on) a card */
+      .badge { position: absolute; z-index: 4; border-radius: 10px; padding: 6px 12px; font: 700 17px var(--mono); color: #fff; box-shadow: 0 0 14px -4px; }
+
+      /* caption HUD */
+      .hud { position: absolute; z-index: 45; left: 108px; right: 108px; top: 1590px; height: 180px; display: flex; align-items: stretch;
+        background: rgba(10, 14, 24, 0.88); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 28px 56px -24px #000; backdrop-filter: blur(20px); }
+      .hud .cc { flex: none; width: 62px; display: grid; place-items: center; border-right: 1px solid var(--line); }
+      .hud .cc span { font: 700 13px var(--mono); letter-spacing: 0.14em; color: var(--accent-ink); padding: 5px 6px; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 6px; }
+      #captions { position: relative; flex: 1; }
+      .cue { position: absolute; inset: 0; display: flex; align-items: center; align-content: center; flex-wrap: wrap; column-gap: 0.27em; padding: 0 24px; font-size: 30px; line-height: 1.22; letter-spacing: -0.008em; }
+      .cue .w { color: rgba(233, 238, 248, 0.4); }
+      .cue .kw { font-weight: 700; }
+
+      /* standalone player chrome lives outside #root and never renders */
+      body.standalone { width: 100vw; height: 100vh; display: grid; place-items: center; background: #03050a; }
+      body.standalone #root { flex: none; transform-origin: 50% 50%; box-shadow: 0 30px 120px rgba(0, 0, 0, 0.6); }
+      .player { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 99; display: flex; gap: 10px; align-items: center;
+        padding: 8px 12px; border-radius: 12px; background: rgba(15, 20, 32, 0.92); border: 1px solid var(--line); backdrop-filter: blur(20px);
+        font: 400 13px var(--mono); color: var(--ink); width: min(620px, 94vw); }
+      .player button { font: inherit; color: var(--ink); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+      .player button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent); }
+      .player input[type="range"] { flex: 1; accent-color: var(--accent); }
+      .gate { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: rgba(4, 6, 11, 0.55); }
+      .gate div { display: flex; gap: 12px; }
+      .gate button { font: 700 17px var(--sans); padding: 16px 26px; border-radius: 12px; cursor: pointer; color: #fff; border: 1px solid var(--line); background: rgba(15, 20, 32, 0.92); }
+      .gate button.primary { background: var(--accent); border-color: transparent; }
+
+      .human-cursor { position: absolute; left: 0; top: 0; width: 68px; height: 68px; z-index: 99; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4)); pointer-events: none; transform-origin: 21% 14%; will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div id="root" class="{{FMT}}" data-composition-id="main" data-start="0" data-duration="{{TOTAL}}" data-width="{{W}}" data-height="{{H}}">
+      <div class="bg-glow"></div>
+      <div class="bg-stars"></div>
+      <div class="bg-vignette"></div>
+
+      <div class="topbar">
+        <div class="brand"><i></i>@@BRAND@@</div>
+        <div class="chapters">
+          <div class="chap">Problem<b><u id="ch-s1"></u></b></div>
+          <div class="chap">How it works<b><u id="ch-s2"></u></b></div>
+          <div class="chap">Recap<b><u id="ch-s3"></u></b></div>
+        </div>
+      </div>
+
+      <!-- ===================== S1 · THE PROBLEM ===================== -->
+      <section id="s1" class="scene clip" data-start="{{S1_START}}" data-duration="{{S1_DUR}}" data-track-index="1" data-track-kind="graphics">
+        <div class="cam" id="s1-cam">
+          <div class="head">
+            <div class="kicker" style="--kc: var(--bad)">01 · The Problem</div>
+            <h2><span class="hw">One</span> <span class="hw">system.</span> <span class="hw">Every</span> <span class="hw">team</span> <span class="hw">waits.</span></h2>
+          </div>
+          <div class="stage" id="s1-stage">
+            <div class="card" id="s1-client" style="left: 130px; top: 280px; width: 260px; height: 120px"><h3>client</h3><div class="sw"><span class="a t-ok">1.2k rps</span></div></div>
+            <div class="card" id="s1-core" style="left: 530px; top: 280px; width: 420px; height: 200px"><h3 class="m">shared system</h3><div class="sw"><span class="a">one config · one owner</span><span class="b t-bad">single point of failure</span></div></div>
+            <div class="badge" id="s1-fail" style="left: 130px; top: 440px; background: #be123c;">one change breaks all</div>
+            <div class="card s1-app" id="s1-web" style="left: 130px; top: 760px; width: 240px; height: 120px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+            <div class="card s1-app" id="s1-api" style="left: 420px; top: 760px; width: 240px; height: 120px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+            <div class="card s1-app" id="s1-pay" style="left: 710px; top: 760px; width: 240px; height: 120px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">Failing</span></div></div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire" data-from="s1-client" data-to="s1-core" data-on="s1-core" data-axis="x" data-label="requests" />
+              <path class="wire" data-from="s1-core" data-to="s1-web" data-on="s1-apps" data-axis="y" />
+              <path class="wire" data-from="s1-core" data-to="s1-api" data-on="s1-apps" data-axis="y" />
+              <path class="wire bad" data-from="s1-core" data-to="s1-pay" data-on="s1-apps" data-axis="y" data-fail="s1-fail" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S2 · HOW IT WORKS ===================== -->
+      <section id="s2" class="scene clip" data-start="{{S2_START}}" data-duration="{{S2_DUR}}" data-track-index="2" data-track-kind="graphics">
+        <div class="cam" id="s2-cam">
+          <div class="head">
+            <div class="kicker" style="--kc: var(--k8s-blue)">02 · How It Works</div>
+            <h2><span class="hw">Three</span> <span class="hw">steps,</span> <span class="hw">one</span> <span class="hw">direction.</span></h2>
+          </div>
+          <div class="stage" id="s2-stage">
+            <div class="card" id="s2-step1" style="--ind: var(--k8s-blue); left: 130px; top: 240px; width: 820px; height: 100px"><h3 class="m">1 · declare</h3><div class="sw"><span class="a">you write the desired state</span></div></div>
+            <div class="card" id="s2-step2" style="--ind: var(--k8s-blue); left: 130px; top: 420px; width: 820px; height: 100px"><h3 class="m">2 · reconcile</h3><div class="sw"><span class="a">a controller closes the gap</span></div></div>
+            <div class="card" id="s2-step3" style="--ind: var(--ok); left: 130px; top: 600px; width: 820px; height: 100px"><h3 class="m">3 · observe</h3><div class="sw"><span class="a t-ok">status reports the result</span></div></div>
+            <div class="term" id="s2-term" style="left: 130px; top: 780px; width: 820px; height: 150px">
+              <div class="bar"><i></i><i></i><i></i><span>laptop · zsh</span></div>
+              <div class="ln"><span class="pr">$ </span><span id="s2-cmd" data-text="kubectl apply -f app.yaml"></span><i class="caret" id="s2-caret"></i></div>
+              <div class="ln out" id="s2-out">deployment.apps/app configured</div>
+            </div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire" data-from="s2-step1" data-to="s2-step2" data-on="s2-step2" data-axis="y" />
+              <path class="wire ok" data-from="s2-step2" data-to="s2-step3" data-on="s2-step3" data-axis="y" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S3 · RECAP ===================== -->
+      <section id="s3" class="scene clip" data-start="{{S3_START}}" data-duration="{{S3_DUR}}" data-track-index="3" data-track-kind="graphics">
+        <div class="cam" id="s3-cam">
+          <div class="head">
+            <div class="kicker" style="--kc: var(--ok)">03 · Recap</div>
+            <h2><span class="hw">Small</span> <span class="hw">pieces.</span> <span class="hw">Clear</span> <span class="hw">owners.</span></h2>
+          </div>
+          <div class="stage" id="s3-stage">
+            <div class="card" id="s3-one" style="--ind: var(--ok); left: 130px; top: 250px; width: 820px; height: 130px"><h3 class="m">declare what you want</h3><div class="sw"><span class="a t-ok">reviewed like code</span></div></div>
+            <div class="card" id="s3-two" style="--ind: var(--ok); left: 130px; top: 420px; width: 820px; height: 130px"><h3 class="m">let the system converge</h3><div class="sw"><span class="a t-ok">no manual steps</span></div></div>
+            <div class="card" id="s3-three" style="--ind: var(--ok); left: 130px; top: 590px; width: 820px; height: 130px"><h3 class="m">read status, not logs</h3><div class="sw"><span class="a t-ok">one place to look</span></div></div>
+            <div class="card chip" id="s3-next" style="left: 130px; top: 780px; width: 820px; height: 72px"><i class="dot"></i>next: try it on a test cluster</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CAPTION HUD ===================== -->
+      <div class="hud" id="hud">
+        <div class="cc"><span>CC</span></div>
+        <div id="captions" data-track-kind="captions">
+{{CUES}}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const REVEAL = {{TIMING_JSON}};
+        const SCENES = {{SCENES_JSON}};
+        const TOTAL = {{TOTAL}};
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+        const S = MotionStage.create({ tl, REVEAL, SCENES, TOTAL, W: {{W}}, H: {{H}} });
+        const { at, sc, reveal, pop, state, hit, type } = S;
+        const C = { ok: "#22c55e", bad: "#f43f5e", warn: "#f59e0b" };
+
+        S.seams();
+        const cursor = S.cursor();
+
+        // ---- S1 · the problem ----
+        gsap.set("#s1-fail", { opacity: 0 });
+        reveal("#s1-client", sc.s1.start + 0.5);
+        reveal("#s1-core", at("s1-core"));
+        reveal(".s1-app", at("s1-apps"), { stagger: 0.12 });
+        const f1 = at("s1-fail");
+        cursor.tap("s1-core", f1);
+        state("s1-core", f1, C.bad, "b");
+        state("s1-pay", f1, C.bad, "b");
+        hit("s1-core", f1, C.bad);
+        pop("#s1-fail", f1 + 0.2);
+
+        // ---- S2 · how it works ----
+        gsap.set(["#s2-out", "#s2-caret"], { opacity: 0 });
+        reveal("#s2-step1", at("s2-step1"));
+        reveal("#s2-step2", at("s2-step2"));
+        reveal("#s2-step3", at("s2-step3"));
+        reveal("#s2-term", at("s2-term"));
+        tl.to("#s2-caret", { opacity: 1, duration: 0.01 }, at("s2-term") + 0.3);
+        const typed = type("s2-cmd", at("s2-term") + 0.4, 20);
+        tl.to("#s2-caret", { opacity: 0, duration: 0.01 }, typed + 0.35);
+        tl.fromTo("#s2-out", { opacity: 0 }, { opacity: 1, duration: 0.2 }, typed + 0.45); // dramatic comma
+
+        // ---- S3 · recap ----
+        reveal("#s3-one", at("s3-one"));
+        reveal("#s3-two", at("s3-two"));
+        reveal("#s3-three", at("s3-three"));
+        reveal("#s3-next", at("s3-next"));
+        tl.fromTo("#s3-next .dot", { boxShadow: "0 0 0 0px var(--ok)" }, { boxShadow: "0 0 0 6px var(--ok), 0 0 30px -4px var(--ok)", duration: 0.4, ease: "power2.out", yoyo: true, repeat: 1 }, at("s3-next") + 0.6);
+
+        S.wires();
+        S.captions();
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+
+    <!-- Standalone player: TTS voice toggle + scrubber when opened directly; inert inside HyperFrames. -->
+    <script src="assets/player.js"></script>
+  </body>
+</html>

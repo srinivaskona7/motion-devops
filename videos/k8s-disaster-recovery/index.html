@@ -435,7 +435,7 @@
     <script>
       (function () {
         const REVEAL = {"s1-ing":4.333,"s1-pods":6,"s1-etcd":8.778,"s1-fail":9.889,"s1-pvc":14.333,"s1-three":16.556,"s2-cmd":23.956,"s2-file":28.4,"s2-off":30.622,"s2-restore":32.289,"s2-api":36.733,"s2-gap":38.956,"s3-clone":48.578,"s3-src":50.8,"s3-ds":52.467,"s3-bad":57.467,"s3-snap":61.356,"s3-bind":62.467,"s4-bk":76.533,"s4-cmd":78.2,"s4-res":81.533,"s4-pv":82.644,"s4-green":84.311,"s5-a":88.933,"s5-b":91.711,"s5-c":93.933,"s5-t":98.933};
-        const SCENES = [{"id":"s1","start":0,"duration":20.733},{"id":"s2","start":20.733,"duration":22.4},{"id":"s3","start":43.133,"duration":23.511},{"id":"s4","start":66.644,"duration":20.733},{"id":"s5","start":87.378,"duration":24.622}];
+        const SCENES = [{"id":"s1","start":0,"duration":20.733},{"id":"s2","start":20.733,"duration":22.4,"axis":"x"},{"id":"s3","start":43.133,"duration":23.511,"axis":"x"},{"id":"s4","start":66.644,"duration":20.733,"axis":"x"},{"id":"s5","start":87.378,"duration":24.622,"axis":"y"}];
         const TOTAL = 112;
         const $ = (s, r = document) => r.querySelector(s);
         const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -756,8 +756,10 @@ window.addEventListener("load", function () {
   const pp = ui.querySelector("#pp"), vo = ui.querySelector("#vo"), sk = ui.querySelector("#sk"), tc = ui.querySelector("#tc");
   
   // High-fidelity local cloned audio support (from VoiceStudio)
+  // build-video.mjs adds <meta name="narration"> only when the track exists (no 404 otherwise)
+  const narration = document.querySelector('meta[name="narration"]');
   const audioTrack = new Audio();
-  audioTrack.src = "assets/audio/narration.mp3";
+  if (narration) audioTrack.src = narration.content;
   let hasRealAudio = false;
   audioTrack.addEventListener("canplaythrough", () => {
     hasRealAudio = true;

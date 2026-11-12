@@ -4,19 +4,19 @@
   "type": "module",
   "description": "Frame-seekable HyperFrames motion explainers for DevOps topics",
   "scripts": {
+    "new": "node scripts/new-video.mjs",
     "build": "node scripts/build-video.mjs",
+    "build:all": "for d in src/*/story.mjs; do s=$(basename $(dirname $d)); node scripts/build-video.mjs $s > /dev/null || exit 1; echo built $s; done",
+    "test": "node scripts/verify-all.mjs && node scripts/test-verifiers.mjs && node scripts/verify-starter.mjs",
+    "verify": "node scripts/verify-all.mjs --browser && node scripts/verify-starter.mjs --browser",
     "render": "node scripts/render-video.mjs",
-    "render:1080": "node scripts/render-video.mjs $npm_config_slug 1080",
-    "render:1440": "node scripts/render-video.mjs $npm_config_slug 1440",
-    "render:4k": "node scripts/render-video.mjs $npm_config_slug 4k",
+    "render:1080": "f() { node scripts/render-video.mjs \"$1\" 1080; }; f",
+    "render:1440": "f() { node scripts/render-video.mjs \"$1\" 1440; }; f",
+    "render:4k": "f() { node scripts/render-video.mjs \"$1\" 4k; }; f",
     "thumbnails": "node scripts/generate-thumbnails.mjs",
-    "prores": "node scripts/export-prores.mjs",
-    "check": "npm run build && cd videos/k8s-pod-scheduling && npx --yes hyperframes@0.9.37 check && cd ../k8s-pod-scheduling-reel && npx --yes hyperframes@0.9.37 check",
-    "test": "node scripts/verify-video.mjs k8s-pod-scheduling",
-    "build:dr": "node scripts/build-video.mjs k8s-disaster-recovery",
-    "verify:dr": "npm run build:dr && python3 scripts/verify_reel.py k8s-disaster-recovery && python3 scripts/verify_reel.py k8s-disaster-recovery --self-test && cd videos/k8s-disaster-recovery && npx --yes hyperframes@0.9.37 check && node ~/.claude/skills/motion-doctrine/scripts/seam-gate.mjs verify --ledger ledger.json --project ."
+    "prores": "node scripts/export-prores.mjs"
   },
-  "devDependencies": {
-    "gsap": "3.15.0"
+  "engines": {
+    "node": ">=20"
   }
 }

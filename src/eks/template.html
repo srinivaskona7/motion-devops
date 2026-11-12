@@ -54,7 +54,7 @@
       .brand { display: flex; align-items: center; gap: 10px; font: 700 17px/1 var(--mono); letter-spacing: 0.14em; }
       .brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
       .chapters { display: flex; gap: 10px; }
-      .chap { width: 96px; font: 700 11px/1 var(--mono); letter-spacing: 0.08em; color: var(--dim); text-transform: uppercase; text-align: center; }
+      .chap { width: 96px; font: 700 11px/1 var(--mono); letter-spacing: 0.08em; color: var(--mute); text-transform: uppercase; text-align: center; }
       .chap b { display: block; height: 3px; border-radius: 2px; margin-top: 6px; background: rgba(255,255,255,0.1); overflow: hidden; }
       .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; }
 
@@ -90,6 +90,8 @@
 
       /* glassmorphic cards */
       .card {
+        /* declared defaults: state() tweens these, and an undeclared start reverts to transparent on a backward seek */
+        --ind: var(--accent); --bd: var(--line);
         position: absolute; z-index: 2; padding: 14px 18px 14px 26px; border-radius: 14px;
         background: var(--glass); backdrop-filter: blur(20px);
         border: 1px solid var(--bd, var(--line));
@@ -105,6 +107,8 @@
       .card .sw { position: relative; margin-top: 6px; height: 24px; font: 400 19px/24px var(--mono); color: var(--mute); white-space: nowrap; }
       .card .sw > span { position: absolute; left: 0; top: 0; }
       .card .sw .b, .card .sw .c { opacity: 0; }
+      .card .sw.two { height: 52px; }
+      .card .sw.two > .b { top: 28px; }
       .t-ok { color: var(--ok); } .t-bad { color: var(--bad); } .t-warn { color: var(--warn); } .t-acc { color: #9db9ff; }
       .card.chip { padding: 0 20px; border-radius: 30px; flex-direction: row; align-items: center; gap: 10px; font: 700 20px/1 var(--mono); }
       .card.chip::before { display: none; }
@@ -115,7 +119,7 @@
         box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.03), 0 24px 48px -22px #000; font: 400 20px/32px var(--mono); }
       .term .bar { display: flex; align-items: center; gap: 8px; height: 28px; margin-bottom: 5px; }
       .term .bar i { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.14); }
-      .term .bar span { margin-left: 10px; font: 400 15px var(--mono); color: var(--dim); }
+      .term .bar span { margin-left: 10px; font: 400 15px var(--mono); color: var(--mute); }
       .term .ln { white-space: pre; height: 32px; }
       .term .pr { color: var(--ok); } .term .out { color: var(--mute); }
       .caret { display: inline-block; width: 12px; height: 26px; margin-left: 3px; vertical-align: -4px; background: var(--ink); }
@@ -147,7 +151,7 @@
       .gate button.primary { background: var(--accent); border-color: transparent; }
 
       /* human cursor */
-      .human-cursor { position: absolute; left: 50%; top: 115%; width: 68px; height: 68px; z-index: 99; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4)); pointer-events: none; transform-origin: 21% 14%; will-change: transform; }
+      .human-cursor { position: absolute; left: 0; top: 0; width: 68px; height: 68px; z-index: 99; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4)); pointer-events: none; transform-origin: 21% 14%; will-change: transform; }
     </style>
   </head>
   <body>
@@ -180,8 +184,8 @@
             <div class="card" id="s1-client" style="left: 130px; top: 400px; width: 260px; height: 110px"><h3>client</h3><div class="sw"><span class="a t-ok">1.2k rps</span></div></div>
             <div class="card" id="s1-kops" style="--ind: var(--bad); left: 410px; top: 400px; width: 340px; height: 200px"><h3 class="m">self-managed K8s</h3><div class="sw"><span class="a">etcd · API server · certs</span><span class="b t-bad">you patch it all</span></div></div>
             <div class="card" id="s1-etcd" style="--ind: var(--bad); left: 410px; top: 615px; width: 340px; height: 94px"><h3 class="m">etcd cluster</h3><div class="sw"><span class="a t-bad">quorum lost</span></div></div>
-            <div class="badge" id="s1-fail" style="left: 770px; top: 410px; background: var(--bad);">etcd quorum lost</div>
-            <div class="badge" id="s1-burden" style="left: 130px; top: 640px; background: var(--warn);">undifferentiated toil</div>
+            <div class="badge" id="s1-fail" style="left: 770px; top: 410px; background: #be123c;">etcd quorum lost</div>
+            <div class="badge" id="s1-burden" style="left: 130px; top: 640px; background: #b45309;">undifferentiated toil</div>
             <div class="card s1-pod" id="s1-web" style="left: 130px; top: 780px; width: 200px; height: 94px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
             <div class="card s1-pod" id="s1-api" style="left: 370px; top: 780px; width: 200px; height: 94px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
             <div class="card s1-pod" id="s1-pay" style="left: 610px; top: 780px; width: 200px; height: 94px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">CrashLoop</span></div></div>
@@ -266,10 +270,10 @@
             <h2><span class="hw">Real</span> <span class="hw">VPC</span> <span class="hw">IPs.</span> <span class="hw">No</span> <span class="hw">overlay.</span></h2>
           </div>
           <div class="stage" id="s4-stage">
-            <div class="card" id="s4-cni" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 130px"><h3 class="m">VPC CNI</h3><div class="sw"><span class="a t-acc">pod → VPC IP</span><span class="b t-ok">ENI per pod</span></div></div>
-            <div class="card" id="s4-alb" style="--ind: var(--aws-orange); left: 610px; top: 400px; width: 340px; height: 130px"><h3 class="m">ALB Controller</h3><div class="sw"><span class="a">AWS Load Balancer · NLB</span><span class="b t-ok">ACM TLS · ingress</span></div></div>
-            <div class="card" id="s4-addons" style="--ind: var(--aws-orange); left: 130px; top: 570px; width: 340px; height: 130px"><h3 class="m">EKS add-ons</h3><div class="sw"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI · version-pinned</span></div></div>
-            <div class="card" id="s4-overlay" style="--ind: var(--bad); left: 610px; top: 570px; width: 340px; height: 130px"><h3 class="m">No overlay</h3><div class="sw"><span class="a t-ok">no VXLAN · no Geneve</span><span class="b t-ok">security groups apply</span></div></div>
+            <div class="card" id="s4-cni" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 130px"><h3 class="m">VPC CNI</h3><div class="sw two"><span class="a t-acc">pod → VPC IP</span><span class="b t-ok">ENI per pod</span></div></div>
+            <div class="card" id="s4-alb" style="--ind: var(--aws-orange); left: 610px; top: 400px; width: 340px; height: 130px"><h3 class="m">ALB Controller</h3><div class="sw two"><span class="a">AWS Load Balancer · NLB</span><span class="b t-ok">ACM TLS · ingress</span></div></div>
+            <div class="card" id="s4-addons" style="--ind: var(--aws-orange); left: 130px; top: 570px; width: 340px; height: 130px"><h3 class="m">EKS add-ons</h3><div class="sw two"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI · version-pinned</span></div></div>
+            <div class="card" id="s4-overlay" style="--ind: var(--bad); left: 610px; top: 570px; width: 340px; height: 130px"><h3 class="m">No overlay</h3><div class="sw two"><span class="a t-ok">no VXLAN · no Geneve</span><span class="b t-ok">security groups apply</span></div></div>
             <svg class="wires" aria-hidden="true">
               <path class="wire cni" data-from="s4-cni" data-to="s4-alb" data-on="s4-cni" data-axis="x" data-label="CNI" />
             </svg>
@@ -285,9 +289,9 @@
             <h2><span class="hw">IRSA.</span> <span class="hw">No</span> <span class="hw">long-lived</span> <span class="hw">keys.</span></h2>
           </div>
           <div class="stage" id="s5-stage">
-            <div class="card" id="s5-irsa" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 130px"><h3 class="m">IRSA</h3><div class="sw"><span class="a t-acc">OIDC trust</span><span class="b t-ok">pod assumes IAM role</span></div></div>
-            <div class="card" id="s5-keys" style="--ind: var(--bad); left: 610px; top: 400px; width: 340px; height: 130px"><h3 class="m">No long-lived keys</h3><div class="sw"><span class="a t-ok">rotated by STS</span><span class="b t-ok">short-lived tokens</span></div></div>
-            <div class="card" id="s5-addons" style="--ind: var(--aws-orange); left: 130px; top: 570px; width: 340px; height: 130px"><h3 class="m">EKS add-ons</h3><div class="sw"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI · version-pinned</span></div></div>
+            <div class="card" id="s5-irsa" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 130px"><h3 class="m">IRSA</h3><div class="sw two"><span class="a t-acc">OIDC trust</span><span class="b t-ok">pod assumes IAM role</span></div></div>
+            <div class="card" id="s5-keys" style="--ind: var(--bad); left: 610px; top: 400px; width: 340px; height: 130px"><h3 class="m">No long-lived keys</h3><div class="sw two"><span class="a t-ok">rotated by STS</span><span class="b t-ok">short-lived tokens</span></div></div>
+            <div class="card" id="s5-addons" style="--ind: var(--aws-orange); left: 130px; top: 570px; width: 340px; height: 130px"><h3 class="m">EKS add-ons</h3><div class="sw two"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI · version-pinned</span></div></div>
             <svg class="wires" aria-hidden="true">
               <path class="wire" data-from="s5-irsa" data-to="s5-addons" data-on="s5-irsa" data-axis="x" data-label="OIDC" />
             </svg>
@@ -378,20 +382,28 @@
           return t0 + dur;
         };
 
-        // ---- seams: cut-the-curve vertical between scenes ----
-        const SEAM_Y = 260;
+        // ---- seams: cut-the-curve in the current (LEFT); UP into the recap ----
+        // axis per incoming scene matches meta.seams / ledger.json; exit power4.in, entry power4.out
+        const SEAM_X = 130, SEAM_Y = 260;
+        const seamAxis = (id) => sc[id].axis ?? "x"; // from meta.seams via build-video.mjs
         SCENES.forEach((s, i) => {
           const cam = "#" + s.id + "-cam";
           const next = SCENES[i + 1];
           if (i > 0) {
-            tl.fromTo(cam, { y: SEAM_Y, opacity: 0.35, filter: "blur(8px)" },
-              { y: 0, filter: "blur(0px)", duration: 0.42, ease: "power4.out", immediateRender: false }, s.start);
+            const ax = seamAxis(s.id), d = ax === "y" ? SEAM_Y : SEAM_X;
+            tl.fromTo(cam, { [ax]: d, opacity: 0.35, filter: "blur(8px)" },
+              { [ax]: 0, filter: "blur(0px)", duration: 0.42, ease: "power4.out", immediateRender: false }, s.start);
             tl.to(cam, { opacity: 1, duration: 0.18, ease: "power2.out" }, s.start);
-            tl.fromTo($$(cam + " .hw"), { opacity: 0.35, y: 60 }, { opacity: 1, y: 0, duration: 0.36, ease: "power4.out", stagger: 0.045, immediateRender: false }, s.start + 0.04);
+            // header waterfall rides in behind the camera, same axis. All words take the from-state
+            // at the cut: with stagger + immediateRender:false, waiting words sat at 0 while earlier
+            // ones were still +60px out, so on x seams they slid over each other ("AWruns").
+            tl.set($$(cam + " .head .hw"), { opacity: 0.35, [ax]: 60 }, s.start);
+            tl.fromTo($$(cam + " .head .hw"), { opacity: 0.35, [ax]: 60 }, { opacity: 1, [ax]: 0, duration: 0.36, ease: "power4.out", stagger: 0.045, immediateRender: false }, s.start + 0.04);
           }
           if (next) {
+            const ax = seamAxis(next.id), d = ax === "y" ? SEAM_Y : SEAM_X;
             const cut = next.start;
-            tl.to(cam, { y: -SEAM_Y, filter: "blur(8px)", duration: 0.34, ease: "power4.in" }, cut - 0.34);
+            tl.to(cam, { [ax]: -d, filter: "blur(8px)", duration: 0.34, ease: "power4.in" }, cut - 0.34);
             tl.to(cam, { opacity: 0, duration: 0.28, ease: "power2.in" }, cut - 0.3);
           }
           tl.fromTo("#ch-" + s.id, { scaleX: 0 }, { scaleX: 1, duration: s.duration, ease: "none" }, s.start);
@@ -414,10 +426,13 @@
         hit("s1-kops", f1, C.bad);
         tl.fromTo("#s1-fail", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, f1);
         tl.fromTo("#s1-burden", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, at("s1-burden"));
-        tl.to(cursorEl, { left: 530, top: 480, duration: 0.7, ease: "power3.out" }, f1);
+        // transform-only motion (x/y from the #root origin); parked below the frame at 50% / 115%
+        const CUR_PARK = { x: {{W}} * 0.5, y: {{H}} * 1.15 };
+        gsap.set(cursorEl, CUR_PARK);
+        tl.fromTo(cursorEl, { ...CUR_PARK }, { x: 530, y: 480, duration: 0.7, ease: "power3.out", immediateRender: false }, f1);
         tl.to(cursorEl, { scale: 0.82, duration: 0.08, ease: "power2.in" }, f1 + 0.7);
         tl.to(cursorEl, { scale: 1.0, duration: 0.18, ease: "power2.out" }, f1 + 0.78);
-        tl.to(cursorEl, { top: "115%", duration: 0.5, ease: "power2.in" }, f1 + 1.2);
+        tl.to(cursorEl, { y: CUR_PARK.y, duration: 0.5, ease: "power2.in" }, f1 + 1.2);
 
         // ---- S2 · what EKS is ----
         const s2 = sc.s2.start;
@@ -480,15 +495,15 @@
         tl.to("#s6-caret", { opacity: 0, duration: 0.01 }, t1 + 0.35);
         tl.fromTo(["#s6-out1", "#s6-out2"], { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.1 }, t1 + 0.4);
         reveal("#s6-pending", at("s6-pending"));
-        state("s6-pending", at("s6-pending"), C.bad, "b");
+        state("s6-pending", at("s6-pending"), C.bad);
         hit("s6-pending", at("s6-pending"), C.bad);
         const t2 = at("s6-crash");
         tl.fromTo("#s6-out3", { opacity: 0 }, { opacity: 1, duration: 0.2 }, t2);
         reveal("#s6-crash", t2);
-        state("s6-crash", t2, C.bad, "b");
+        state("s6-crash", t2, C.bad);
         hit("s6-crash", t2, C.bad);
         reveal("#s6-eni", at("s6-eni"));
-        state("s6-eni", at("s6-eni"), C.warn, "b");
+        state("s6-eni", at("s6-eni"), C.warn);
         hit("s6-eni", at("s6-eni"), C.warn);
 
         // ---- S7 · recap ----

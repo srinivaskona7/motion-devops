@@ -29,19 +29,25 @@ motion-devops/
 ├── .skills/                              <- In-repo skill packages
 │   ├── devops-deep-researcher/           <- Production research & 6-stage lifecycle
 │   └── motion-devops-creator/            <- Build, test, render, and export workflows
+├── .github/workflows/ci.yml              <- CI: npm test (static gate, every video)
 ├── contents/                             <- All deep-dive research briefs (<slug>.md)
+├── docs/PIPELINE_FEATURES.md             <- Gates, invariants, what is deliberately not checked
 ├── memory/
 │   └── MEMORY.md                         <- Single source of truth for repository state
 ├── scripts/
-│   ├── build-video.mjs                   <- Compiles src/<slug> into videos/<slug>/index.html
+│   ├── lib/timing.mjs                    <- The one scene/reveal/caption timing source (build + synth)
+│   ├── build-video.mjs                   <- Compiles src/<slug> into videos/<slug>/index.html (--out <dir>)
 │   ├── export-prores.mjs                 <- Exports Apple ProRes 4444 with Alpha (.mov)
 │   ├── generate-thumbnails.mjs           <- Captures click-ready social cover thumbnails
 │   ├── render-video.mjs                  <- Headless video renderer via HyperFrames CLI
 │   ├── render-with-audio.mjs             <- Muxes cloned voice narration with video stream
 │   ├── setup-opencode-engine.mjs         <- Auto-configures OpenCode MCP & tools
 │   ├── synthesize-cloned-audio.mjs       <- Queries local VoiceStudio API (profile 51c11ae3)
-│   ├── verify-video.mjs                  <- Node layout verifier
-│   └── verify_reel.py                    <- Headless 200+ frame layout probe (0 overlaps)
+│   ├── headless_check.py                 <- Player plays, deep-links, inert under ?render, no console errors
+│   ├── test-verifiers.mjs                <- Proves verify-video.mjs fails on injected defects
+│   ├── verify-all.mjs                    <- One gate: fresh build + every check, every video
+│   ├── verify-video.mjs                  <- Static invariants of a built video
+│   └── verify_reel.py                    <- Headless layout probe (band, overlap, overflow, captions, seams)
 ├── src/
 │   ├── shared/
 │   │   ├── cursor.js                     <- Human-like oversized cursor driver
@@ -52,7 +58,7 @@ motion-devops/
 ├── videos/                               <- Compiled self-contained HTML video players
 ├── renders/                              <- Rendered MP4 videos, ProRes exports, thumbnails
 ├── AGENTS.md                             <- Agent instructions & execution commands
-├── CLAUDE.md                             <- Symlink to AGENTS.md
+├── CLAUDE.md, GEMINI.md                  <- Relative symlinks to AGENTS.md (edit AGENTS.md only)
 └── PREREQUISITES.md                      <- Full system dependencies & MCP guide
 ```
 
@@ -65,14 +71,14 @@ When given a concept (e.g. `k8s-api-gateway` or `devops-roadmap-ecommerce`):
 1. **Research Brief**: Author `contents/<slug>.md` covering the breaking point ("Why"), 3 Personas, traffic flows, and live CLI fixes.
 2. **Storyboard**: Author `src/<slug>/story.mjs` setting `wps: 1.75`, word reveal tokens `[[id|text]]`, and phonetics in `say`.
 3. **DOM Template**: Author `src/<slug>/template.html` using structural containers (`cluster · prod`), glowing SVG packet paths, and `src/shared/cursor.js`.
-4. **Voice Synthesis**:
+4. **Voice Synthesis** (then rebuild so the player picks up the track):
    ```bash
    node scripts/synthesize-cloned-audio.mjs <slug> 51c11ae3
    ```
-5. **Compilation & Headless Audit**:
+5. **Compilation & Verification Gate** (done = every line PASS):
    ```bash
    node scripts/build-video.mjs <slug>
-   python3 scripts/verify_reel.py <slug>
+   node scripts/verify-all.mjs --browser <slug>
    ```
 6. **Rendering**:
    ```bash

@@ -19,6 +19,7 @@
 //     including onto a different cluster (migration).
 
 export const meta = {
+  advisory: ["labels", "balance"], // predates these checks: WARN only, backlog in docs/PIPELINE_FEATURES.md
   slug: "k8s-disaster-recovery",
   title: "Kubernetes Disaster Recovery",
   subtitle: "etcd snapshots · PVC clones · Velero restore",

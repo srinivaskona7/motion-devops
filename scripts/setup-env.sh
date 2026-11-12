@@ -34,6 +34,14 @@ else
   echo "✅ HyperFrames CLI: $(hyperframes --version 2>/dev/null || echo 'installed')"
 fi
 
+# 3b. Python playwright + Chromium (needed by npm run verify: verify_reel.py, headless_check.py)
+if python3 -c "import playwright" >/dev/null 2>&1; then
+  echo "✅ Python playwright: installed"
+else
+  echo "📦 Installing Python playwright + Chromium..."
+  python3 -m pip install --user playwright && python3 -m playwright install chromium
+fi
+
 # 4. Install repo dependencies
 echo "📦 Installing project dependencies..."
 npm install
@@ -60,6 +68,8 @@ fi
 echo ""
 echo "🎉 ENVIRONMENT READY ON THIS MACHINE!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Verify every video (static + headless):"
+echo "  npm test && npm run verify"
 echo "To test an interactive video:"
 echo "  open videos/k8s-api-gateway/index.html?autoplay=1"
 echo ""
