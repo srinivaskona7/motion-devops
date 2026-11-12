@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <title>Kubernetes Disaster Recovery 🚨</title>
+  <!-- GSAP 3.12 Core & Plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
+
+    :root {
+      --bg: #070a12;
+      --card-bg: rgba(15, 20, 32, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --k8s-blue: #326ce5;
+      --k8s-glow: rgba(50, 108, 229, 0.5);
+      --alert-red: #ef4444;
+      --alert-glow: rgba(239, 68, 68, 0.6);
+      --restore-green: #10b981;
+      --restore-glow: rgba(16, 185, 129, 0.6);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: var(--font-sans);
+      color: var(--text-main);
+    }
+
+    #stage {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 25%, rgba(50, 108, 229, 0.16) 0%, transparent 60%),
+                  radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                  #070a12;
+    }
+
+    /* Ambient Space Grid */
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* Red Alert Alarm Flash Overlay */
+    #alarm-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.25) 0%, transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Top HUD / Brand Header */
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 180px;
+      padding: 60px 60px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(50, 108, 229, 0.5), rgba(15, 20, 32, 0.9));
+      border: 1px solid var(--k8s-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px var(--k8s-glow);
+    }
+
+    .brand-title h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title p {
+      font-size: 13px;
+      color: var(--k8s-blue);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--restore-green);
+      box-shadow: 0 0 12px var(--restore-green);
+      transition: all 0.3s ease;
+    }
+
+    /* Central 2.5D Architectural Stage */
+    #cluster-stage {
+      position: absolute;
+      top: 220px;
+      left: 60px;
+      right: 60px;
+      height: 1100px;
+      perspective: 1200px;
+      z-index: 20;
+    }
+
+    .cluster-box {
+      width: 100%;
+      height: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 2px solid rgba(50, 108, 229, 0.4);
+      border-radius: 36px;
+      padding: 40px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(50, 108, 229, 0.08);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .cluster-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 20px;
+    }
+
+    .cluster-tag {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--k8s-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Control Plane Module */
+    .control-plane {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 24px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .cp-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cp-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: rgba(50, 108, 229, 0.15);
+      border: 1px solid rgba(50, 108, 229, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(50, 108, 229, 0.3);
+      transition: all 0.3s;
+    }
+
+    .cp-node span {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Worker Workloads Grid */
+    .workloads-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .workloads-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pods-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .pod-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: all 0.4s ease;
+    }
+
+    .pod-card.highlight {
+      border-color: var(--k8s-blue);
+      box-shadow: 0 0 25px var(--k8s-glow);
+    }
+
+    .pod-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pod-info h4 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .pod-info p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Persistent Storage Layer */
+    .storage-layer {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .storage-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .storage-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Velero / Backup Vault Rack */
+    #backup-vault {
+      margin-top: 20px;
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px dashed rgba(16, 185, 129, 0.4);
+      border-radius: 24px;
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .vault-title h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--restore-green);
+      margin-bottom: 4px;
+    }
+
+    .vault-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Terminal HUD Execution Bar */
+    #terminal-hud {
+      position: absolute;
+      bottom: 260px;
+      left: 60px;
+      right: 60px;
+      height: 120px;
+      background: rgba(10, 14, 23, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 20px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      z-index: 30;
+      font-family: var(--font-mono);
+    }
+
+    .term-dots {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .term-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .term-cmd {
+      font-size: 19px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .term-cursor {
+      width: 10px;
+      height: 22px;
+      background: #38bdf8;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Kinetic Subtitle Rail (Social Reels/Shorts Focus) */
+    #caption-rail {
+      position: absolute;
+      bottom: 80px;
+      left: 60px;
+      right: 60px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 40;
+    }
+
+    .caption-pill {
+      background: rgba(15, 20, 32, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      padding: 24px 36px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      max-width: 960px;
+    }
+
+    .caption-text {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: #cbd5e1;
+    }
+
+    .caption-text span.pop {
+      color: #38bdf8;
+      font-weight: 900;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+      transform: scale(1.1);
+      display: inline-block;
+    }
+
+    .caption-text span.alert {
+      color: var(--alert-red);
+      font-weight: 900;
+      text-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+      transform: scale(1.1);
+      display: inline-block;
+    }
+
+    .caption-text span.restore {
+      color: var(--restore-green);
+      font-weight: 900;
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+      transform: scale(1.1);
+      display: inline-block;
+    }
+
+    /* Floating Recovery Data Beams */
+    .restore-beam {
+      position: absolute;
+      width: 4px;
+      background: linear-gradient(180deg, transparent, #10b981, transparent);
+      box-shadow: 0 0 15px #10b981;
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="stage" data-composition-id="main" data-start="0" data-duration="90" data-width="1080" data-height="1920">
+  <div class="grid"></div>
+  <div id="alarm-overlay"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-badge">
+      <div class="brand-logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+      </div>
+      <div class="brand-title">
+        <h1>Kubernetes DR</h1>
+        <p>Zero Data-Loss Architecture</p>
+      </div>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot" id="dot"></div>
+      <span id="status-text" style="color:var(--restore-green);">HEALTHY</span>
+    </div>
+  </header>
+
+  <!-- Architectural 2.5D Cluster -->
+  <div id="cluster-stage">
+    <div class="cluster-box" id="cluster">
+      <div class="cluster-header">
+        <div class="cluster-tag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/>
+            <line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+          </svg>
+          <span>Production Cluster (us-east-1)</span>
+        </div>
+        <span style="font-family:var(--font-mono); font-size:13px; color:var(--text-muted);">v1.31-HA</span>
+      </div>
+
+      <!-- Control Plane -->
+      <div class="control-plane" id="control-plane">
+        <div class="cp-node" id="cp-apiserver">
+          <div class="cp-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/>
+            </svg>
+          </div>
+          <span>API Server</span>
+        </div>
+        <div class="cp-node" id="cp-etcd">
+          <div class="cp-icon" style="border-color:#10b981; background:rgba(16,185,129,0.15);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <span>etcd State</span>
+        </div>
+        <div class="cp-node" id="cp-sched">
+          <div class="cp-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/>
+            </svg>
+          </div>
+          <span>Scheduler</span>
+        </div>
+      </div>
+
+      <!-- Workloads Section -->
+      <div class="workloads-section">
+        <div class="workloads-title">Active Workload Pods</div>
+        <div class="pods-grid">
+          <div class="pod-card highlight" id="pod-order">
+            <div class="pod-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+            </div>
+            <div class="pod-info">
+              <h4>Orders API</h4>
+              <p>Deployment · 3/3</p>
+            </div>
+          </div>
+          <div class="pod-card highlight" id="pod-db">
+            <div class="pod-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>
+              </svg>
+            </div>
+            <div class="pod-info">
+              <h4>Postgres DB</h4>
+              <p>StatefulSet · 1/1</p>
+            </div>
+          </div>
+          <div class="pod-card highlight" id="pod-payment">
+            <div class="pod-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <div class="pod-info">
+              <h4>Payment GW</h4>
+              <p>Deployment · 2/2</p>
+            </div>
+          </div>
+          <div class="pod-card highlight" id="pod-auth">
+            <div class="pod-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div class="pod-info">
+              <h4>Auth Service</h4>
+              <p>Deployment · 2/2</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Persistent Storage Layer -->
+      <div class="storage-layer" id="storage">
+        <div class="storage-item">
+          <div class="storage-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+              <path d="M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>
+            </svg>
+          </div>
+          <div>
+            <h4 style="font-size:18px; font-weight:700;">PersistentVolume (PVC)</h4>
+            <p style="font-size:13px; color:var(--text-muted); font-family:var(--font-mono);">CSI Snapshot · 500 GiB SSD</p>
+          </div>
+        </div>
+        <span style="font-family:var(--font-mono); font-size:13px; color:var(--restore-green); font-weight:700;">BOUND</span>
+      </div>
+
+      <!-- Velero Vault Backup Rack -->
+      <div id="backup-vault">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="width:52px; height:52px; border-radius:14px; background:rgba(16,185,129,0.2); border:1px solid var(--restore-green); display:flex; align-items:center; justify-content:center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <div class="vault-title">
+            <h3>Velero DR Target (AWS S3)</h3>
+            <p>RPO: 5 Mins · Immutable WORM Snapshot</p>
+          </div>
+        </div>
+        <span style="font-family:var(--font-mono); font-size:13px; color:var(--restore-green); font-weight:700;">SYNCHRONIZED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terminal Execution HUD -->
+  <div id="terminal-hud">
+    <div class="term-dots">
+      <div class="term-dot" style="background:#ef4444;"></div>
+      <div class="term-dot" style="background:#f59e0b;"></div>
+      <div class="term-dot" style="background:#10b981;"></div>
+    </div>
+    <div class="term-cmd">
+      <span style="color:#a855f7;">dr-admin@k8s:~$</span>
+      <span id="term-text">velero backup create k8s-hourly-dr --include-namespaces production</span>
+      <div class="term-cursor"></div>
+    </div>
+  </div>
+
+  <!-- Kinetic Subtitle Rail -->
+  <div id="caption-rail">
+    <div class="caption-pill">
+      <p class="caption-text" id="caption-box">
+        What happens when your entire Kubernetes cluster <span class="alert">CRASHES</span> without a disaster recovery plan?
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- HyperFrames GSAP Orchestrator -->
+<script>
+  // Master GSAP Timeline (90s Social Reel)
+  const tl = gsap.timeline({ paused: true });
+
+  // 1. Scene 1: Introduction & Happy State (0 - 20s)
+  tl.from("#cluster", { scale: 0.94, opacity: 0, duration: 1.2, ease: "power3.out" }, 0.5);
+  tl.from(".pod-card", { y: 20, opacity: 0, stagger: 0.2, duration: 0.8, ease: "back.out(1.4)" }, 1.5);
+  tl.to("#backup-vault", { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 5.0);
+
+  // 2. Scene 2: The Disaster Hits! (20s - 45s)
+  tl.add(() => {
+    document.getElementById("caption-box").innerHTML = "A catastrophic availability zone outage strikes. Pods are evicted, and <span class='alert'>STATE IS LOST</span>!";
+  }, 20);
+
+  // Red Alarm Flash
+  tl.to("#alarm-overlay", { opacity: 1, duration: 0.3, repeat: 5, yoyo: true }, 20.5);
+  tl.to("#cluster", { borderColor: "var(--alert-red)", boxShadow: "0 0 60px rgba(239, 68, 68, 0.5)" }, 21.0);
+  tl.to(".pod-card", { filter: "grayscale(1)", opacity: 0.25, scale: 0.95, stagger: 0.1, duration: 0.5 }, 21.5);
+  tl.to("#cp-etcd .cp-icon", { borderColor: "var(--alert-red)", background: "rgba(239, 68, 68, 0.2)" }, 22.0);
+  tl.add(() => {
+    document.getElementById("dot").style.background = "var(--alert-red)";
+    document.getElementById("dot").style.boxShadow = "0 0 12px var(--alert-red)";
+    document.getElementById("status-text").textContent = "CLUSTER FAILURE";
+    document.getElementById("status-text").style.color = "var(--alert-red)";
+  }, 21.5);
+
+  // 3. Scene 3: The Velero Restore Trigger (45s - 70s)
+  tl.add(() => {
+    document.getElementById("caption-box").innerHTML = "Triggering <span class='restore'>AUTOMATED RECOVERY</span> via Velero and etcd point-in-time snapshot!";
+    document.getElementById("term-text").textContent = "velero restore create --from-backup k8s-hourly-dr --wait";
+  }, 45);
+
+  tl.to("#backup-vault", { borderColor: "var(--restore-green)", boxShadow: "0 0 40px rgba(16, 185, 129, 0.4)", duration: 0.8 }, 46);
+
+  // Terminal Command Execution Glow
+  tl.to("#terminal-hud", { borderColor: "var(--restore-green)", boxShadow: "0 0 30px rgba(16, 185, 129, 0.3)", duration: 0.5 }, 48);
+
+  // 4. Scene 4: Reconstruction & Pod Rescheduling (70s - 90s)
+  tl.add(() => {
+    document.getElementById("caption-box").innerHTML = "Namespaces restored, volumes re-bound, and workloads <span class='restore'>HEALTHY</span> with zero data loss!";
+  }, 70);
+
+  tl.to("#cluster", { borderColor: "rgba(50, 108, 229, 0.4)", boxShadow: "0 0 50px rgba(0, 0, 0, 0.6)", duration: 1.0 }, 71);
+  tl.to("#cp-etcd .cp-icon", { borderColor: "#10b981", background: "rgba(16, 185, 129, 0.15)", duration: 0.5 }, 72);
+  tl.to(".pod-card", { filter: "grayscale(0)", opacity: 1, scale: 1, stagger: 0.15, duration: 0.8, ease: "back.out(1.5)" }, 73);
+  tl.add(() => {
+    document.getElementById("dot").style.background = "var(--restore-green)";
+    document.getElementById("dot").style.boxShadow = "0 0 12px var(--restore-green)";
+    document.getElementById("status-text").textContent = "RESTORED · HEALTHY";
+    document.getElementById("status-text").style.color = "var(--restore-green)";
+    document.getElementById("term-text").textContent = "Restore completed successfully: 4/4 pods online in 18.4s";
+  }, 76);
+
+  // Master Timeline Hook for HyperFrames Renderer
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+  tl.seek(0);
+</script>
+
+</body>
+</html>

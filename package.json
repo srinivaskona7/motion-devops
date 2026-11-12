@@ -1,0 +1,14 @@
+{
+  "name": "motion-devops",
+  "private": true,
+  "type": "module",
+  "description": "Frame-seekable HyperFrames motion explainers for DevOps topics",
+  "scripts": {
+    "build": "node scripts/build-video.mjs k8s-pod-scheduling",
+    "check": "npm run build && cd videos/k8s-pod-scheduling && npx --yes hyperframes@0.9.37 check && cd ../k8s-pod-scheduling-reel && npx --yes hyperframes@0.9.37 check",
+    "test": "node scripts/verify-video.mjs k8s-pod-scheduling"
+  },
+  "devDependencies": {
+    "gsap": "3.15.0"
+  }
+}
