@@ -16,6 +16,31 @@ This repository is optimized for autonomous coding agents (**OpenCode**, **Claud
 
 ---
 
+---
+
+## 🧩 Configured Skills & Roles
+
+Every autonomous agent session in this repository has immediate access to these in-repo skills:
+
+1. **`devops-deep-researcher`** ([`.skills/devops-deep-researcher/SKILL.md`](.skills/devops-deep-researcher/SKILL.md)):
+   - Deep production scenario research (e.g. 50k req/sec E-commerce platform on AWS EKS).
+   - In-depth coverage across all 6 DevOps lifecycle stages (Code, CI, Supply Chain, GitOps, IaC/EKS, Day-2 Observability).
+   - Real-world outage breaking points, live `kubectl` terminal fixes, and architectural terminology dictionaries.
+
+2. **`motion-devops-creator`** ([`.skills/motion-devops-creator/SKILL.md`](.skills/motion-devops-creator/SKILL.md)):
+   - Complete video lifecycle: Storyboarding (`story.mjs`), HTML/GSAP compilation, headless Playwright layout testing, thumbnail generation, and MP4/ProRes rendering.
+
+3. **`oversized-cursor`** (`src/shared/cursor.js`):
+   - Human-like macOS pointer glides in from off-screen (`top: 115%`), walks to interactive elements, asymmetric click-taps (`scale: 0.82`), and ignites transitions.
+
+4. **`captions-overlay`**:
+   - Word-by-word subtitle highlight overlay on the lower third without vertical displacement of the main diagram.
+
+5. **`motion-doctrine` & `cut-the-curve`**:
+   - Vector continuity: matched exit/entry velocity across scene seams using mirrored `power4` easing. Zero idle wobble.
+
+---
+
 ## ⚡ Execution Commands
 
 | Action | Command |
