@@ -37,7 +37,7 @@ export const scenes = [
     id: "s1",
     chapter: "Outage",
     narration:
-      "2 a.m. Traffic flows through the [[s1-ing|ingress]] to your [[s1-pods|pods]]. " +
+      "2 AM. Traffic flows through the [[s1-ing|ingress]] to your [[s1-pods|pods]]. " +
       "Every object lives in [[s1-etcd|etcd]]. " +
       "Then [[s1-fail|the etcd disk fails]], and a bad migration [[s1-pvc|corrupts the payments volume]]. " +
       "[[s1-three|Three layers]] bring it back.",
@@ -79,7 +79,7 @@ export const scenes = [
       "So: [[s5-a|etcd snapshots]] for cluster state. " +
       "[[s5-b|PVC clones]] for data. " +
       "[[s5-c|Velero]] for whole namespaces, even on a new cluster. " +
-      "[[s5-t]]And rehearse the restore, before 2 a.m. does it for you.",
+      "[[s5-t]]And rehearse the restore, before 2 AM does it for you.",
   },
 ];
 
@@ -94,5 +94,5 @@ export const say = [
   [/\bdataSource\b/g, "data source"],
   [/\bVolumeSnapshot\b/g, "Volume Snapshot"],
   [/\bpayments-data\b/g, "payments data"],
-  [/\b2 a\.m\./g, "Two A M."],
+  [/\b2 AM\b/g, "Two A M"],
 ];

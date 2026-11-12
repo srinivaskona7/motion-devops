@@ -1,0 +1,665 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-variables='[{"id":"accent","type":"color","label":"Brand accent","default":"{{ACCENT}}"}]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width={{W}}, height={{H}}" />
+    <title>{{TITLE}} · {{FORMAT_LABEL}}</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      :root {
+        --accent: {{ACCENT}};
+        --bg: #070a12;
+        --ink: #e9eef8;
+        --mute: #93a0b8;
+        --dim: #566079;
+        --ok: #22c55e;
+        --bad: #f43f5e;
+        --warn: #f59e0b;
+        --l1: var(--accent); /* layer 1: etcd */
+        --l2: #a78bfa; /* layer 2: volumes */
+        --l3: #22d3ee; /* layer 3: velero */
+        --glass: rgba(14, 19, 31, 0.82);
+        --line: rgba(255, 255, 255, 0.09);
+        --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--bg); }
+      #root {
+        position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden;
+        background: var(--bg); color: var(--ink); font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---------- backdrop: 2.5D floor below the platform UI band (decoration only) ---------- */
+      .bg-glow {
+        position: absolute; width: 1400px; height: 1400px; left: 50%; top: 40%;
+        margin: -700px 0 0 -700px; border-radius: 50%;
+        background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+          color-mix(in srgb, var(--accent) 6%, transparent) 40%, transparent 66%);
+      }
+      .floor-wrap { position: absolute; left: -540px; right: -540px; top: 1100px; height: 1100px; perspective: 900px; perspective-origin: 50% 0%; }
+      .floor {
+        position: absolute; inset: 0; transform: rotateX(64deg); transform-origin: 50% 0%;
+        background-image:
+          linear-gradient(color-mix(in srgb, var(--accent) 34%, transparent) 2px, transparent 2px),
+          linear-gradient(90deg, color-mix(in srgb, var(--accent) 34%, transparent) 2px, transparent 2px);
+        background-size: 120px 120px;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 60%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 60%, transparent 100%);
+        opacity: 0.55;
+      }
+      .bg-dots {
+        position: absolute; left: 0; right: 0; top: 0; height: 1180px;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1.4px, transparent 1.6px);
+        background-size: 40px 40px;
+        -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+        mask-image: linear-gradient(to bottom, #000 60%, transparent);
+      }
+      .bg-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 38%, transparent 50%, rgba(3, 5, 10, 0.88) 100%); }
+
+      /* ---------- chrome (inside the 168–1330 platform band) ---------- */
+      .topbar { position: absolute; left: 120px; right: 120px; top: 186px; height: 40px; display: flex; justify-content: space-between; align-items: center; z-index: 30; }
+      .brand { display: flex; align-items: center; gap: 12px; font: 700 20px/1 var(--mono); letter-spacing: 0.14em; }
+      .brand i { width: 11px; height: 11px; border-radius: 50%; background: var(--bad); box-shadow: 0 0 12px var(--bad); }
+      .chapters { display: flex; gap: 8px; }
+      .chap { width: 92px; font: 700 13px/1 var(--mono); letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; }
+      .chap b { display: block; height: 4px; border-radius: 2px; margin-top: 8px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+      .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; }
+
+      /* ---------- scenes ---------- */
+      .scene { position: absolute; inset: 0; z-index: 10; }
+      .cam { position: absolute; inset: 0; }
+      .head { position: absolute; left: 120px; top: 256px; width: 840px; }
+      .kicker { font: 700 22px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--kc, var(--accent)); }
+      .head h2 { margin-top: 14px; font-size: 58px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.04; }
+      .head h2 .hw { display: inline-block; }
+      .stage { position: absolute; left: 120px; top: 436px; width: 840px; height: 710px; }
+      .abs { position: absolute; }
+
+      svg.wires { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
+      .wire { fill: none; stroke: color-mix(in srgb, var(--accent) 60%, transparent); stroke-width: 3; stroke-linecap: round; }
+      .wire.ok { stroke: color-mix(in srgb, var(--ok) 70%, transparent); }
+      .wire.dash { stroke-dasharray: 8 10; }
+      .bead { fill: #d4e3ff; filter: drop-shadow(0 0 6px var(--accent)); }
+      .bead.ok { fill: #bbf7d0; filter: drop-shadow(0 0 7px var(--ok)); }
+      .bead.bad { fill: #fecdd3; filter: drop-shadow(0 0 7px var(--bad)); }
+      .wire-label { font: 700 19px var(--mono); fill: var(--mute); letter-spacing: 0.04em; paint-order: stroke; stroke: var(--bg); stroke-width: 6px; }
+
+      .bound { position: absolute; z-index: 0; }
+      .bound svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+      .bound rect { fill: rgba(50, 108, 229, 0.035); stroke: rgba(160, 180, 220, 0.34); stroke-width: 2; stroke-dasharray: 10 8; }
+      .bound .bl { position: absolute; left: 18px; top: -13px; padding: 0 10px; background: var(--bg); font: 700 18px/26px var(--mono); letter-spacing: 0.08em; color: var(--mute); text-transform: uppercase; }
+
+      .card {
+        position: absolute; z-index: 2; padding: 14px 18px 14px 26px; border-radius: 14px;
+        background: var(--glass); border: 2px solid var(--bd, var(--line));
+        box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.035), 0 28px 50px -24px rgba(0, 0, 0, 0.9);
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      .card::before {
+        content: ""; position: absolute; left: -2px; top: 14px; bottom: 14px; width: 5px;
+        border-radius: 0 4px 4px 0; background: var(--ind, var(--accent)); box-shadow: 0 0 14px var(--ind, var(--accent));
+      }
+      .card h3 { font: 700 28px/1.1 var(--sans); letter-spacing: -0.015em; white-space: nowrap; }
+      .card h3.m { font-family: var(--mono); font-size: 25px; letter-spacing: -0.02em; }
+      .card .sw { position: relative; margin-top: 7px; height: 26px; font: 400 21px/26px var(--mono); color: var(--mute); white-space: nowrap; }
+      .card .sw > span { position: absolute; left: 0; top: 0; }
+      .card .sw .b, .card .sw .c { opacity: 0; }
+      .t-ok { color: var(--ok); } .t-bad { color: var(--bad); } .t-warn { color: var(--warn); } .t-acc { color: #9db9ff; }
+      .card.chip { padding: 0 20px; border-radius: 30px; flex-direction: row; align-items: center; gap: 12px; font: 700 22px/1 var(--mono); }
+      .card.chip::before { display: none; }
+      .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 10px var(--ok); flex: none; }
+      .ghost { position: absolute; z-index: 1; border-radius: 14px; border: 2px dashed rgba(244, 63, 94, 0.45); background: rgba(244, 63, 94, 0.04); }
+
+      .term { position: absolute; z-index: 3; padding: 16px 28px 18px; border-radius: 16px; background: rgba(6, 9, 16, 0.92); border: 2px solid var(--line);
+        box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.035), 0 30px 60px -26px #000; font: 400 24px/39px var(--mono); }
+      .term .bar { display: flex; align-items: center; gap: 9px; height: 30px; margin-bottom: 6px; }
+      .term .bar i { width: 13px; height: 13px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); }
+      .term .bar span { margin-left: 12px; font: 400 17px var(--mono); color: var(--dim); }
+      .term .ln { white-space: pre; height: 39px; }
+      .term .pr { color: var(--ok); }
+      .term .out { color: var(--mute); }
+      .caret { display: inline-block; width: 13px; height: 28px; margin-left: 3px; vertical-align: -5px; background: var(--ink); }
+
+      .banner { position: absolute; z-index: 4; display: flex; align-items: center; gap: 16px; padding: 0 24px; border-radius: 14px;
+        background: color-mix(in srgb, var(--bad) 18%, #0b0d14); border: 2px solid var(--bad); box-shadow: 0 0 40px -6px var(--bad);
+        font: 700 24px/1 var(--mono); color: #ffe4e8; letter-spacing: 0.02em; }
+      .banner b { padding: 6px 10px; border-radius: 8px; background: var(--bad); color: #fff; font-size: 20px; letter-spacing: 0.1em; }
+      .alert { position: absolute; inset: 0; z-index: 25; pointer-events: none; box-shadow: inset 0 0 200px 30px rgba(244, 63, 94, 0.55); border: 6px solid rgba(244, 63, 94, 0.7); opacity: 0; }
+
+      .layers { position: absolute; z-index: 5; padding: 26px 30px; border-radius: 18px; background: rgba(9, 12, 20, 0.94); border: 2px solid var(--line); box-shadow: 0 40px 80px -30px #000; }
+      .layers .lt { font: 700 20px/1 var(--mono); letter-spacing: 0.14em; color: var(--mute); text-transform: uppercase; margin-bottom: 18px; }
+      .lrow { display: flex; align-items: center; gap: 18px; height: 70px; border-top: 1px solid var(--line); }
+      .lrow .n { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; font: 700 24px var(--mono); color: #05070c; background: var(--lc); }
+      .lrow h4 { font: 700 30px/1 var(--sans); letter-spacing: -0.015em; }
+      .lrow span { margin-left: auto; font: 400 21px var(--mono); color: var(--mute); }
+
+      .yaml { position: absolute; z-index: 3; padding: 18px 26px; border-radius: 16px; background: rgba(6, 9, 16, 0.92); border: 2px solid var(--line);
+        box-shadow: 0 10px 0 -3px rgba(255, 255, 255, 0.035), 0 30px 60px -26px #000; font: 400 22px/30px var(--mono); }
+      .yaml .ln { position: relative; white-space: pre; height: 30px; color: #c8d3e6; }
+      .yaml .k { color: #7fa3ff; }
+      .yaml .hl { position: absolute; left: -12px; right: -12px; top: 0; height: 30px; border-radius: 6px; background: color-mix(in srgb, var(--l2) 26%, transparent); opacity: 0; }
+      .yaml .v2 { opacity: 0; }
+      .yaml .alt { position: absolute; left: 0; top: 0; }
+      .yaml .file { position: absolute; right: 22px; top: 16px; font: 700 17px var(--mono); color: var(--dim); letter-spacing: 0.06em; }
+
+      .slabs { position: absolute; left: 0; top: 0; width: 340px; height: 560px; overflow: visible; }
+      .slab .top { stroke-width: 2; }
+      .lcard { position: absolute; left: 384px; width: 456px; height: 116px; }
+      .final { position: absolute; left: 0; top: 580px; width: 840px; text-align: center; }
+      .final h3 { font-size: 54px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+      .final h3 .hw { display: inline-block; }
+      .final h3 em { font-style: normal; color: var(--ok); }
+
+      /* ---------- caption HUD: bottom of the 168–1330 band, above the platform caption area ---------- */
+      .hud { position: absolute; z-index: 40; left: 120px; width: 840px; top: 1170px; height: 150px; display: flex; align-items: stretch;
+        background: rgba(10, 14, 24, 0.86); border: 2px solid var(--line); border-radius: 18px; box-shadow: 0 30px 60px -30px #000; }
+      .hud .cc { flex: none; width: 70px; display: grid; place-items: center; border-right: 1px solid var(--line); }
+      .hud .cc span { font: 700 15px var(--mono); letter-spacing: 0.14em; color: var(--accent); padding: 6px 7px; border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 7px; }
+      #captions { position: relative; flex: 1; }
+      .cue { position: absolute; inset: 0; display: flex; align-items: center; align-content: center; flex-wrap: wrap; column-gap: 0.27em; padding: 0 26px; font-size: 34px; line-height: 1.24; letter-spacing: -0.008em; }
+      .cue .w { color: rgba(233, 238, 248, 0.4); }
+      .cue .kw { font-weight: 700; }
+
+      /* standalone player chrome lives outside #root and never renders */
+      body.standalone { width: 100vw; height: 100vh; display: grid; place-items: center; background: #04060b; }
+      body.standalone #root { flex: none; transform-origin: 50% 50%; box-shadow: 0 30px 120px rgba(0, 0, 0, 0.6); }
+      .player { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 99; display: flex; gap: 10px; align-items: center;
+        padding: 8px 12px; border-radius: 12px; background: rgba(15, 20, 32, 0.92); border: 1px solid var(--line); backdrop-filter: blur(14px);
+        font: 400 13px var(--mono); color: var(--ink); width: min(620px, 94vw); }
+      .player button { font: inherit; color: var(--ink); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+      .player button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent); }
+      .player input[type="range"] { flex: 1; accent-color: var(--accent); }
+      .gate { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: rgba(4, 6, 11, 0.55); }
+      .gate div { display: flex; gap: 12px; }
+      .gate button { font: 700 17px var(--sans); padding: 16px 26px; border-radius: 12px; cursor: pointer; color: #fff; border: 1px solid var(--line); background: rgba(15, 20, 32, 0.92); }
+      .gate button.primary { background: var(--accent); border-color: transparent; }
+    </style>
+  </head>
+  <body>
+    <div id="root" class="{{FMT}}" data-composition-id="main" data-start="0" data-duration="{{TOTAL}}" data-width="{{W}}" data-height="{{H}}">
+      <div class="bg-glow" id="glow"></div>
+      <div class="bg-dots"></div>
+      <div class="floor-wrap"><div class="floor"></div></div>
+      <div class="bg-vignette"></div>
+
+      <div class="topbar">
+        <div class="brand"><i id="brand-dot"></i>K8S · DR</div>
+        <div class="chapters">
+          <div class="chap">Outage<b><u id="ch-s1"></u></b></div>
+          <div class="chap">etcd<b><u id="ch-s2"></u></b></div>
+          <div class="chap">Volumes<b><u id="ch-s3"></u></b></div>
+          <div class="chap">Velero<b><u id="ch-s4"></u></b></div>
+          <div class="chap">Recap<b><u id="ch-s5"></u></b></div>
+        </div>
+      </div>
+
+      <!-- ===================== S1 · OUTAGE ===================== -->
+      <section id="s1" class="scene clip" data-start="{{S1_START}}" data-duration="{{S1_DUR}}" data-track-index="1" data-track-kind="graphics">
+        <div class="cam" id="s1-cam">
+          <div class="head">
+            <div class="kicker hx" id="s1-kick" style="--kc: var(--bad)">01 · Outage</div>
+            <h2><span class="hw">2</span> <span class="hw">AM.</span> <span class="hw">etcd</span> <span class="hw">is</span> <span class="hw">gone.</span></h2>
+          </div>
+          <div class="stage" id="s1-stage">
+            <div id="s1-dia" class="abs" style="inset: 0">
+              <div class="bound" id="s1-bound" style="left: 0; top: 84px; width: 840px; height: 612px">
+                <svg aria-hidden="true"><rect x="1" y="1" width="838" height="610" rx="22" /></svg>
+                <div class="bl">cluster · prod</div>
+              </div>
+              <div class="card chip" id="s1-users" style="left: 290px; top: 0; width: 260px; height: 56px"><i class="dot" style="background: var(--accent); box-shadow: 0 0 10px var(--accent)"></i>users · 1.2k rps</div>
+              <div class="banner" id="s1-banner" style="left: 0; top: 0; width: 840px; height: 60px"><b>SEV-1</b><span id="s1-bt1">etcd unreachable</span><span id="s1-bt2" style="color: #fda4af">+ payments-data corrupt</span></div>
+              <div class="card" id="s1-ing" style="left: 270px; top: 118px; width: 300px; height: 92px"><h3>ingress</h3><div class="sw"><span class="a">nginx · :443</span></div></div>
+              <div class="card s1-pod" id="s1-web" style="left: 30px; top: 262px; width: 240px; height: 100px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+              <div class="card s1-pod" id="s1-apisvc" style="left: 300px; top: 262px; width: 240px; height: 100px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+              <div class="card s1-pod" id="s1-pay" style="left: 570px; top: 262px; width: 240px; height: 100px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">CrashLoop</span></div></div>
+              <div class="card" id="s1-pvc" style="--ind: var(--l2); left: 570px; top: 414px; width: 240px; height: 100px"><h3 class="m">payments-data</h3><div class="sw"><span class="a">PVC · 50Gi</span><span class="b t-bad">corrupted</span></div></div>
+              <div class="card" id="s1-api" style="left: 30px; top: 566px; width: 240px; height: 100px"><h3 class="m">apiserver</h3><div class="sw"><span class="a t-ok">healthy</span><span class="b t-warn">no etcd</span></div></div>
+              <div class="card" id="s1-etcd" style="--ind: var(--l1); left: 300px; top: 566px; width: 240px; height: 100px"><h3 class="m">etcd</h3><div class="sw"><span class="a t-ok">leader ok</span><span class="b t-bad">disk failed</span></div></div>
+              <svg class="wires" aria-hidden="true">
+                <path class="wire" data-from="s1-users" data-to="s1-ing" data-on="s1-ing" />
+                <path class="wire" data-from="s1-ing" data-to="s1-web" data-on="s1-pods" data-axis="y" />
+                <path class="wire" data-from="s1-web" data-to="s1-apisvc" data-on="s1-pods" data-axis="x" />
+                <path class="wire" data-from="s1-apisvc" data-to="s1-pay" data-on="s1-pods" data-axis="x" data-fail="s1-pvc" />
+                <path class="wire" data-from="s1-pay" data-to="s1-pvc" data-on="s1-pods" data-axis="y" data-fail="s1-pvc" />
+                <path class="wire" data-from="s1-api" data-to="s1-etcd" data-on="s1-etcd" data-axis="x" data-fail="s1-fail" />
+              </svg>
+            </div>
+            <div class="layers" id="s1-layers" style="left: 60px; top: 170px; width: 720px">
+              <div class="lt">Three layers of recovery</div>
+              <div class="lrow s1-lr" style="--lc: var(--l1)"><i class="n">1</i><h4>etcd snapshot</h4><span>cluster state</span></div>
+              <div class="lrow s1-lr" style="--lc: var(--l2)"><i class="n">2</i><h4>PVC clone · snapshot</h4><span>volume data</span></div>
+              <div class="lrow s1-lr" style="--lc: var(--l3)"><i class="n">3</i><h4>Velero restore</h4><span>whole app</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="alert" id="s1-alert"></div>
+      </section>
+
+      <!-- ===================== S2 · ETCD SNAPSHOT ===================== -->
+      <section id="s2" class="scene clip" data-start="{{S2_START}}" data-duration="{{S2_DUR}}" data-track-index="2" data-track-kind="graphics">
+        <div class="cam" id="s2-cam">
+          <div class="head">
+            <div class="kicker hx" style="--kc: var(--l1)">02 · Layer 1 — cluster state</div>
+            <h2><span class="hw">Snapshot</span> <span class="hw">etcd.</span> <span class="hw">Keep</span> <span class="hw">it</span> <span class="hw">off-cluster.</span></h2>
+          </div>
+          <div class="stage" id="s2-stage">
+            <div class="term" id="s2-term" style="left: 0; top: 0; width: 840px; height: 238px">
+              <div class="bar"><i></i><i></i><i></i><span>control-plane-0 · bash</span></div>
+              <div class="ln"><span class="pr">$ </span><span id="s2-c1" data-text="etcdctl snapshot save etcd-0212.db"></span><i class="caret" id="s2-caret1"></i></div>
+              <div class="ln out" id="s2-o1">Snapshot saved at etcd-0212.db</div>
+              <div class="ln"><span class="pr" id="s2-p2">$ </span><span id="s2-c2" data-text="etcdutl snapshot restore etcd-0212.db \"></span><i class="caret" id="s2-caret2"></i></div>
+              <div class="ln"><span id="s2-c3" data-text="    --data-dir /var/lib/etcd-new"></span></div>
+            </div>
+            <div class="bound" id="s2-bound" style="left: 0; top: 284px; width: 500px; height: 420px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="498" height="418" rx="22" /></svg>
+              <div class="bl">cluster</div>
+            </div>
+            <div class="card" id="s2-etcd" style="--ind: var(--l1); left: 30px; top: 318px; width: 440px; height: 100px"><h3 class="m">etcd</h3><div class="sw"><span class="a">keyspace · rev 48213</span></div></div>
+            <div class="card" id="s2-file" style="--ind: var(--l1); left: 30px; top: 456px; width: 440px; height: 100px"><h3 class="m">etcd-0212.db</h3><div class="sw"><span class="a">1 file · every object</span></div></div>
+            <div class="card" id="s2-api" style="--ind: var(--ok); left: 30px; top: 594px; width: 440px; height: 100px"><h3 class="m">kube-apiserver</h3><div class="sw"><span class="a t-ok">all objects back</span></div></div>
+            <div class="abs kicker" id="s2-offl" style="left: 560px; top: 398px; font-size: 18px; --kc: var(--mute)">off-cluster</div>
+            <div class="card" id="s2-bucket" style="--ind: var(--l1); left: 560px; top: 432px; width: 280px; height: 124px"><h3>object storage</h3><div class="sw"><span class="a">s3://dr-backups</span></div></div>
+            <div class="card" id="s2-gap" style="--ind: var(--warn); --bd: color-mix(in srgb, var(--warn) 55%, transparent); left: 560px; top: 594px; width: 280px; height: 100px; border-style: dashed"><h3>PV data</h3><div class="sw"><span class="a t-warn">not in snapshot</span></div></div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire" data-from="s2-etcd" data-to="s2-file" data-on="s2-file" data-axis="y" />
+              <path class="wire" data-from="s2-file" data-to="s2-bucket" data-on="s2-off" data-axis="x" />
+              <path class="wire ok" data-from="s2-bucket" data-to="s2-api" data-on="s2-restore" data-axis="x" data-label="restore" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S3 · PVC CLONE / VOLUMESNAPSHOT ===================== -->
+      <section id="s3" class="scene clip" data-start="{{S3_START}}" data-duration="{{S3_DUR}}" data-track-index="3" data-track-kind="graphics">
+        <div class="cam" id="s3-cam">
+          <div class="head">
+            <div class="kicker hx" style="--kc: var(--l2)">03 · Layer 2 — volume data</div>
+            <h2><span class="hw">Clone</span> <span class="hw">a</span> <span class="hw">claim.</span> <span class="hw">Or</span> <span class="hw">restore</span> <span class="hw">a</span> <span class="hw">snapshot.</span></h2>
+          </div>
+          <div class="stage" id="s3-stage">
+            <div class="yaml" id="s3-yaml" style="left: 0; top: 0; width: 840px; height: 314px">
+              <div class="file">pvc-restore.yaml</div>
+              <div class="ln"><span class="k">kind:</span> PersistentVolumeClaim</div>
+              <div class="ln"><span class="k">metadata:</span></div>
+              <div class="ln">  <span class="k">name:</span> payments-restore</div>
+              <div class="ln"><span class="k">spec:</span></div>
+              <div class="ln">  <span class="k">storageClassName:</span> csi-ssd</div>
+              <div class="ln"><i class="hl" id="s3-hl1"></i>  <span class="k">dataSource:</span></div>
+              <div class="ln"><i class="hl" id="s3-hl2"></i>    <span class="k">kind:</span> <span class="alt v1" style="left: 128px">PersistentVolumeClaim</span><span class="alt v2" style="left: 128px">VolumeSnapshot</span></div>
+              <div class="ln"><i class="hl" id="s3-hl3"></i>    <span class="k">name:</span> <span class="alt v1" style="left: 128px">payments-data</span><span class="alt v2" style="left: 128px">payments-nightly</span></div>
+              <div class="ln"><i class="hl" id="s3-hl4"></i><span class="v2">    <span class="k">apiGroup:</span> snapshot.storage.k8s.io</span></div>
+            </div>
+            <div class="card" id="s3-src" style="--ind: var(--bad); left: 0; top: 352px; width: 360px; height: 106px"><h3 class="m">payments-data</h3><div class="sw"><span class="a t-bad">source · corrupted</span></div></div>
+            <div class="card" id="s3-snap" style="--ind: var(--l2); left: 0; top: 498px; width: 360px; height: 106px"><h3 class="m">payments-nightly</h3><div class="sw"><span class="a">VolumeSnapshot · 02:00</span></div></div>
+            <div class="card" id="s3-dst" style="--ind: var(--l2); left: 480px; top: 425px; width: 360px; height: 106px"><h3 class="m">payments-restore</h3><div class="sw"><span class="a t-acc">cloning…</span><span class="b t-bad">corruption copied</span><span class="c t-ok">restored · clean</span></div></div>
+            <div class="card" id="s3-pod" style="--ind: var(--ok); left: 480px; top: 594px; width: 360px; height: 100px"><h3>pod / payments</h3><div class="sw"><span class="a t-ok">Running · mounted</span></div></div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire" id="s3-w-clone" data-from="s3-src" data-to="s3-dst" data-on="s3-src" data-axis="x" data-fail="s3-bad" data-label="clone" />
+              <path class="wire ok" data-from="s3-snap" data-to="s3-dst" data-on="s3-snap" data-axis="x" data-label="restore" />
+              <path class="wire ok" data-from="s3-dst" data-to="s3-pod" data-on="s3-bind" data-axis="y" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S4 · VELERO RESTORE ===================== -->
+      <section id="s4" class="scene clip" data-start="{{S4_START}}" data-duration="{{S4_DUR}}" data-track-index="4" data-track-kind="graphics">
+        <div class="cam" id="s4-cam">
+          <div class="head">
+            <div class="kicker hx" style="--kc: var(--l3)">04 · Layer 3 — the whole app</div>
+            <h2><span class="hw">One</span> <span class="hw">command</span> <span class="hw">restores</span> <span class="hw">the</span> <span class="hw">namespace.</span></h2>
+          </div>
+          <div class="stage" id="s4-stage">
+            <div class="term" id="s4-term" style="left: 0; top: 0; width: 840px; height: 238px">
+              <div class="bar"><i></i><i></i><i></i><span>ops-laptop · zsh</span></div>
+              <div class="ln"><span class="pr">$ </span><span id="s4-c1" data-text="velero restore create --from-backup k8s-daily"></span><i class="caret" id="s4-caret"></i></div>
+              <div class="ln out s4-out">Restore request "k8s-daily-20261112021503"</div>
+              <div class="ln out s4-out">submitted successfully.</div>
+              <div class="ln" id="s4-phase" style="color: var(--ok)">Phase: Completed · 41/41 items</div>
+            </div>
+            <div class="card" id="s4-bk" style="--ind: var(--l3); left: 220px; top: 268px; width: 400px; height: 90px"><h3 class="m">backup/k8s-daily</h3><div class="sw"><span class="a">object storage · 41 items</span></div></div>
+            <div class="bound" id="s4-bound" style="left: 0; top: 392px; width: 840px; height: 314px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="838" height="312" rx="22" /></svg>
+              <div class="bl">namespace · shop</div>
+            </div>
+            <div class="ghost s4-gh" style="left: 270px; top: 420px; width: 300px; height: 80px"></div>
+            <div class="ghost s4-gh" style="left: 30px; top: 520px; width: 240px; height: 80px"></div>
+            <div class="ghost s4-gh" style="left: 300px; top: 520px; width: 240px; height: 80px"></div>
+            <div class="ghost s4-gh" style="left: 570px; top: 520px; width: 240px; height: 80px"></div>
+            <div class="ghost s4-gh" style="left: 570px; top: 616px; width: 240px; height: 80px"></div>
+            <div class="card s4-obj" id="s4-ing" style="--ind: var(--ok); left: 270px; top: 420px; width: 300px; height: 80px; padding-top: 8px; padding-bottom: 8px"><h3>ingress</h3></div>
+            <div class="card s4-obj" id="s4-web" style="--ind: var(--ok); left: 30px; top: 520px; width: 240px; height: 80px"><h3>web</h3></div>
+            <div class="card s4-obj" id="s4-api" style="--ind: var(--ok); left: 300px; top: 520px; width: 240px; height: 80px"><h3>api</h3></div>
+            <div class="card s4-obj" id="s4-pay" style="--ind: var(--ok); left: 570px; top: 520px; width: 240px; height: 80px"><h3>payments</h3></div>
+            <div class="card" id="s4-pvc" style="--ind: var(--l2); left: 570px; top: 616px; width: 240px; height: 80px"><h3 class="m">payments-data</h3></div>
+            <div class="card chip" id="s4-ready" style="left: 30px; top: 628px; width: 400px; height: 56px; --bd: color-mix(in srgb, var(--ok) 50%, transparent)"><i class="dot"></i>shop · all Ready</div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire dash" id="s4-w-restore" data-from="s4-bk" data-to="s4-ing" data-on="s4-res" data-axis="y" data-label="restore" />
+              <path class="wire ok" data-from="s4-ing" data-to="s4-web" data-on="s4-green" data-axis="y" />
+              <path class="wire ok" data-from="s4-web" data-to="s4-api" data-on="s4-green" data-axis="x" />
+              <path class="wire ok" data-from="s4-api" data-to="s4-pay" data-on="s4-green" data-axis="x" />
+              <path class="wire ok" data-from="s4-pay" data-to="s4-pvc" data-on="s4-pv" data-axis="y" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S5 · RECAP ===================== -->
+      <section id="s5" class="scene clip" data-start="{{S5_START}}" data-duration="{{S5_DUR}}" data-track-index="5" data-track-kind="graphics">
+        <div class="cam" id="s5-cam">
+          <div class="head">
+            <div class="kicker hx" style="--kc: var(--ok)">05 · Recap</div>
+            <h2><span class="hw">Three</span> <span class="hw">layers.</span> <span class="hw">One</span> <span class="hw">rehearsal.</span></h2>
+          </div>
+          <div class="stage" id="s5-stage">
+            <svg class="slabs" viewBox="0 0 340 560" aria-hidden="true">
+              <!-- isometric slabs, bottom layer first; each: right face, left face, top face -->
+              <g class="slab" id="s5-sa" style="--c: var(--l1)">
+                <path d="M170 450 L330 370 L330 402 L170 482 Z" fill="color-mix(in srgb, var(--l1) 38%, #070a12)" />
+                <path d="M170 450 L10 370 L10 402 L170 482 Z" fill="color-mix(in srgb, var(--l1) 22%, #070a12)" />
+                <path class="top" d="M170 290 L330 370 L170 450 L10 370 Z" fill="color-mix(in srgb, var(--l1) 30%, #0b1020)" stroke="var(--l1)" />
+              </g>
+              <g class="slab" id="s5-sb">
+                <path d="M170 310 L330 230 L330 262 L170 342 Z" fill="color-mix(in srgb, var(--l2) 38%, #070a12)" />
+                <path d="M170 310 L10 230 L10 262 L170 342 Z" fill="color-mix(in srgb, var(--l2) 22%, #070a12)" />
+                <path class="top" d="M170 150 L330 230 L170 310 L10 230 Z" fill="color-mix(in srgb, var(--l2) 30%, #0b1020)" stroke="var(--l2)" />
+              </g>
+              <g class="slab" id="s5-sc">
+                <path d="M170 170 L330 90 L330 122 L170 202 Z" fill="color-mix(in srgb, var(--l3) 38%, #070a12)" />
+                <path d="M170 170 L10 90 L10 122 L170 202 Z" fill="color-mix(in srgb, var(--l3) 22%, #070a12)" />
+                <path class="top" d="M170 10 L330 90 L170 170 L10 90 Z" fill="color-mix(in srgb, var(--l3) 30%, #0b1020)" stroke="var(--l3)" />
+              </g>
+            </svg>
+            <div class="card lcard" id="s5-c" style="--ind: var(--l3); top: 36px"><h3>Velero</h3><div class="sw"><span class="a">namespaces · any cluster</span></div></div>
+            <div class="card lcard" id="s5-b" style="--ind: var(--l2); top: 176px"><h3>PVC clone · snapshot</h3><div class="sw"><span class="a">volume data</span></div></div>
+            <div class="card lcard" id="s5-a" style="--ind: var(--l1); top: 316px"><h3>etcd snapshot</h3><div class="sw"><span class="a">cluster state</span></div></div>
+            <div class="final" id="s5-final">
+              <h3><span class="hw">Rehearse</span> <span class="hw">the</span> <span class="hw"><em>restore.</em></span></h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CAPTION HUD ===================== -->
+      <div class="hud" id="hud">
+        <div class="cc"><span>CC</span></div>
+        <div id="captions" data-track-kind="captions">
+{{CUES}}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const REVEAL = {{TIMING_JSON}};
+        const SCENES = {{SCENES_JSON}};
+        const TOTAL = {{TOTAL}};
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+        const at = (id) => {
+          if (!(id in REVEAL)) throw new Error("missing reveal mark " + id);
+          return REVEAL[id];
+        };
+        const sc = Object.fromEntries(SCENES.map((s) => [s.id, s]));
+        const C = { ok: "#22c55e", bad: "#f43f5e", warn: "#f59e0b", ink: "#e9eef8" };
+
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+
+        // ---- helpers: one entry intent for every element (≤0.55s, power3.out) ----
+        const IN = { opacity: 0, y: 22, filter: "blur(6px)" };
+        const SHOW = { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" };
+        const reveal = (sel, t, extra = {}) => tl.fromTo(sel, { ...IN }, { ...SHOW, ...extra }, t);
+        // state change on a card: indicator + border colour, swap the status line
+        const state = (id, t, color, swapTo) => {
+          tl.to("#" + id, { "--ind": color, "--bd": color, duration: 0.3, ease: "power2.out" }, t);
+          if (swapTo) {
+            tl.to("#" + id + " .sw > span:not(." + swapTo + ")", { opacity: 0, y: -10, duration: 0.25, ease: "power2.in" }, t);
+            tl.fromTo("#" + id + " .sw ." + swapTo, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, t + 0.12);
+          }
+        };
+        const hit = (id, t, color) =>
+          tl.fromTo("#" + id, { boxShadow: "0 0 0 0px " + color }, { boxShadow: "0 0 0 4px " + color + ", 0 0 46px -4px " + color, duration: 0.22, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+        const type = (id, t0, cps = 26) => {
+          const el = $("#" + id), text = el.dataset.text, o = { n: 0 };
+          const dur = text.length / cps;
+          tl.fromTo(o, { n: 0 }, { n: text.length, duration: dur, ease: "none", onUpdate: () => { el.textContent = text.slice(0, Math.round(o.n)); } }, t0);
+          return t0 + dur;
+        };
+
+        // ---- seams: cut-the-curve in the current (LEFT); UP into the recap ----
+        // exit power4.in 0.34s / entry power4.out 0.42s, 12% partial travel, zero overlap
+        const SEAM_X = 130, SEAM_Y = 230;
+        SCENES.forEach((s, i) => {
+          const cam = "#" + s.id + "-cam";
+          const next = SCENES[i + 1];
+          if (i > 0) {
+            const ax = s.id === "s5" ? "y" : "x", d = ax === "y" ? SEAM_Y : SEAM_X;
+            tl.fromTo(cam, { [ax]: d, opacity: 0.35, filter: "blur(8px)" },
+              { [ax]: 0, filter: "blur(0px)", duration: 0.42, ease: "power4.out", immediateRender: false }, s.start);
+            tl.to(cam, { opacity: 1, duration: 0.18, ease: "power2.out" }, s.start);
+            // header waterfall rides in behind the camera
+            tl.fromTo($$(cam + " .hw"), { opacity: 0.35, x: 60 }, { opacity: 1, x: 0, duration: 0.36, ease: "power4.out", stagger: 0.045, immediateRender: false }, s.start + 0.04);
+          }
+          if (next) {
+            const ax = next.id === "s5" ? "y" : "x", d = ax === "y" ? SEAM_Y : SEAM_X;
+            const cut = next.start;
+            tl.to(cam, { [ax]: -d, filter: "blur(8px)", duration: 0.34, ease: "power4.in" }, cut - 0.34);
+            tl.to(cam, { opacity: 0, duration: 0.28, ease: "power2.in" }, cut - 0.3);
+          }
+          tl.fromTo("#ch-" + s.id, { scaleX: 0 }, { scaleX: 1, duration: s.duration, ease: "none" }, s.start);
+        });
+
+        // ---- S1 · outage (frame 0 already carries the hook line) ----
+        gsap.set(["#s1-banner", "#s1-layers", "#s1-bt2"], { opacity: 0 });
+        reveal("#s1-ing", at("s1-ing"));
+        reveal(".s1-pod", at("s1-pods"), { stagger: 0.12 });
+        reveal("#s1-pvc", at("s1-pods") + 0.5);
+        reveal(["#s1-api", "#s1-etcd"], at("s1-etcd"), { stagger: 0.12 });
+        // failure: the etcd disk dies
+        const f = at("s1-fail");
+        state("s1-etcd", f, C.bad, "b");
+        hit("s1-etcd", f, C.bad);
+        state("s1-api", f + 0.35, C.warn, "b");
+        tl.to("#s1-users", { opacity: 0, y: -16, duration: 0.25, ease: "power2.in" }, f);
+        tl.fromTo("#s1-banner", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.6)" }, f + 0.1);
+        tl.fromTo("#s1-alert", { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 3 }, f);
+        tl.to("#s1-alert", { opacity: 0.4, duration: 0.3 }, f + 0.8);
+        // a bad migration corrupts the payments volume; payments pod falls over (web/api keep serving)
+        const p = at("s1-pvc");
+        state("s1-pvc", p, C.bad, "b");
+        hit("s1-pvc", p, C.bad);
+        state("s1-pay", p + 0.45, C.bad, "b");
+        tl.fromTo("#s1-bt2", { opacity: 0, x: 16 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, p + 0.1);
+        tl.fromTo("#s1-alert", { opacity: 0.4 }, { opacity: 1, duration: 0.18, yoyo: true, repeat: 1 }, p);
+        // three layers bring it back
+        const th = at("s1-three");
+        tl.to("#s1-alert", { opacity: 0, duration: 0.5 }, th - 0.2);
+        tl.to("#s1-dia", { opacity: 0.22, filter: "blur(3px)", duration: 0.45, ease: "power2.out" }, th - 0.1);
+        tl.fromTo("#s1-layers", { opacity: 0, y: 30, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out" }, th);
+        tl.fromTo(".s1-lr", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out", stagger: 0.14 }, th + 0.15);
+
+        // ---- S2 · etcd snapshot ----
+        const s2 = sc.s2.start;
+        gsap.set(["#s2-o1", "#s2-p2", "#s2-caret2"], { opacity: 0 });
+        reveal("#s2-term", s2 + 0.45);
+        reveal(["#s2-bound", "#s2-etcd"], s2 + 0.65, { stagger: 0.1 });
+        const c1end = type("s2-c1", at("s2-cmd"));
+        tl.to("#s2-caret1", { opacity: 0, duration: 0.01 }, c1end + 0.35);
+        tl.fromTo("#s2-o1", { opacity: 0 }, { opacity: 1, duration: 0.2 }, c1end + 0.4); // 0.4s stillness before the result
+        reveal("#s2-file", Math.max(at("s2-file"), c1end + 0.45));
+        reveal(["#s2-offl", "#s2-bucket"], at("s2-off"), { stagger: 0.1 });
+        const r0 = at("s2-restore");
+        tl.to(["#s2-p2", "#s2-caret2"], { opacity: 1, duration: 0.01 }, r0 - 0.1);
+        const c2end = type("s2-c2", r0, 32);
+        const c3end = type("s2-c3", c2end, 32);
+        tl.to("#s2-caret2", { opacity: 0, duration: 0.01 }, c3end);
+        reveal("#s2-api", Math.max(at("s2-api"), c3end + 0.35));
+        hit("s2-api", Math.max(at("s2-api"), c3end + 0.35) + 0.4, C.ok);
+        reveal("#s2-gap", at("s2-gap"));
+        hit("s2-gap", at("s2-gap") + 0.45, C.warn);
+
+        // ---- S3 · PVC clone vs VolumeSnapshot ----
+        const s3 = sc.s3.start;
+        reveal("#s3-yaml", s3 + 0.45);
+        reveal("#s3-dst", at("s3-clone"));
+        reveal("#s3-src", at("s3-src"));
+        tl.fromTo(["#s3-hl1", "#s3-hl2", "#s3-hl3"], { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.08 }, at("s3-ds"));
+        state("s3-dst", at("s3-bad"), C.bad, "b");
+        hit("s3-dst", at("s3-bad"), C.bad);
+        const sn = at("s3-snap");
+        tl.to("#s3-yaml .v1", { opacity: 0, y: -8, duration: 0.22, ease: "power2.in" }, sn);
+        tl.fromTo("#s3-yaml .v2", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, sn + 0.12);
+        tl.fromTo("#s3-hl4", { opacity: 0 }, { opacity: 1, duration: 0.3 }, sn + 0.12);
+        tl.to("#s3-src", { opacity: 0.35, duration: 0.4 }, sn);
+        tl.to("#s3-w-clone", { opacity: 0.12, duration: 0.4 }, sn);
+        reveal("#s3-snap", sn);
+        const bd = at("s3-bind");
+        state("s3-dst", bd - 0.5, C.ok, "c"); // restore lands, then the pause, then the mount
+        hit("s3-dst", bd - 0.5, C.ok);
+        reveal("#s3-pod", bd);
+
+        // ---- S4 · Velero restore ----
+        const s4 = sc.s4.start;
+        gsap.set([".s4-out", "#s4-phase", "#s4-ready"], { opacity: 0 });
+        reveal("#s4-term", s4 + 0.45);
+        reveal(["#s4-bound", ".s4-gh"], s4 + 0.65, { stagger: 0.06 });
+        reveal("#s4-bk", at("s4-bk"));
+        const vend = type("s4-c1", at("s4-cmd"), 18);
+        tl.to("#s4-caret", { opacity: 0, duration: 0.01 }, vend + 0.45);
+        tl.fromTo(".s4-out", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.25, stagger: 0.12 }, vend + 0.5); // Enter, after a beat
+        const rs = Math.max(at("s4-res"), vend + 0.6);
+        tl.to(".s4-gh", { opacity: 0, duration: 0.4 }, rs);
+        reveal(".s4-obj", rs, { stagger: 0.12 });
+        reveal("#s4-pvc", Math.max(at("s4-pv"), rs + 0.5));
+        state("s4-pvc", Math.max(at("s4-pv"), rs + 0.5) + 0.3, C.ok);
+        const g = Math.max(at("s4-green"), rs + 1.0);
+        tl.fromTo("#s4-phase", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.3 }, g);
+        reveal("#s4-ready", g + 0.2);
+        tl.to("#s4-w-restore", { opacity: 0.25, duration: 0.5 }, g);
+        tl.to("#brand-dot", { backgroundColor: C.ok, boxShadow: "0 0 12px " + C.ok, duration: 0.4 }, g);
+
+        // ---- S5 · recap: layers land bottom-up, then the line ----
+        [["s5-a", "#s5-sa"], ["s5-b", "#s5-sb"], ["s5-c", "#s5-sc"]].forEach(([id, slab]) => {
+          tl.fromTo(slab, { opacity: 0, y: -60 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, at(id));
+          reveal("#" + id, at(id) + 0.08);
+        });
+        const fin = at("s5-t") + 0.45; // stillness before the closing line
+        tl.fromTo("#s5-final .hw", { opacity: 0, y: 40, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power4.out", stagger: 0.09 }, fin);
+
+        // ---- wires fade in at their mark ----
+        const wires = $$("path.wire");
+        wires.forEach((w) => tl.fromTo(w, { opacity: 0 }, { opacity: w.classList.contains("dash") ? 0.9 : 1, duration: 0.45, ease: "power2.out", immediateRender: true }, at(w.dataset.on)));
+        wires.filter((w) => w.dataset.fail).forEach((w) => tl.to(w, { stroke: "rgba(244,63,94,0.75)", duration: 0.3 }, at(w.dataset.fail)));
+
+        // ---- subtitles: each word lights as it is spoken ----
+        $$(".cue .w").forEach((w) => {
+          const t = parseFloat(w.dataset.t);
+          tl.fromTo(w, { color: "rgba(233,238,248,0.4)" }, { color: w.classList.contains("kw") ? "#8fb0ff" : "rgba(233,238,248,1)", duration: 0.16, ease: "none", immediateRender: false }, t);
+        });
+        $$(".cue").forEach((cue) => {
+          tl.fromTo(cue, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.24, ease: "power3.out" }, parseFloat(cue.dataset.start));
+        });
+
+        // ---- packets on wires + caret blink: pure functions of timeline time ----
+        const stageOf = (el) => el.closest(".stage");
+        function offsetIn(el, stage) {
+          let x = 0, y = 0, n = el;
+          while (n && n !== stage) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+          return n === stage ? { x, y, w: el.offsetWidth, h: el.offsetHeight } : null;
+        }
+        function route(p) {
+          const a = $("#" + p.dataset.from), b = $("#" + p.dataset.to), stage = stageOf(p);
+          if (!a || !b || !stage || stage.offsetWidth === 0) return false;
+          const A = offsetIn(a, stage), B = offsetIn(b, stage);
+          if (!A || !B) return false;
+          const ac = { x: A.x + A.w / 2, y: A.y + A.h / 2 }, bc = { x: B.x + B.w / 2, y: B.y + B.h / 2 };
+          const dx = bc.x - ac.x, dy = bc.y - ac.y, gap = 8;
+          let s, e, c1, c2;
+          const horiz = p.dataset.axis ? p.dataset.axis === "x" : Math.abs(dx) > Math.abs(dy);
+          if (horiz) {
+            const sx = Math.sign(dx) || 1;
+            s = { x: ac.x + sx * (A.w / 2 + gap), y: ac.y }; e = { x: bc.x - sx * (B.w / 2 + gap), y: bc.y };
+            const k = (e.x - s.x) * 0.5; c1 = { x: s.x + k, y: s.y }; c2 = { x: e.x - k, y: e.y };
+          } else {
+            const sy = Math.sign(dy) || 1;
+            s = { x: ac.x, y: ac.y + sy * (A.h / 2 + gap) }; e = { x: bc.x, y: bc.y - sy * (B.h / 2 + gap) };
+            const k = (e.y - s.y) * 0.5; c1 = { x: s.x, y: s.y + k }; c2 = { x: e.x, y: e.y - k };
+          }
+          const fx = (v) => v.toFixed(1);
+          p.setAttribute("d", `M${fx(s.x)},${fx(s.y)} C${fx(c1.x)},${fx(c1.y)} ${fx(c2.x)},${fx(c2.y)} ${fx(e.x)},${fx(e.y)}`);
+          return true;
+        }
+        const SVGNS = "http://www.w3.org/2000/svg";
+        const packets = wires.map((p) => {
+          const kind = p.classList.contains("ok") ? " ok" : "";
+          const beads = [0, 1, 2].map(() => {
+            const b = document.createElementNS(SVGNS, "circle");
+            b.setAttribute("r", "6"); b.setAttribute("class", "bead" + kind); b.setAttribute("opacity", "0");
+            p.parentNode.appendChild(b);
+            return b;
+          });
+          let label = null;
+          if (p.dataset.label) {
+            label = document.createElementNS(SVGNS, "text");
+            label.setAttribute("class", "wire-label"); label.setAttribute("text-anchor", "middle"); label.setAttribute("opacity", "0");
+            label.textContent = p.dataset.label;
+            p.parentNode.appendChild(label);
+          }
+          return { p, beads, label, kind, on: at(p.dataset.on), fail: p.dataset.fail ? at(p.dataset.fail) : null,
+            scene: sc[p.closest(".scene").id], len: 0 };
+        });
+        const carets = $$(".caret").map((el) => ({ el, scene: sc[el.closest(".scene").id] }));
+        const clock = { t: 0 };
+        const SPEED = 240; // px/s along a wire
+
+        function tick() {
+          const t = clock.t;
+          for (const c of carets) {
+            const local = t - c.scene.start;
+            c.el.style.visibility = local >= 0 && Math.floor(local * 2.2) % 2 === 0 ? "visible" : "hidden";
+          }
+          for (const k of packets) {
+            const live = t >= k.scene.start && t < k.scene.start + k.scene.duration;
+            if (!live) continue;
+            if (!k.p.dataset.ready) { if (route(k.p)) k.p.dataset.ready = "1"; else continue; }
+            if (!k.len) {
+              k.len = k.p.getTotalLength();
+              if (k.label) {
+                const m = k.p.getPointAtLength(k.len / 2);
+                k.label.setAttribute("x", m.x.toFixed(1)); k.label.setAttribute("y", (m.y - 14).toFixed(1));
+              }
+            }
+            const since = t - k.on;
+            const failed = k.fail !== null && t >= k.fail;
+            // traffic stalls where it fails: beads freeze red at their failure-time position
+            const tt = failed ? k.fail - k.on : since;
+            const vis = since <= 0 ? 0 : Math.min(1, since / 0.6);
+            const wireOp = parseFloat(getComputedStyle(k.p).opacity) || 0;
+            k.beads.forEach((b, j) => {
+              const u = ((((tt * SPEED) / k.len + j / 3) % 1) + 1) % 1;
+              const pt = k.p.getPointAtLength(u * k.len);
+              const edge = failed ? 1 : Math.min(1, u / 0.12, (1 - u) / 0.12);
+              b.setAttribute("cx", pt.x.toFixed(1)); b.setAttribute("cy", pt.y.toFixed(1));
+              b.setAttribute("opacity", (vis * edge * Math.min(1, wireOp * 1.4) * (failed ? 0.8 : 1)).toFixed(3));
+              b.setAttribute("class", "bead" + (failed ? " bad" : k.kind));
+            });
+            if (k.label) k.label.setAttribute("opacity", (vis * wireOp).toFixed(3));
+          }
+        }
+        tl.fromTo(clock, { t: 0 }, { t: TOTAL, duration: TOTAL, ease: "none", onUpdate: tick }, 0);
+
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+
+    <!-- Standalone player: TTS voice toggle + scrubber when opened directly; inert inside HyperFrames. -->
+    <script src="assets/player.js"></script>
+  </body>
+</html>

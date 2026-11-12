@@ -13,13 +13,14 @@
         --accent: #326ce5;
         --bg: #070a12;
         --ink: #e9eef8;
-        --mute: #8a95ac;
-        --dim: #566079;
+        --mute: #a7b1c6;
+        --dim: #8f9ab1;
         --ok: #22c55e;
         --bad: #f43f5e;
         --warn: #f59e0b;
         --glass: rgba(15, 20, 32, 0.75);
         --line: rgba(255, 255, 255, 0.08);
+        --accent-ink: color-mix(in srgb, var(--accent) 55%, #ffffff);
         --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
         --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
       }
@@ -73,8 +74,8 @@
       .brand span { color: var(--mute); font-weight: 400; letter-spacing: 0.04em; }
       .port .brand span { display: none; }
       .chapters { display: flex; gap: 10px; }
-      .chap { width: 92px; font: 400 13px/1 var(--mono); letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; }
-      .port .chap { width: 84px; font-size: 12px; }
+      .chap { width: 100px; font: 400 14px/1 var(--mono); letter-spacing: 0.12em; color: var(--mute); text-transform: uppercase; }
+      .port .chap { width: 92px; font-size: 13px; }
       .chap b { display: block; height: 3px; border-radius: 2px; margin-top: 9px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
       .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; box-shadow: 0 0 10px var(--accent); }
 
@@ -84,7 +85,7 @@
       .head { position: absolute; }
       .land .head { left: 192px; top: 128px; width: 1536px; }
       .port .head { left: 108px; top: 200px; width: 864px; }
-      .kicker { font: 700 18px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+      .kicker { font: 700 20px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-ink); }
       .head h2 { margin-top: 16px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.04; }
       .land .head h2 { font-size: 54px; }
       .port .head h2 { font-size: 62px; }
@@ -96,14 +97,14 @@
       .wire { fill: none; stroke: color-mix(in srgb, var(--accent) 55%, transparent); stroke-width: 2; stroke-linecap: round; }
       .wire.dash { stroke-dasharray: 6 8; stroke: rgba(255, 255, 255, 0.28); }
       .bead { fill: #cfe0ff; filter: drop-shadow(0 0 6px var(--accent)) drop-shadow(0 0 2px #fff); }
-      .wire-label { font: 400 14px var(--mono); fill: var(--mute); letter-spacing: 0.06em; }
+      .wire-label { font: 400 17px var(--mono); fill: var(--mute); letter-spacing: 0.06em; }
 
       .card { padding: 18px 22px 18px 28px; }
       .card h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
-      .card p { margin-top: 6px; font: 400 15px/1.4 var(--mono); color: var(--mute); }
+      .card p { margin-top: 6px; font: 400 17px/1.4 var(--mono); color: var(--mute); }
       .mono { font-family: var(--mono); }
       .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 8px;
-        font: 400 15px/1.2 var(--mono); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+        font: 400 17px/1.2 var(--mono); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
       .chip.acc { border-color: color-mix(in srgb, var(--accent) 60%, transparent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
       .tag { font: 700 13px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }
 
@@ -116,7 +117,7 @@
       .term .bar { display: flex; gap: 8px; margin-bottom: 14px; }
       .term .bar i { width: 11px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); }
       .term .ln { white-space: pre; }
-      .term .pr { color: var(--accent); }
+      .term .pr { color: var(--accent-ink); }
       .term .out { color: var(--mute); }
       .term .pend { color: var(--warn); }
       .cp { display: grid; grid-template-columns: 1fr 1fr; gap: 72px 64px; align-items: center; }
@@ -128,40 +129,39 @@
       .s2 { position: absolute; inset: 0; display: flex; flex-direction: column; }
       .pipe { display: flex; justify-content: space-between; }
       .land .pipe { gap: 64px; }
-      .port .pipe { gap: 26px; }
+      .port .pipe { gap: 20px; }
       .pipe > .stepw { flex: 1; position: relative; }
       .step h3 { font-size: 26px; }
       .port .step { padding: 16px 14px 16px 22px; }
-      .port .step h3 { font-size: 22px; }
-      .port .step p { font-size: 13px; }
+      .port .step h3 { font-size: 24px; }
+      .port .step p { font-size: 15px; }
       .podchip { margin-top: 12px; }
-      .port .podchip { font-size: 12px; padding: 5px 8px; white-space: normal; }
+      .port .podchip { font-size: 14px; padding: 5px 8px; white-space: normal; }
       .post { position: absolute; left: 0; right: 0; top: calc(100% + 16px); padding: 9px 12px; border-radius: 10px;
         border: 1px dashed rgba(255, 255, 255, 0.28); font: 400 14px/1.3 var(--mono); color: var(--mute); text-align: center; }
       .nodes { display: flex; }
       .land .nodes { gap: 48px; margin-top: 96px; }
-      .port .nodes { gap: 24px; margin-top: 150px; }
+      .port .nodes { gap: 20px; margin-top: 170px; }
       .nodes > .nodew { flex: 1; }
       .ncard h3 { font: 700 24px var(--mono); }
       .port .ncard { padding: 16px 14px 16px 22px; }
       .port .ncard h3 { font-size: 20px; }
       .meter { margin-top: 12px; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
       .meter u { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; }
-      .nmeta { margin-top: 8px; font: 400 14px var(--mono); color: var(--mute); }
+      .nmeta { margin-top: 8px; font: 400 17px var(--mono); color: var(--mute); }
       .verdict { margin-top: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; min-height: 34px; }
       .v-bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 55%, transparent); background: color-mix(in srgb, var(--bad) 12%, transparent); }
       .v-ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 55%, transparent); background: color-mix(in srgb, var(--ok) 12%, transparent); }
       .score { margin-left: auto; font: 700 30px/1 var(--mono); color: var(--ink); }
       .port .score { font-size: 24px; }
       .kubelet { margin-top: 10px; }
-      .port .kubelet { font-size: 12px; white-space: normal; }
-      .ep { margin-top: auto; font: 400 15px/1.9 var(--mono); color: var(--dim); }
-      .port .ep { font-size: 15px; line-height: 2; }
+      .port .kubelet { font-size: 14px; white-space: normal; }
+      .ep { margin-top: auto; font: 400 17px/1.9 var(--mono); color: var(--dim); }
+      .port .ep { font-size: 17px; line-height: 2; }
       .ep span { padding: 2px 6px; border-radius: 6px; }
-      .ep .sep { color: rgba(255, 255, 255, 0.18); padding: 0 2px; }
-      .illus { position: absolute; right: 0; font: 400 13px var(--mono); color: var(--dim); letter-spacing: 0.06em; }
-      .land .illus { top: 260px; }
-      .port .illus { top: 300px; }
+      .ep .sep { color: var(--dim); padding: 0 4px; }
+      .nodes { position: relative; }
+      .illus { position: absolute; right: 0; top: -34px; font: 400 15px var(--mono); color: var(--dim); letter-spacing: 0.06em; }
 
       /* S3 */
       .mx { position: absolute; inset: 0; display: flex; }
@@ -170,13 +170,13 @@
       .mlabels { width: 170px; flex: none; padding-top: 86px; }
       .port .mlabels { display: none; }
       .mlabels div, .mcell { height: 106px; }
-      .mlabels div { font: 700 14px/106px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+      .mlabels div { font: 700 15px/106px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
       .mcol { flex: 1; padding: 0; }
       .mhead { height: 86px; padding: 22px 22px 0 30px; }
       .mhead h3 { font-size: 26px; }
       .mhead .tag { margin-top: 8px; display: block; color: var(--ind); }
       .mcell { padding: 14px 22px 0 30px; border-top: 1px solid var(--line); font-size: 19px; line-height: 1.38; }
-      .mcell code { font: 400 16px var(--mono); color: var(--ink); background: rgba(255, 255, 255, 0.06); padding: 1px 6px; border-radius: 5px; }
+      .mcell code { font: 400 17px var(--mono); color: var(--ink); background: rgba(255, 255, 255, 0.06); padding: 1px 6px; border-radius: 5px; }
       .mcell .big { font-weight: 700; }
       .port .mhead { height: auto; padding: 18px 20px 10px 28px; display: flex; align-items: baseline; justify-content: space-between; }
       .port .mhead .tag { margin-top: 0; }
@@ -193,11 +193,11 @@
       .edge h3 { margin-top: 6px; font-size: 27px; }
       .edge .body { margin-top: auto; position: relative; }
       .rank { display: flex; flex-direction: column; gap: 7px; }
-      .rank div { display: flex; gap: 12px; align-items: center; font: 400 15px var(--mono); color: var(--mute); }
+      .rank div { display: flex; gap: 12px; align-items: center; font: 400 18px var(--mono); color: var(--mute); }
       .rank b { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; font-size: 13px; background: rgba(255, 255, 255, 0.07); color: var(--ink); }
       .rank .r1 b { background: color-mix(in srgb, var(--bad) 35%, transparent); }
       .rank em { font-style: normal; color: var(--ink); }
-      .qos { position: absolute; right: 0; bottom: 0; }
+      .qos { position: absolute; right: 0; top: -58px; }
       .code { font: 400 18px/1.6 var(--mono); white-space: pre; }
       .code .k { color: var(--mute); }
       .strike { position: absolute; left: 0; height: 2px; background: var(--bad); transform-origin: 0 50%; }
@@ -206,39 +206,39 @@
       .tp { margin-top: 4px; }
       .tbar { position: relative; height: 10px; border-radius: 5px; background: rgba(255, 255, 255, 0.08); overflow: hidden; margin-top: 14px; }
       .tbar u { display: block; height: 100%; background: var(--warn); transform-origin: 0 50%; }
-      .ticks { display: flex; justify-content: space-between; margin-top: 8px; font: 400 13px var(--mono); color: var(--dim); }
+      .ticks { display: flex; justify-content: space-between; margin-top: 8px; font: 400 16px var(--mono); color: var(--dim); }
 
       /* S5 */
       .ring { position: absolute; }
       .land .ring { left: 0; top: 0; width: 760px; height: 552px; }
-      .port .ring { left: 0; top: 0; width: 864px; height: 620px; }
+      .port .ring { left: 0; top: 0; width: 864px; height: 540px; }
       .rn { position: absolute; }
       .rn .chip { font-size: 17px; padding: 9px 16px; }
       .rcenter { position: absolute; text-align: center; }
       .rcenter .tag { color: var(--dim); }
       .rcenter div { margin-top: 8px; font: 700 22px var(--mono); }
       .habits { position: absolute; display: flex; flex-direction: column; gap: 18px; }
-      .land .habits { left: 860px; right: 0; top: 30px; }
-      .port .habits { left: 0; right: 0; top: 660px; gap: 16px; }
-      .habit { padding: 18px 22px 18px 30px; }
+      .land .habits { left: 860px; right: 0; top: 0; gap: 14px; }
+      .port .habits { left: 0; right: 0; top: 560px; gap: 14px; }
+      .habit { padding: 14px 22px 14px 30px; }
       .habit h3 { font-size: 24px; }
-      .habit p { margin-top: 4px; font: 400 15px var(--mono); color: var(--mute); }
+      .habit p { margin-top: 4px; font: 400 17px var(--mono); color: var(--mute); }
       .events { padding: 14px 20px 14px 30px; font: 400 17px/1.6 var(--mono); }
-      .events .pr { color: var(--accent); }
+      .events .pr { color: var(--accent-ink); }
       .events .out { color: var(--mute); }
       .events .evr { color: var(--warn); }
       .events .evr.bad { color: var(--bad); }
       .final { margin-top: 16px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
-      .land .final { font-size: 34px; }
-      .port .final { font-size: 36px; margin-top: 12px; }
-      .final em { font-style: normal; color: var(--accent); }
+      .land .final { font-size: 31px; margin-top: 8px; }
+      .port .final { font-size: 34px; margin-top: 10px; }
+      .final em { font-style: normal; color: var(--accent-ink); }
 
       /* ---------- caption HUD ---------- */
       .hud { position: absolute; z-index: 40; display: flex; align-items: stretch; }
       .land .hud { left: 192px; width: 1536px; top: 846px; height: 126px; }
       .port .hud { left: 108px; width: 864px; top: 1540px; height: 188px; }
       .hud .cc { flex: none; width: 84px; display: grid; place-items: center; border-right: 1px solid var(--line); }
-      .hud .cc span { font: 700 13px var(--mono); letter-spacing: 0.16em; color: var(--accent); padding: 5px 7px; border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); border-radius: 6px; }
+      .hud .cc span { font: 700 13px var(--mono); letter-spacing: 0.16em; color: var(--accent-ink); padding: 5px 7px; border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); border-radius: 6px; }
       .port .hud .cc { width: 64px; }
       #captions { position: relative; flex: 1; }
       .cue { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 30px; font-weight: 400; letter-spacing: -0.005em; flex-wrap: wrap; align-content: center; column-gap: 0.28em; }
@@ -343,8 +343,8 @@
                 <div class="stepw"><div id="s2-score" class="glass card step float-host"><div class="float"><h3>Score</h3><p>rank feasible nodes</p></div></div></div>
                 <div class="stepw"><div id="s2-bind" class="glass card step float-host"><div class="float"><h3>Bind</h3><p>set spec.nodeName</p></div></div></div>
               </div>
-              <div class="illus" id="s2-illus">scores illustrative</div>
               <div class="nodes">
+                <div class="illus" id="s2-illus">scores illustrative</div>
                 <div class="nodew"><div id="s2-na" class="glass card ncard float-host"><div class="float">
                   <h3>node-a</h3><div class="meter"><u id="s2-na-m"></u></div><div class="nmeta">cpu free 300m</div>
                   <div class="verdict"><span class="chip v-bad" id="s2-na-x">✕ Insufficient cpu</span></div></div></div></div>
@@ -376,24 +376,24 @@
               <div class="mlabels" id="s3-labels"><div>Trigger</div><div>Decided by</div><div>PDB</div><div>Grace period</div></div>
               <div id="s3-c1" class="glass mcol float-host" style="--ind: var(--warn)"><div class="float">
                 <div class="mhead"><h3>Preemption</h3><span class="tag">scheduler</span></div>
-                <div class="mcell" data-label="Trigger">Higher-priority Pod has no feasible node</div>
-                <div class="mcell" data-label="Decided by"><code>kube-scheduler</code> PostFilter</div>
-                <div class="mcell" data-label="PDB" id="s3-c1-pdb"><span class="big">Best effort</span></div>
-                <div class="mcell" data-label="Grace period" id="s3-c1-grace">Victim's <code>terminationGracePeriodSeconds</code>, 30s default</div>
+                <div class="mcell" data-label="Trigger"><span>Higher-priority Pod has no feasible node</span></div>
+                <div class="mcell" data-label="Decided by"><span><code>kube-scheduler</code> PostFilter</span></div>
+                <div class="mcell" data-label="PDB" id="s3-c1-pdb"><span><span class="big">Best effort</span></span></div>
+                <div class="mcell" data-label="Grace period" id="s3-c1-grace"><span>Victim's <code>terminationGracePeriodSeconds</code>, 30s default</span></div>
               </div></div>
               <div id="s3-c2" class="glass mcol float-host" style="--ind: var(--bad)"><div class="float">
                 <div class="mhead"><h3>Node-pressure</h3><span class="tag">kubelet</span></div>
-                <div class="mcell" data-label="Trigger" id="s3-c2-trig">Signal crosses threshold: <code>memory.available&lt;100Mi</code></div>
-                <div class="mcell" data-label="Decided by"><code>kubelet</code> on the node</div>
-                <div class="mcell" data-label="PDB" id="s3-c2-pdb"><span class="big" style="color: var(--bad)">Ignored</span></div>
-                <div class="mcell" data-label="Grace period" id="s3-c2-grace">Hard: <code>0s</code> · Soft: <code>evictionMaxPodGracePeriod</code></div>
+                <div class="mcell" data-label="Trigger" id="s3-c2-trig"><span>Signal crosses threshold: <code>memory.available&lt;100Mi</code></span></div>
+                <div class="mcell" data-label="Decided by"><span><code>kubelet</code> on the node</span></div>
+                <div class="mcell" data-label="PDB" id="s3-c2-pdb"><span><span class="big" style="color: var(--bad)">Ignored</span></span></div>
+                <div class="mcell" data-label="Grace period" id="s3-c2-grace"><span>Hard: <code>0s</code> · Soft: <code>evictionMaxPodGracePeriod</code></span></div>
               </div></div>
               <div id="s3-c3" class="glass mcol float-host" style="--ind: var(--ok)"><div class="float">
                 <div class="mhead"><h3>API-initiated</h3><span class="tag">eviction api</span></div>
-                <div class="mcell" data-label="Trigger" id="s3-c3-trig">Eviction API, e.g. <code>kubectl drain</code></div>
-                <div class="mcell" data-label="Decided by"><code>kube-apiserver</code></div>
-                <div class="mcell" data-label="PDB" id="s3-c3-pdb"><span class="big" style="color: var(--ok)">Respected</span> · <code>429</code> if violated</div>
-                <div class="mcell" data-label="Grace period">Pod's <code>terminationGracePeriodSeconds</code></div>
+                <div class="mcell" data-label="Trigger" id="s3-c3-trig"><span>Eviction API, e.g. <code>kubectl drain</code></span></div>
+                <div class="mcell" data-label="Decided by"><span><code>kube-apiserver</code></span></div>
+                <div class="mcell" data-label="PDB" id="s3-c3-pdb"><span><span class="big" style="color: var(--ok)">Respected</span> · <code>429</code> if violated</span></div>
+                <div class="mcell" data-label="Grace period"><span>Pod's <code>terminationGracePeriodSeconds</code></span></div>
               </div></div>
             </div>
           </div>
@@ -505,45 +505,42 @@
         <p id="cue-03" class="cue clip" data-start="9.152" data-duration="6.047" data-track-index="20" data-say="Then it sits at Pending: the object exists, but spec dot node name is still empty."><span class="w" data-t="9.272">Then</span> <span class="w" data-t="9.737">it</span> <span class="w" data-t="10.202">sits</span> <span class="w" data-t="10.667">at</span> <span class="w kw" data-t="11.133">Pending:</span> <span class="w" data-t="11.598">the</span> <span class="w" data-t="12.063">object</span> <span class="w" data-t="12.528">exists,</span> <span class="w" data-t="12.993">but</span> <span class="w" data-t="13.458">spec.nodeName</span> <span class="w" data-t="13.923">is</span> <span class="w" data-t="14.388">still</span> <span class="w" data-t="14.853">empty.</span></p>
         <p id="cue-04" class="cue clip" data-start="15.199" data-duration="1.86" data-track-index="20" data-say="Who chooses the machine?"><span class="w" data-t="15.319">Who</span> <span class="w" data-t="15.784">chooses</span> <span class="w" data-t="16.249">the</span> <span class="w" data-t="16.714">machine?</span></p>
         <p id="cue-05" class="cue clip" data-start="17.059" data-duration="3.256" data-track-index="20" data-say="The kube-scheduler, which watches for unassigned Pods."><span class="w" data-t="17.179">The</span> <span class="w kw" data-t="17.644">kube-scheduler,</span> <span class="w" data-t="18.109">which</span> <span class="w" data-t="18.574">watches</span> <span class="w" data-t="19.04">for</span> <span class="w" data-t="19.505">unassigned</span> <span class="w" data-t="19.97">Pods.</span></p>
-        <p id="cue-06" class="cue clip" data-start="20.315" data-duration="6.046" data-track-index="20" data-say="And when a node runs short of memory, the kubelet may take checkout"><span class="w" data-t="20.435">And</span> <span class="w" data-t="20.9">when</span> <span class="w" data-t="21.365">a</span> <span class="w" data-t="21.83">node</span> <span class="w" data-t="22.295">runs</span> <span class="w" data-t="22.76">short</span> <span class="w" data-t="23.226">of</span> <span class="w" data-t="23.691">memory,</span> <span class="w" data-t="24.156">the</span> <span class="w kw" data-t="24.621">kubelet</span> <span class="w" data-t="25.086">may</span> <span class="w" data-t="25.551">take</span> <span class="w" data-t="26.016">checkout</span></p>
-        <p id="cue-07" class="cue clip" data-start="26.361" data-duration="0.466" data-track-index="20" data-say="away."><span class="w" data-t="26.481">away.</span></p>
-        <p id="cue-08" class="cue clip" data-start="26.827" data-duration="2.78" data-track-index="20" data-say="Let's follow both halves."><span class="w" data-t="26.947">Let's</span> <span class="w" data-t="27.412">follow</span> <span class="w" data-t="27.877">both</span> <span class="w" data-t="28.342">halves.</span></p>
-        <p id="cue-09" class="cue clip" data-start="30.987" data-duration="3.721" data-track-index="20" data-say="Checkout enters the scheduling queue, ordered by priority."><span class="w" data-t="31.107">Checkout</span> <span class="w" data-t="31.572">enters</span> <span class="w" data-t="32.037">the</span> <span class="w kw" data-t="32.502">scheduling</span> <span class="w kw" data-t="32.967">queue,</span> <span class="w" data-t="33.433">ordered</span> <span class="w" data-t="33.898">by</span> <span class="w" data-t="34.363">priority.</span></p>
-        <p id="cue-10" class="cue clip" data-start="34.708" data-duration="2.325" data-track-index="20" data-say="Then Filter checks every node."><span class="w" data-t="34.828">Then</span> <span class="w kw" data-t="35.293">Filter</span> <span class="w" data-t="35.758">checks</span> <span class="w" data-t="36.223">every</span> <span class="w" data-t="36.688">node.</span></p>
-        <p id="cue-11" class="cue clip" data-start="37.033" data-duration="5.582" data-track-index="20" data-say="node-a has 300 millicores free; checkout requests 500, so node-a is out."><span class="w kw" data-t="37.153">node-a</span> <span class="w" data-t="37.619">has</span> <span class="w" data-t="38.084">300</span> <span class="w" data-t="38.549">millicores</span> <span class="w" data-t="39.014">free;</span> <span class="w" data-t="39.479">checkout</span> <span class="w" data-t="39.944">requests</span> <span class="w" data-t="40.409">500,</span> <span class="w" data-t="40.874">so</span> <span class="w" data-t="41.34">node-a</span> <span class="w" data-t="41.805">is</span> <span class="w" data-t="42.27">out.</span></p>
-        <p id="cue-12" class="cue clip" data-start="42.615" data-duration="2.325" data-track-index="20" data-say="node-b and node-c are feasible."><span class="w kw" data-t="42.735">node-b</span> <span class="w" data-t="43.2">and</span> <span class="w kw" data-t="43.665">node-c</span> <span class="w" data-t="44.13">are</span> <span class="w" data-t="44.595">feasible.</span></p>
-        <p id="cue-13" class="cue clip" data-start="44.94" data-duration="3.256" data-track-index="20" data-say="Score ranks them: node-b 61, node-c 88."><span class="w kw" data-t="45.06">Score</span> <span class="w" data-t="45.526">ranks</span> <span class="w" data-t="45.991">them:</span> <span class="w" data-t="46.456">node-b</span> <span class="w" data-t="46.921">61,</span> <span class="w" data-t="47.386">node-c</span> <span class="w" data-t="47.851">88.</span></p>
-        <p id="cue-14" class="cue clip" data-start="48.196" data-duration="2.791" data-track-index="20" data-say="Highest wins, ties break at random."><span class="w" data-t="48.316">Highest</span> <span class="w" data-t="48.781">wins,</span> <span class="w" data-t="49.247">ties</span> <span class="w" data-t="49.712">break</span> <span class="w" data-t="50.177">at</span> <span class="w" data-t="50.642">random.</span></p>
-        <p id="cue-15" class="cue clip" data-start="50.987" data-duration="6.046" data-track-index="20" data-say="Reserve and Permit then hold that choice, so no other Pod claims it."><span class="w" data-t="51.107">Reserve</span> <span class="w" data-t="51.572">and</span> <span class="w" data-t="52.037">Permit</span> <span class="w" data-t="52.502">then</span> <span class="w" data-t="52.967">hold</span> <span class="w" data-t="53.433">that</span> <span class="w" data-t="53.898">choice,</span> <span class="w" data-t="54.363">so</span> <span class="w" data-t="54.828">no</span> <span class="w" data-t="55.293">other</span> <span class="w" data-t="55.758">Pod</span> <span class="w" data-t="56.223">claims</span> <span class="w" data-t="56.688">it.</span></p>
-        <p id="cue-16" class="cue clip" data-start="57.033" data-duration="5.582" data-track-index="20" data-say="Bind writes node-c into spec dot node name, and the kubelet there starts the container."><span class="w kw" data-t="57.153">Bind</span> <span class="w" data-t="57.619">writes</span> <span class="w" data-t="58.084">node-c</span> <span class="w" data-t="58.549">into</span> <span class="w" data-t="59.014">spec.nodeName,</span> <span class="w" data-t="59.479">and</span> <span class="w" data-t="59.944">the</span> <span class="w kw" data-t="60.409">kubelet</span> <span class="w" data-t="60.874">there</span> <span class="w" data-t="61.34">starts</span> <span class="w" data-t="61.805">the</span> <span class="w" data-t="62.27">container.</span></p>
-        <p id="cue-17" class="cue clip" data-start="62.615" data-duration="5.106" data-track-index="20" data-say="Had no node passed Filter, Post Filter would try preemption."><span class="w" data-t="62.735">Had</span> <span class="w" data-t="63.2">no</span> <span class="w" data-t="63.665">node</span> <span class="w" data-t="64.13">passed</span> <span class="w" data-t="64.595">Filter,</span> <span class="w kw" data-t="65.06">PostFilter</span> <span class="w" data-t="65.526">would</span> <span class="w" data-t="65.991">try</span> <span class="w" data-t="66.456">preemption.</span></p>
-        <p id="cue-18" class="cue clip" data-start="69.101" data-duration="3.256" data-track-index="20" data-say="Three different forces can remove a Pod."><span class="w" data-t="69.221">Three</span> <span class="w" data-t="69.686">different</span> <span class="w" data-t="70.151">forces</span> <span class="w" data-t="70.616">can</span> <span class="w" data-t="71.081">remove</span> <span class="w" data-t="71.547">a</span> <span class="w" data-t="72.012">Pod.</span></p>
-        <p id="cue-19" class="cue clip" data-start="72.357" data-duration="5.116" data-track-index="20" data-say="Preemption: the scheduler evicts lower-priority victims so a higher-priority Pod fits,"><span class="w kw" data-t="72.477">Preemption:</span> <span class="w" data-t="72.942">the</span> <span class="w" data-t="73.407">scheduler</span> <span class="w" data-t="73.872">evicts</span> <span class="w" data-t="74.337">lower-priority</span> <span class="w" data-t="74.802">victims</span> <span class="w" data-t="75.267">so</span> <span class="w" data-t="75.733">a</span> <span class="w" data-t="76.198">higher-priority</span> <span class="w" data-t="76.663">Pod</span> <span class="w" data-t="77.128">fits,</span></p>
-        <p id="cue-20" class="cue clip" data-start="77.473" data-duration="2.791" data-track-index="20" data-say="and records the target in nominated node name."><span class="w" data-t="77.593">and</span> <span class="w" data-t="78.058">records</span> <span class="w" data-t="78.523">the</span> <span class="w" data-t="78.988">target</span> <span class="w" data-t="79.453">in</span> <span class="w" data-t="79.919">nominatedNodeName.</span></p>
-        <p id="cue-21" class="cue clip" data-start="80.264" data-duration="4.186" data-track-index="20" data-say="Victims get their grace period, 30 seconds by default,"><span class="w" data-t="80.384">Victims</span> <span class="w" data-t="80.849">get</span> <span class="w" data-t="81.314">their</span> <span class="w" data-t="81.779">grace</span> <span class="w" data-t="82.244">period,</span> <span class="w" data-t="82.709">30</span> <span class="w" data-t="83.174">seconds</span> <span class="w" data-t="83.64">by</span> <span class="w" data-t="84.105">default,</span></p>
-        <p id="cue-22" class="cue clip" data-start="84.45" data-duration="2.325" data-track-index="20" data-say="and Pod Disruption Budgets are best effort."><span class="w" data-t="84.57">and</span> <span class="w" data-t="85.035">PodDisruptionBudgets</span> <span class="w" data-t="85.5">are</span> <span class="w" data-t="85.965">best</span> <span class="w" data-t="86.43">effort.</span></p>
-        <p id="cue-23" class="cue clip" data-start="86.775" data-duration="5.117" data-track-index="20" data-say="Node-pressure eviction: the kubelet sees a signal, like memory dot available under 100 mebibytes."><span class="w kw" data-t="86.895">Node-pressure</span> <span class="w kw" data-t="87.36">eviction:</span> <span class="w" data-t="87.826">the</span> <span class="w" data-t="88.291">kubelet</span> <span class="w" data-t="88.756">sees</span> <span class="w" data-t="89.221">a</span> <span class="w" data-t="89.686">signal,</span> <span class="w" data-t="90.151">like</span> <span class="w" data-t="90.616">memory.available</span> <span class="w" data-t="91.081">under</span> <span class="w" data-t="91.547">100Mi.</span></p>
-        <p id="cue-24" class="cue clip" data-start="91.892" data-duration="4.651" data-track-index="20" data-say="It ignores budgets, and a hard threshold means zero grace."><span class="w" data-t="92.012">It</span> <span class="w" data-t="92.477">ignores</span> <span class="w" data-t="92.942">budgets,</span> <span class="w" data-t="93.407">and</span> <span class="w" data-t="93.872">a</span> <span class="w" data-t="94.337">hard</span> <span class="w" data-t="94.802">threshold</span> <span class="w" data-t="95.267">means</span> <span class="w" data-t="95.733">zero</span> <span class="w" data-t="96.198">grace.</span></p>
-        <p id="cue-25" class="cue clip" data-start="96.543" data-duration="6.046" data-track-index="20" data-say="API-initiated eviction, used by kube control drain, respects budgets and returns four twenty-nine when one"><span class="w kw" data-t="96.663">API-initiated</span> <span class="w kw" data-t="97.128">eviction,</span> <span class="w" data-t="97.593">used</span> <span class="w" data-t="98.058">by</span> <span class="w" data-t="98.523">kubectl</span> <span class="w" data-t="98.988">drain,</span> <span class="w" data-t="99.453">respects</span> <span class="w" data-t="99.919">budgets</span> <span class="w" data-t="100.384">and</span> <span class="w" data-t="100.849">returns</span> <span class="w" data-t="101.314">429</span> <span class="w" data-t="101.779">when</span> <span class="w" data-t="102.244">one</span></p>
-        <p id="cue-26" class="cue clip" data-start="102.589" data-duration="1.851" data-track-index="20" data-say="would break."><span class="w" data-t="102.709">would</span> <span class="w" data-t="103.174">break.</span></p>
-        <p id="cue-27" class="cue clip" data-start="105.82" data-duration="1.395" data-track-index="20" data-say="Four edge cases."><span class="w" data-t="105.94">Four</span> <span class="w" data-t="106.405">edge</span> <span class="w" data-t="106.87">cases.</span></p>
-        <p id="cue-28" class="cue clip" data-start="107.215" data-duration="4.651" data-track-index="20" data-say="Eviction order: Pods using more than they request go first,"><span class="w kw" data-t="107.335">Eviction</span> <span class="w kw" data-t="107.8">order:</span> <span class="w" data-t="108.265">Pods</span> <span class="w" data-t="108.73">using</span> <span class="w" data-t="109.195">more</span> <span class="w" data-t="109.66">than</span> <span class="w" data-t="110.126">they</span> <span class="w" data-t="110.591">request</span> <span class="w" data-t="111.056">go</span> <span class="w" data-t="111.521">first,</span></p>
-        <p id="cue-29" class="cue clip" data-start="111.866" data-duration="3.256" data-track-index="20" data-say="by priority, then by how far over."><span class="w" data-t="111.986">by</span> <span class="w" data-t="112.451">priority,</span> <span class="w" data-t="112.916">then</span> <span class="w" data-t="113.381">by</span> <span class="w" data-t="113.847">how</span> <span class="w" data-t="114.312">far</span> <span class="w" data-t="114.777">over.</span></p>
-        <p id="cue-30" class="cue clip" data-start="115.122" data-duration="4.651" data-track-index="20" data-say="BestEffort Pods request nothing, so any usage counts as over."><span class="w" data-t="115.242">BestEffort</span> <span class="w" data-t="115.707">Pods</span> <span class="w" data-t="116.172">request</span> <span class="w" data-t="116.637">nothing,</span> <span class="w" data-t="117.102">so</span> <span class="w" data-t="117.567">any</span> <span class="w" data-t="118.033">usage</span> <span class="w" data-t="118.498">counts</span> <span class="w" data-t="118.963">as</span> <span class="w" data-t="119.428">over.</span></p>
-        <p id="cue-31" class="cue clip" data-start="119.773" data-duration="3.256" data-track-index="20" data-say="Q o S class is not the ranking key."><span class="w" data-t="119.893">QoS</span> <span class="w" data-t="120.358">class</span> <span class="w" data-t="120.823">is</span> <span class="w" data-t="121.288">not</span> <span class="w" data-t="121.753">the</span> <span class="w" data-t="122.219">ranking</span> <span class="w" data-t="122.684">key.</span></p>
-        <p id="cue-32" class="cue clip" data-start="123.029" data-duration="6.046" data-track-index="20" data-say="nominated node name is a hint, not a reservation; a higher-priority Pod can take that"><span class="w kw" data-t="123.149">nominatedNodeName</span> <span class="w" data-t="123.614">is</span> <span class="w" data-t="124.079">a</span> <span class="w" data-t="124.544">hint,</span> <span class="w" data-t="125.009">not</span> <span class="w" data-t="125.474">a</span> <span class="w" data-t="125.94">reservation;</span> <span class="w" data-t="126.405">a</span> <span class="w" data-t="126.87">higher-priority</span> <span class="w" data-t="127.335">Pod</span> <span class="w" data-t="127.8">can</span> <span class="w" data-t="128.265">take</span> <span class="w" data-t="128.73">that</span></p>
-        <p id="cue-33" class="cue clip" data-start="129.075" data-duration="0.465" data-track-index="20" data-say="node."><span class="w" data-t="129.195">node.</span></p>
-        <p id="cue-34" class="cue clip" data-start="129.54" data-duration="5.117" data-track-index="20" data-say="MemoryPressure becomes a NoSchedule taint, so new Pods stop landing there."><span class="w kw" data-t="129.66">MemoryPressure</span> <span class="w" data-t="130.126">becomes</span> <span class="w" data-t="130.591">a</span> <span class="w" data-t="131.056">NoSchedule</span> <span class="w" data-t="131.521">taint,</span> <span class="w" data-t="131.986">so</span> <span class="w" data-t="132.451">new</span> <span class="w" data-t="132.916">Pods</span> <span class="w" data-t="133.381">stop</span> <span class="w" data-t="133.847">landing</span> <span class="w" data-t="134.312">there.</span></p>
-        <p id="cue-35" class="cue clip" data-start="134.657" data-duration="6.967" data-track-index="20" data-say="And the transition period, five minutes by default, stops that condition from flapping."><span class="w" data-t="134.777">And</span> <span class="w" data-t="135.242">the</span> <span class="w kw" data-t="135.707">transition</span> <span class="w kw" data-t="136.172">period,</span> <span class="w" data-t="136.637">five</span> <span class="w" data-t="137.102">minutes</span> <span class="w" data-t="137.567">by</span> <span class="w" data-t="138.033">default,</span> <span class="w" data-t="138.498">stops</span> <span class="w" data-t="138.963">that</span> <span class="w" data-t="139.428">condition</span> <span class="w" data-t="139.893">from</span> <span class="w" data-t="140.358">flapping.</span></p>
-        <p id="cue-36" class="cue clip" data-start="143.003" data-duration="3.721" data-track-index="20" data-say="The whole loop: Queue, Filter, Score, Bind, Running."><span class="w" data-t="143.123">The</span> <span class="w" data-t="143.588">whole</span> <span class="w" data-t="144.053">loop:</span> <span class="w kw" data-t="144.519">Queue,</span> <span class="w kw" data-t="144.984">Filter,</span> <span class="w kw" data-t="145.449">Score,</span> <span class="w kw" data-t="145.914">Bind,</span> <span class="w kw" data-t="146.379">Running.</span></p>
-        <p id="cue-37" class="cue clip" data-start="146.724" data-duration="4.186" data-track-index="20" data-say="Then Pressure, and Evicted: the Pod is marked Failed,"><span class="w" data-t="146.844">Then</span> <span class="w kw" data-t="147.309">Pressure,</span> <span class="w" data-t="147.774">and</span> <span class="w kw" data-t="148.24">Evicted:</span> <span class="w" data-t="148.705">the</span> <span class="w" data-t="149.17">Pod</span> <span class="w" data-t="149.635">is</span> <span class="w" data-t="150.1">marked</span> <span class="w" data-t="150.565">Failed,</span></p>
-        <p id="cue-38" class="cue clip" data-start="150.91" data-duration="4.651" data-track-index="20" data-say="and its Replica Set creates a replacement that rejoins the queue."><span class="w" data-t="151.03">and</span> <span class="w" data-t="151.495">its</span> <span class="w" data-t="151.96">ReplicaSet</span> <span class="w" data-t="152.426">creates</span> <span class="w" data-t="152.891">a</span> <span class="w" data-t="153.356">replacement</span> <span class="w" data-t="153.821">that</span> <span class="w" data-t="154.286">rejoins</span> <span class="w" data-t="154.751">the</span> <span class="w" data-t="155.216">queue.</span></p>
-        <p id="cue-39" class="cue clip" data-start="155.561" data-duration="5.117" data-track-index="20" data-say="Three habits keep you in control: set requests, use a Priority Class,"><span class="w" data-t="155.681">Three</span> <span class="w" data-t="156.147">habits</span> <span class="w" data-t="156.612">keep</span> <span class="w" data-t="157.077">you</span> <span class="w" data-t="157.542">in</span> <span class="w" data-t="158.007">control:</span> <span class="w kw" data-t="158.472">set</span> <span class="w kw" data-t="158.937">requests,</span> <span class="w kw" data-t="159.402">use</span> <span class="w kw" data-t="159.867">a</span> <span class="w kw" data-t="160.333">PriorityClass,</span></p>
-        <p id="cue-40" class="cue clip" data-start="160.678" data-duration="1.395" data-track-index="20" data-say="add a Pod Disruption Budget."><span class="w kw" data-t="160.798">add</span> <span class="w kw" data-t="161.263">a</span> <span class="w kw" data-t="161.728">PodDisruptionBudget.</span></p>
-        <p id="cue-41" class="cue clip" data-start="162.073" data-duration="5.116" data-track-index="20" data-say="To watch both halves, read the events: FailedScheduling from the scheduler,"><span class="w" data-t="162.193">To</span> <span class="w" data-t="162.658">watch</span> <span class="w" data-t="163.123">both</span> <span class="w" data-t="163.588">halves,</span> <span class="w" data-t="164.053">read</span> <span class="w" data-t="164.519">the</span> <span class="w" data-t="164.984">events:</span> <span class="w" data-t="165.449">FailedScheduling</span> <span class="w" data-t="165.914">from</span> <span class="w" data-t="166.379">the</span> <span class="w" data-t="166.844">scheduler,</span></p>
-        <p id="cue-42" class="cue clip" data-start="167.189" data-duration="1.861" data-track-index="20" data-say="Evicted from the kubelet."><span class="w" data-t="167.309">Evicted</span> <span class="w" data-t="167.774">from</span> <span class="w" data-t="168.24">the</span> <span class="w" data-t="168.705">kubelet.</span></p>
-        <p id="cue-43" class="cue clip" data-start="169.05" data-duration="3.256" data-track-index="20" data-say="The scheduler decides where a Pod lands."><span class="w" data-t="169.17">The</span> <span class="w" data-t="169.635">scheduler</span> <span class="w" data-t="170.1">decides</span> <span class="w" data-t="170.565">where</span> <span class="w" data-t="171.03">a</span> <span class="w" data-t="171.495">Pod</span> <span class="w" data-t="171.96">lands.</span></p>
-        <p id="cue-44" class="cue clip" data-start="172.306" data-duration="3.745" data-track-index="20" data-say="The kubelet decides when it leaves."><span class="w" data-t="172.426">The</span> <span class="w" data-t="172.891">kubelet</span> <span class="w" data-t="173.356">decides</span> <span class="w" data-t="173.821">when</span> <span class="w" data-t="174.286">it</span> <span class="w" data-t="174.751">leaves.</span></p>
+        <p id="cue-06" class="cue clip" data-start="20.315" data-duration="6.512" data-track-index="20" data-say="And when a node runs short of memory, the kubelet may take checkout away."><span class="w" data-t="20.435">And</span> <span class="w" data-t="20.9">when</span> <span class="w" data-t="21.365">a</span> <span class="w" data-t="21.83">node</span> <span class="w" data-t="22.295">runs</span> <span class="w" data-t="22.76">short</span> <span class="w" data-t="23.226">of</span> <span class="w" data-t="23.691">memory,</span> <span class="w" data-t="24.156">the</span> <span class="w kw" data-t="24.621">kubelet</span> <span class="w" data-t="25.086">may</span> <span class="w" data-t="25.551">take</span> <span class="w" data-t="26.016">checkout</span> <span class="w" data-t="26.481">away.</span></p>
+        <p id="cue-07" class="cue clip" data-start="26.827" data-duration="2.78" data-track-index="20" data-say="Let's follow both halves."><span class="w" data-t="26.947">Let's</span> <span class="w" data-t="27.412">follow</span> <span class="w" data-t="27.877">both</span> <span class="w" data-t="28.342">halves.</span></p>
+        <p id="cue-08" class="cue clip" data-start="30.987" data-duration="3.721" data-track-index="20" data-say="Checkout enters the scheduling queue, ordered by priority."><span class="w" data-t="31.107">Checkout</span> <span class="w" data-t="31.572">enters</span> <span class="w" data-t="32.037">the</span> <span class="w kw" data-t="32.502">scheduling</span> <span class="w kw" data-t="32.967">queue,</span> <span class="w" data-t="33.433">ordered</span> <span class="w" data-t="33.898">by</span> <span class="w" data-t="34.363">priority.</span></p>
+        <p id="cue-09" class="cue clip" data-start="34.708" data-duration="2.325" data-track-index="20" data-say="Then Filter checks every node."><span class="w" data-t="34.828">Then</span> <span class="w kw" data-t="35.293">Filter</span> <span class="w" data-t="35.758">checks</span> <span class="w" data-t="36.223">every</span> <span class="w" data-t="36.688">node.</span></p>
+        <p id="cue-10" class="cue clip" data-start="37.033" data-duration="5.582" data-track-index="20" data-say="node-a has 300 millicores free; checkout requests 500, so node-a is out."><span class="w kw" data-t="37.153">node-a</span> <span class="w" data-t="37.619">has</span> <span class="w" data-t="38.084">300</span> <span class="w" data-t="38.549">millicores</span> <span class="w" data-t="39.014">free;</span> <span class="w" data-t="39.479">checkout</span> <span class="w" data-t="39.944">requests</span> <span class="w" data-t="40.409">500,</span> <span class="w" data-t="40.874">so</span> <span class="w" data-t="41.34">node-a</span> <span class="w" data-t="41.805">is</span> <span class="w" data-t="42.27">out.</span></p>
+        <p id="cue-11" class="cue clip" data-start="42.615" data-duration="2.325" data-track-index="20" data-say="node-b and node-c are feasible."><span class="w kw" data-t="42.735">node-b</span> <span class="w" data-t="43.2">and</span> <span class="w kw" data-t="43.665">node-c</span> <span class="w" data-t="44.13">are</span> <span class="w" data-t="44.595">feasible.</span></p>
+        <p id="cue-12" class="cue clip" data-start="44.94" data-duration="3.256" data-track-index="20" data-say="Score ranks them: node-b 61, node-c 88."><span class="w kw" data-t="45.06">Score</span> <span class="w" data-t="45.526">ranks</span> <span class="w" data-t="45.991">them:</span> <span class="w" data-t="46.456">node-b</span> <span class="w" data-t="46.921">61,</span> <span class="w" data-t="47.386">node-c</span> <span class="w" data-t="47.851">88.</span></p>
+        <p id="cue-13" class="cue clip" data-start="48.196" data-duration="2.791" data-track-index="20" data-say="Highest wins, ties break at random."><span class="w" data-t="48.316">Highest</span> <span class="w" data-t="48.781">wins,</span> <span class="w" data-t="49.247">ties</span> <span class="w" data-t="49.712">break</span> <span class="w" data-t="50.177">at</span> <span class="w" data-t="50.642">random.</span></p>
+        <p id="cue-14" class="cue clip" data-start="50.987" data-duration="6.046" data-track-index="20" data-say="Reserve and Permit then hold that choice, so no other Pod claims it."><span class="w" data-t="51.107">Reserve</span> <span class="w" data-t="51.572">and</span> <span class="w" data-t="52.037">Permit</span> <span class="w" data-t="52.502">then</span> <span class="w" data-t="52.967">hold</span> <span class="w" data-t="53.433">that</span> <span class="w" data-t="53.898">choice,</span> <span class="w" data-t="54.363">so</span> <span class="w" data-t="54.828">no</span> <span class="w" data-t="55.293">other</span> <span class="w" data-t="55.758">Pod</span> <span class="w" data-t="56.223">claims</span> <span class="w" data-t="56.688">it.</span></p>
+        <p id="cue-15" class="cue clip" data-start="57.033" data-duration="5.582" data-track-index="20" data-say="Bind writes node-c into spec dot node name, and the kubelet there starts the container."><span class="w kw" data-t="57.153">Bind</span> <span class="w" data-t="57.619">writes</span> <span class="w" data-t="58.084">node-c</span> <span class="w" data-t="58.549">into</span> <span class="w" data-t="59.014">spec.nodeName,</span> <span class="w" data-t="59.479">and</span> <span class="w" data-t="59.944">the</span> <span class="w kw" data-t="60.409">kubelet</span> <span class="w" data-t="60.874">there</span> <span class="w" data-t="61.34">starts</span> <span class="w" data-t="61.805">the</span> <span class="w" data-t="62.27">container.</span></p>
+        <p id="cue-16" class="cue clip" data-start="62.615" data-duration="5.106" data-track-index="20" data-say="Had no node passed Filter, Post Filter would try preemption."><span class="w" data-t="62.735">Had</span> <span class="w" data-t="63.2">no</span> <span class="w" data-t="63.665">node</span> <span class="w" data-t="64.13">passed</span> <span class="w" data-t="64.595">Filter,</span> <span class="w kw" data-t="65.06">PostFilter</span> <span class="w" data-t="65.526">would</span> <span class="w" data-t="65.991">try</span> <span class="w" data-t="66.456">preemption.</span></p>
+        <p id="cue-17" class="cue clip" data-start="69.101" data-duration="3.256" data-track-index="20" data-say="Three different forces can remove a Pod."><span class="w" data-t="69.221">Three</span> <span class="w" data-t="69.686">different</span> <span class="w" data-t="70.151">forces</span> <span class="w" data-t="70.616">can</span> <span class="w" data-t="71.081">remove</span> <span class="w" data-t="71.547">a</span> <span class="w" data-t="72.012">Pod.</span></p>
+        <p id="cue-18" class="cue clip" data-start="72.357" data-duration="5.116" data-track-index="20" data-say="Preemption: the scheduler evicts lower-priority victims so a higher-priority Pod fits,"><span class="w kw" data-t="72.477">Preemption:</span> <span class="w" data-t="72.942">the</span> <span class="w" data-t="73.407">scheduler</span> <span class="w" data-t="73.872">evicts</span> <span class="w" data-t="74.337">lower-priority</span> <span class="w" data-t="74.802">victims</span> <span class="w" data-t="75.267">so</span> <span class="w" data-t="75.733">a</span> <span class="w" data-t="76.198">higher-priority</span> <span class="w" data-t="76.663">Pod</span> <span class="w" data-t="77.128">fits,</span></p>
+        <p id="cue-19" class="cue clip" data-start="77.473" data-duration="2.791" data-track-index="20" data-say="and records the target in nominated node name."><span class="w" data-t="77.593">and</span> <span class="w" data-t="78.058">records</span> <span class="w" data-t="78.523">the</span> <span class="w" data-t="78.988">target</span> <span class="w" data-t="79.453">in</span> <span class="w" data-t="79.919">nominatedNodeName.</span></p>
+        <p id="cue-20" class="cue clip" data-start="80.264" data-duration="4.186" data-track-index="20" data-say="Victims get their grace period, 30 seconds by default,"><span class="w" data-t="80.384">Victims</span> <span class="w" data-t="80.849">get</span> <span class="w" data-t="81.314">their</span> <span class="w" data-t="81.779">grace</span> <span class="w" data-t="82.244">period,</span> <span class="w" data-t="82.709">30</span> <span class="w" data-t="83.174">seconds</span> <span class="w" data-t="83.64">by</span> <span class="w" data-t="84.105">default,</span></p>
+        <p id="cue-21" class="cue clip" data-start="84.45" data-duration="2.325" data-track-index="20" data-say="and Pod Disruption Budgets are best effort."><span class="w" data-t="84.57">and</span> <span class="w" data-t="85.035">PodDisruptionBudgets</span> <span class="w" data-t="85.5">are</span> <span class="w" data-t="85.965">best</span> <span class="w" data-t="86.43">effort.</span></p>
+        <p id="cue-22" class="cue clip" data-start="86.775" data-duration="5.117" data-track-index="20" data-say="Node-pressure eviction: the kubelet sees a signal, like memory dot available under 100 mebibytes."><span class="w kw" data-t="86.895">Node-pressure</span> <span class="w kw" data-t="87.36">eviction:</span> <span class="w" data-t="87.826">the</span> <span class="w" data-t="88.291">kubelet</span> <span class="w" data-t="88.756">sees</span> <span class="w" data-t="89.221">a</span> <span class="w" data-t="89.686">signal,</span> <span class="w" data-t="90.151">like</span> <span class="w" data-t="90.616">memory.available</span> <span class="w" data-t="91.081">under</span> <span class="w" data-t="91.547">100Mi.</span></p>
+        <p id="cue-23" class="cue clip" data-start="91.892" data-duration="4.651" data-track-index="20" data-say="It ignores budgets, and a hard threshold means zero grace."><span class="w" data-t="92.012">It</span> <span class="w" data-t="92.477">ignores</span> <span class="w" data-t="92.942">budgets,</span> <span class="w" data-t="93.407">and</span> <span class="w" data-t="93.872">a</span> <span class="w" data-t="94.337">hard</span> <span class="w" data-t="94.802">threshold</span> <span class="w" data-t="95.267">means</span> <span class="w" data-t="95.733">zero</span> <span class="w" data-t="96.198">grace.</span></p>
+        <p id="cue-24" class="cue clip" data-start="96.543" data-duration="7.897" data-track-index="20" data-say="API-initiated eviction, used by kube control drain, respects budgets and returns four twenty-nine when one would break."><span class="w kw" data-t="96.663">API-initiated</span> <span class="w kw" data-t="97.128">eviction,</span> <span class="w" data-t="97.593">used</span> <span class="w" data-t="98.058">by</span> <span class="w" data-t="98.523">kubectl</span> <span class="w" data-t="98.988">drain,</span> <span class="w" data-t="99.453">respects</span> <span class="w" data-t="99.919">budgets</span> <span class="w" data-t="100.384">and</span> <span class="w" data-t="100.849">returns</span> <span class="w" data-t="101.314">429</span> <span class="w" data-t="101.779">when</span> <span class="w" data-t="102.244">one</span> <span class="w" data-t="102.709">would</span> <span class="w" data-t="103.174">break.</span></p>
+        <p id="cue-25" class="cue clip" data-start="105.82" data-duration="1.395" data-track-index="20" data-say="Four edge cases."><span class="w" data-t="105.94">Four</span> <span class="w" data-t="106.405">edge</span> <span class="w" data-t="106.87">cases.</span></p>
+        <p id="cue-26" class="cue clip" data-start="107.215" data-duration="4.651" data-track-index="20" data-say="Eviction order: Pods using more than they request go first,"><span class="w kw" data-t="107.335">Eviction</span> <span class="w kw" data-t="107.8">order:</span> <span class="w" data-t="108.265">Pods</span> <span class="w" data-t="108.73">using</span> <span class="w" data-t="109.195">more</span> <span class="w" data-t="109.66">than</span> <span class="w" data-t="110.126">they</span> <span class="w" data-t="110.591">request</span> <span class="w" data-t="111.056">go</span> <span class="w" data-t="111.521">first,</span></p>
+        <p id="cue-27" class="cue clip" data-start="111.866" data-duration="3.256" data-track-index="20" data-say="by priority, then by how far over."><span class="w" data-t="111.986">by</span> <span class="w" data-t="112.451">priority,</span> <span class="w" data-t="112.916">then</span> <span class="w" data-t="113.381">by</span> <span class="w" data-t="113.847">how</span> <span class="w" data-t="114.312">far</span> <span class="w" data-t="114.777">over.</span></p>
+        <p id="cue-28" class="cue clip" data-start="115.122" data-duration="4.651" data-track-index="20" data-say="BestEffort Pods request nothing, so any usage counts as over."><span class="w" data-t="115.242">BestEffort</span> <span class="w" data-t="115.707">Pods</span> <span class="w" data-t="116.172">request</span> <span class="w" data-t="116.637">nothing,</span> <span class="w" data-t="117.102">so</span> <span class="w" data-t="117.567">any</span> <span class="w" data-t="118.033">usage</span> <span class="w" data-t="118.498">counts</span> <span class="w" data-t="118.963">as</span> <span class="w" data-t="119.428">over.</span></p>
+        <p id="cue-29" class="cue clip" data-start="119.773" data-duration="3.256" data-track-index="20" data-say="Q o S class is not the ranking key."><span class="w" data-t="119.893">QoS</span> <span class="w" data-t="120.358">class</span> <span class="w" data-t="120.823">is</span> <span class="w" data-t="121.288">not</span> <span class="w" data-t="121.753">the</span> <span class="w" data-t="122.219">ranking</span> <span class="w" data-t="122.684">key.</span></p>
+        <p id="cue-30" class="cue clip" data-start="123.029" data-duration="6.511" data-track-index="20" data-say="nominated node name is a hint, not a reservation; a higher-priority Pod can take that node."><span class="w kw" data-t="123.149">nominatedNodeName</span> <span class="w" data-t="123.614">is</span> <span class="w" data-t="124.079">a</span> <span class="w" data-t="124.544">hint,</span> <span class="w" data-t="125.009">not</span> <span class="w" data-t="125.474">a</span> <span class="w" data-t="125.94">reservation;</span> <span class="w" data-t="126.405">a</span> <span class="w" data-t="126.87">higher-priority</span> <span class="w" data-t="127.335">Pod</span> <span class="w" data-t="127.8">can</span> <span class="w" data-t="128.265">take</span> <span class="w" data-t="128.73">that</span> <span class="w" data-t="129.195">node.</span></p>
+        <p id="cue-31" class="cue clip" data-start="129.54" data-duration="5.117" data-track-index="20" data-say="MemoryPressure becomes a NoSchedule taint, so new Pods stop landing there."><span class="w kw" data-t="129.66">MemoryPressure</span> <span class="w" data-t="130.126">becomes</span> <span class="w" data-t="130.591">a</span> <span class="w" data-t="131.056">NoSchedule</span> <span class="w" data-t="131.521">taint,</span> <span class="w" data-t="131.986">so</span> <span class="w" data-t="132.451">new</span> <span class="w" data-t="132.916">Pods</span> <span class="w" data-t="133.381">stop</span> <span class="w" data-t="133.847">landing</span> <span class="w" data-t="134.312">there.</span></p>
+        <p id="cue-32" class="cue clip" data-start="134.657" data-duration="6.967" data-track-index="20" data-say="And the transition period, five minutes by default, stops that condition from flapping."><span class="w" data-t="134.777">And</span> <span class="w" data-t="135.242">the</span> <span class="w kw" data-t="135.707">transition</span> <span class="w kw" data-t="136.172">period,</span> <span class="w" data-t="136.637">five</span> <span class="w" data-t="137.102">minutes</span> <span class="w" data-t="137.567">by</span> <span class="w" data-t="138.033">default,</span> <span class="w" data-t="138.498">stops</span> <span class="w" data-t="138.963">that</span> <span class="w" data-t="139.428">condition</span> <span class="w" data-t="139.893">from</span> <span class="w" data-t="140.358">flapping.</span></p>
+        <p id="cue-33" class="cue clip" data-start="143.003" data-duration="3.721" data-track-index="20" data-say="The whole loop: Queue, Filter, Score, Bind, Running."><span class="w" data-t="143.123">The</span> <span class="w" data-t="143.588">whole</span> <span class="w" data-t="144.053">loop:</span> <span class="w kw" data-t="144.519">Queue,</span> <span class="w kw" data-t="144.984">Filter,</span> <span class="w kw" data-t="145.449">Score,</span> <span class="w kw" data-t="145.914">Bind,</span> <span class="w kw" data-t="146.379">Running.</span></p>
+        <p id="cue-34" class="cue clip" data-start="146.724" data-duration="4.186" data-track-index="20" data-say="Then Pressure, and Evicted: the Pod is marked Failed,"><span class="w" data-t="146.844">Then</span> <span class="w kw" data-t="147.309">Pressure,</span> <span class="w" data-t="147.774">and</span> <span class="w kw" data-t="148.24">Evicted:</span> <span class="w" data-t="148.705">the</span> <span class="w" data-t="149.17">Pod</span> <span class="w" data-t="149.635">is</span> <span class="w" data-t="150.1">marked</span> <span class="w" data-t="150.565">Failed,</span></p>
+        <p id="cue-35" class="cue clip" data-start="150.91" data-duration="4.651" data-track-index="20" data-say="and its Replica Set creates a replacement that rejoins the queue."><span class="w" data-t="151.03">and</span> <span class="w" data-t="151.495">its</span> <span class="w" data-t="151.96">ReplicaSet</span> <span class="w" data-t="152.426">creates</span> <span class="w" data-t="152.891">a</span> <span class="w" data-t="153.356">replacement</span> <span class="w" data-t="153.821">that</span> <span class="w" data-t="154.286">rejoins</span> <span class="w" data-t="154.751">the</span> <span class="w" data-t="155.216">queue.</span></p>
+        <p id="cue-36" class="cue clip" data-start="155.561" data-duration="5.117" data-track-index="20" data-say="Three habits keep you in control: set requests, use a Priority Class,"><span class="w" data-t="155.681">Three</span> <span class="w" data-t="156.147">habits</span> <span class="w" data-t="156.612">keep</span> <span class="w" data-t="157.077">you</span> <span class="w" data-t="157.542">in</span> <span class="w" data-t="158.007">control:</span> <span class="w kw" data-t="158.472">set</span> <span class="w kw" data-t="158.937">requests,</span> <span class="w kw" data-t="159.402">use</span> <span class="w kw" data-t="159.867">a</span> <span class="w kw" data-t="160.333">PriorityClass,</span></p>
+        <p id="cue-37" class="cue clip" data-start="160.678" data-duration="1.395" data-track-index="20" data-say="add a Pod Disruption Budget."><span class="w kw" data-t="160.798">add</span> <span class="w kw" data-t="161.263">a</span> <span class="w kw" data-t="161.728">PodDisruptionBudget.</span></p>
+        <p id="cue-38" class="cue clip" data-start="162.073" data-duration="5.116" data-track-index="20" data-say="To watch both halves, read the events: FailedScheduling from the scheduler,"><span class="w" data-t="162.193">To</span> <span class="w" data-t="162.658">watch</span> <span class="w" data-t="163.123">both</span> <span class="w" data-t="163.588">halves,</span> <span class="w" data-t="164.053">read</span> <span class="w" data-t="164.519">the</span> <span class="w" data-t="164.984">events:</span> <span class="w" data-t="165.449">FailedScheduling</span> <span class="w" data-t="165.914">from</span> <span class="w" data-t="166.379">the</span> <span class="w" data-t="166.844">scheduler,</span></p>
+        <p id="cue-39" class="cue clip" data-start="167.189" data-duration="1.861" data-track-index="20" data-say="Evicted from the kubelet."><span class="w" data-t="167.309">Evicted</span> <span class="w" data-t="167.774">from</span> <span class="w" data-t="168.24">the</span> <span class="w" data-t="168.705">kubelet.</span></p>
+        <p id="cue-40" class="cue clip" data-start="169.05" data-duration="3.256" data-track-index="20" data-say="The scheduler decides where a Pod lands."><span class="w" data-t="169.17">The</span> <span class="w" data-t="169.635">scheduler</span> <span class="w" data-t="170.1">decides</span> <span class="w" data-t="170.565">where</span> <span class="w" data-t="171.03">a</span> <span class="w" data-t="171.495">Pod</span> <span class="w" data-t="171.96">lands.</span></p>
+        <p id="cue-41" class="cue clip" data-start="172.306" data-duration="3.745" data-track-index="20" data-say="The kubelet decides when it leaves."><span class="w" data-t="172.426">The</span> <span class="w" data-t="172.891">kubelet</span> <span class="w" data-t="173.356">decides</span> <span class="w" data-t="173.821">when</span> <span class="w" data-t="174.286">it</span> <span class="w" data-t="174.751">leaves.</span></p>
         </div>
       </div>
     </div>
@@ -625,7 +622,7 @@
         reveal("#s2-bind", at("s2-bind"));
         reveal("#s2-kubelet", at("s2-kubelet"));
         reveal("#s2-post", at("s2-post"));
-        const epOn = (sel, t, c = "var(--accent)") => tl.fromTo(sel, { color: "#566079", backgroundColor: "rgba(0,0,0,0)" },
+        const epOn = (sel, t, c = "var(--accent)") => tl.fromTo(sel, { color: "#8f9ab1", backgroundColor: "rgba(0,0,0,0)" },
           { color: "#e9eef8", backgroundColor: "color-mix(in srgb, " + c + " 28%, transparent)", duration: 0.3 }, t);
         epOn("#ep-f", at("s2-filter"));
         epOn("#ep-s", at("s2-score"));
@@ -663,7 +660,7 @@
         // ---- S5 ring geometry (computed, not measured) ----
         const ring = $("#s5-ring");
         const RW = ring.offsetWidth || (1080 > 1920 ? 760 : 864);
-        const RH = ring.offsetHeight || (1080 > 1920 ? 552 : 620);
+        const RH = ring.offsetHeight || (1080 > 1920 ? 552 : 540);
         const cx = RW / 2, cy = RH / 2, R = Math.min(RW, RH) / 2 - 46;
         const ringIds = ["s5-q", "s5-f", "s5-s", "s5-b", "s5-r", "s5-p", "s5-e"];
         const ang = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / ringIds.length;
@@ -679,7 +676,10 @@
           const p = $("#w5-" + i);
           p.setAttribute("d", "M" + (cx + R * Math.cos(a0)).toFixed(1) + "," + (cy + R * Math.sin(a0)).toFixed(1) +
             " A" + R + "," + R + " 0 0 1 " + (cx + R * Math.cos(a1)).toFixed(1) + "," + (cy + R * Math.sin(a1)).toFixed(1));
-          p.dataset.ready = "1";
+          if (p.dataset.label) {
+            const am = (a0 + a1) / 2, lr = R + 30, lx = cx + lr * Math.cos(am), ly = cy + lr * Math.sin(am);
+            p.dataset.labelAt = lx.toFixed(1) + "," + (ly + 5).toFixed(1) + "," + (Math.cos(am) < 0 ? "end" : "start");
+          }
         });
         reveal("#s5-c", sc.s5.start + 0.6, { y: 0 });
         ringIds.forEach((id) => tl.fromTo("#" + id, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, at(id)));
@@ -700,7 +700,7 @@
         $$(".cue .w").forEach((w) => {
           const t = parseFloat(w.dataset.t);
           tl.fromTo(w, { color: "rgba(233,238,248,0.42)" },
-            { color: w.classList.contains("kw") ? "#326ce5" : "rgba(233,238,248,1)", duration: 0.18, ease: "none" }, t);
+            { color: w.classList.contains("kw") ? "#8fb2ff" : "rgba(233,238,248,1)", duration: 0.18, ease: "none" }, t);
         });
         $$(".cue").forEach((cue) => {
           const s = parseFloat(cue.dataset.start);
@@ -716,7 +716,7 @@
         }
         function route(p) {
           const a = $("#" + p.dataset.from), b = $("#" + p.dataset.to), stage = stageOf(p);
-          if (!a || !b || !stage || stage.offsetWidth === 0) return false;
+          if (!a || !b || !stage) return false;
           const A = offsetIn(a, stage), B = offsetIn(b, stage);
           if (!A || !B) return false;
           const ac = { x: A.x + A.w / 2, y: A.y + A.h / 2 }, bc = { x: B.x + B.w / 2, y: B.y + B.h / 2 };
@@ -736,8 +736,18 @@
           p.setAttribute("d", `M${f(s.x)},${f(s.y)} C${f(c1.x)},${f(c1.y)} ${f(c2.x)},${f(c2.y)} ${f(e.x)},${f(e.y)}`);
           return true;
         }
+        // All geometry is resolved here, synchronously, before the timeline is registered:
+        // the per-frame callback only reads precomputed numbers (no DOM measurement on seek).
         const SVGNS = "http://www.w3.org/2000/svg";
+        const SAMPLES = 160;
         const packets = wires.map((p) => {
+          if (p.dataset.from) route(p);
+          const len = p.getAttribute("d") ? p.getTotalLength() : 0;
+          const pts = [];
+          for (let i = 0; i <= SAMPLES; i++) {
+            const q = len ? p.getPointAtLength((i / SAMPLES) * len) : { x: 0, y: 0 };
+            pts.push([q.x, q.y]);
+          }
           const beads = [0, 1, 2].map(() => {
             const b = document.createElementNS(SVGNS, "circle");
             b.setAttribute("r", "4.5"); b.setAttribute("class", "bead"); b.setAttribute("opacity", "0");
@@ -745,50 +755,55 @@
             return b;
           });
           let label = null;
-          if (p.dataset.label) {
+          if (p.dataset.label && len) {
             label = document.createElementNS(SVGNS, "text");
-            label.setAttribute("class", "wire-label"); label.setAttribute("text-anchor", "middle"); label.setAttribute("opacity", "0");
+            label.setAttribute("class", "wire-label");
+            label.setAttribute("opacity", "0");
             label.textContent = p.dataset.label;
+            const out = p.dataset.labelAt; // "x,y,anchor" override (ring arcs)
+            if (out) {
+              const [lx, ly, anchor] = out.split(",");
+              label.setAttribute("x", lx); label.setAttribute("y", ly); label.setAttribute("text-anchor", anchor);
+            } else {
+              const [mx, my] = pts[SAMPLES / 2];
+              label.setAttribute("x", (mx + 22).toFixed(1)); label.setAttribute("y", (my + 6).toFixed(1));
+              label.setAttribute("text-anchor", "start");
+            }
             p.parentNode.appendChild(label);
           }
-          const scene = p.closest(".scene");
-          return { p, beads, label, on: at(p.dataset.on), scene: sc[scene.id], len: 0 };
+          const scene = sc[p.closest(".scene").id];
+          return { beads, label, pts, len, on: at(p.dataset.on), scene };
         });
-        const floats = $$(".float-host").map((host, i) => ({ el: host.querySelector(".float") || null, i, scene: sc[host.closest(".scene").id] }));
+        const pointAt = (pts, u) => {
+          const f = u * SAMPLES, i = Math.min(SAMPLES - 1, Math.floor(f)), r = f - i;
+          return [pts[i][0] + (pts[i + 1][0] - pts[i][0]) * r, pts[i][1] + (pts[i + 1][1] - pts[i][1]) * r];
+        };
+        const floats = $$(".float-host").map((host, i) => ({ el: host.querySelector(".float"), i, scene: sc[host.closest(".scene").id] }))
+          .filter((f) => f.el);
         const glow = $("#glow");
         const clock = { t: 0 };
+        const SPEED = 210; // packet speed, px per second along the path
 
         function tick() {
           const t = clock.t;
           gsap.set(glow, { x: Math.sin(t * 0.21) * 140, y: Math.cos(t * 0.17) * 90, scale: 1 + Math.sin(t * 0.33) * 0.05 });
+          // the last 3 s settle to stillness so the closing line lands on a still frame
+          const damp = Math.max(0, Math.min(1, (TOTAL - 0.6 - t) / 2.4));
           for (const f of floats) {
-            if (!f.el || f.el.style.display === "contents") continue;
-            const live = t >= f.scene.start && t < f.scene.start + f.scene.duration;
-            if (!live) continue;
-            const y = Math.sin((t / 4.2) * Math.PI * 2 + f.i * 0.9) * 4;
-            const r = Math.sin((t / 6.1) * Math.PI * 2 + f.i * 1.7) * 0.25;
-            f.el.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0) rotate(${r.toFixed(3)}deg)`;
+            if (t < f.scene.start || t >= f.scene.start + f.scene.duration) continue;
+            const y = Math.sin((t / 4.2) * Math.PI * 2 + f.i * 0.9) * 4 * damp;
+            const r = Math.sin((t / 6.1) * Math.PI * 2 + f.i * 1.7) * 0.25 * damp;
+            f.el.style.transform = "translate3d(0," + y.toFixed(2) + "px,0) rotate(" + r.toFixed(3) + "deg)";
           }
           for (const k of packets) {
-            const live = t >= k.scene.start && t < k.scene.start + k.scene.duration;
-            if (!live) continue;
-            if (!k.p.dataset.ready && k.p.dataset.from) { if (route(k.p)) k.p.dataset.ready = "1"; }
-            if (!k.len && k.p.dataset.ready) {
-              k.len = k.p.getTotalLength();
-              if (k.label) {
-                const m = k.p.getPointAtLength(k.len / 2);
-                k.label.setAttribute("x", m.x.toFixed(1)); k.label.setAttribute("y", (m.y - 12).toFixed(1));
-              }
-            }
-            if (!k.len) continue;
+            if (!k.len || t < k.scene.start || t >= k.scene.start + k.scene.duration) continue;
             const since = t - k.on;
             const vis = since <= 0 ? 0 : Math.min(1, since / 0.6);
-            const speed = 210; // px per second along the path
             k.beads.forEach((b, j) => {
-              const u = (((since * speed) / k.len + j / 3) % 1 + 1) % 1;
-              const pt = k.p.getPointAtLength(u * k.len);
+              const u = ((((since * SPEED) / k.len + j / 3) % 1) + 1) % 1;
+              const [x, y] = pointAt(k.pts, u);
               const edge = Math.min(1, u / 0.12, (1 - u) / 0.12);
-              b.setAttribute("cx", pt.x.toFixed(1)); b.setAttribute("cy", pt.y.toFixed(1));
+              b.setAttribute("cx", x.toFixed(1)); b.setAttribute("cy", y.toFixed(1));
               b.setAttribute("opacity", (vis * edge).toFixed(3));
             });
             if (k.label) k.label.setAttribute("opacity", vis.toFixed(3));

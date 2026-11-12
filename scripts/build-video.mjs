@@ -95,6 +95,14 @@ for (const [i, sc] of scenes.entries()) {
     }
   });
   if (cue.length) cues.push(cue);
+  // no orphan captions: a 1–2 word tail of a sentence joins the cue before it
+  for (let k = cues.length - 1; k > 0; k--) {
+    const prev = cues[k - 1];
+    if (cues[k].length <= 2 && !/[.?!]$/.test(prev[prev.length - 1].w)) {
+      prev.push(...cues[k]);
+      cues.splice(k, 1);
+    }
+  }
   s.cues = cues;
   timing.scenes.push(s);
   t = start + dur;

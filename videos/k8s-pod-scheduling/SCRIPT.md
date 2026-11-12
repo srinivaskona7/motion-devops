@@ -76,42 +76,39 @@ Rate 2.15 words/s · lead 0.9s · pad 1.4s · runtime 180s
 | 3 | 0:09.15 | 0:15.20 | Then it sits at Pending: the object exists, but spec.nodeName is still empty. |
 | 4 | 0:15.20 | 0:17.06 | Who chooses the machine? |
 | 5 | 0:17.06 | 0:20.32 | The kube-scheduler, which watches for unassigned Pods. |
-| 6 | 0:20.32 | 0:26.36 | And when a node runs short of memory, the kubelet may take checkout |
-| 7 | 0:26.36 | 0:26.83 | away. |
-| 8 | 0:26.83 | 0:29.61 | Let's follow both halves. |
-| 9 | 0:30.99 | 0:34.71 | Checkout enters the scheduling queue, ordered by priority. |
-| 10 | 0:34.71 | 0:37.03 | Then Filter checks every node. |
-| 11 | 0:37.03 | 0:42.62 | node-a has 300 millicores free; checkout requests 500, so node-a is out. |
-| 12 | 0:42.62 | 0:44.94 | node-b and node-c are feasible. |
-| 13 | 0:44.94 | 0:48.20 | Score ranks them: node-b 61, node-c 88. |
-| 14 | 0:48.20 | 0:50.99 | Highest wins, ties break at random. |
-| 15 | 0:50.99 | 0:57.03 | Reserve and Permit then hold that choice, so no other Pod claims it. |
-| 16 | 0:57.03 | 1:02.62 | Bind writes node-c into spec.nodeName, and the kubelet there starts the container. |
-| 17 | 1:02.62 | 1:07.72 | Had no node passed Filter, PostFilter would try preemption. |
-| 18 | 1:09.10 | 1:12.36 | Three different forces can remove a Pod. |
-| 19 | 1:12.36 | 1:17.47 | Preemption: the scheduler evicts lower-priority victims so a higher-priority Pod fits, |
-| 20 | 1:17.47 | 1:20.26 | and records the target in nominatedNodeName. |
-| 21 | 1:20.26 | 1:24.45 | Victims get their grace period, 30 seconds by default, |
-| 22 | 1:24.45 | 1:26.78 | and PodDisruptionBudgets are best effort. |
-| 23 | 1:26.78 | 1:31.89 | Node-pressure eviction: the kubelet sees a signal, like memory.available under 100Mi. |
-| 24 | 1:31.89 | 1:36.54 | It ignores budgets, and a hard threshold means zero grace. |
-| 25 | 1:36.54 | 1:42.59 | API-initiated eviction, used by kubectl drain, respects budgets and returns 429 when one |
-| 26 | 1:42.59 | 1:44.44 | would break. |
-| 27 | 1:45.82 | 1:47.21 | Four edge cases. |
-| 28 | 1:47.22 | 1:51.87 | Eviction order: Pods using more than they request go first, |
-| 29 | 1:51.87 | 1:55.12 | by priority, then by how far over. |
-| 30 | 1:55.12 | 1:59.77 | BestEffort Pods request nothing, so any usage counts as over. |
-| 31 | 1:59.77 | 2:03.03 | QoS class is not the ranking key. |
-| 32 | 2:03.03 | 2:09.07 | nominatedNodeName is a hint, not a reservation; a higher-priority Pod can take that |
-| 33 | 2:09.07 | 2:09.54 | node. |
-| 34 | 2:09.54 | 2:14.66 | MemoryPressure becomes a NoSchedule taint, so new Pods stop landing there. |
-| 35 | 2:14.66 | 2:21.62 | And the transition period, five minutes by default, stops that condition from flapping. |
-| 36 | 2:23.00 | 2:26.72 | The whole loop: Queue, Filter, Score, Bind, Running. |
-| 37 | 2:26.72 | 2:30.91 | Then Pressure, and Evicted: the Pod is marked Failed, |
-| 38 | 2:30.91 | 2:35.56 | and its ReplicaSet creates a replacement that rejoins the queue. |
-| 39 | 2:35.56 | 2:40.68 | Three habits keep you in control: set requests, use a PriorityClass, |
-| 40 | 2:40.68 | 2:42.07 | add a PodDisruptionBudget. |
-| 41 | 2:42.07 | 2:47.19 | To watch both halves, read the events: FailedScheduling from the scheduler, |
-| 42 | 2:47.19 | 2:49.05 | Evicted from the kubelet. |
-| 43 | 2:49.05 | 2:52.31 | The scheduler decides where a Pod lands. |
-| 44 | 2:52.31 | 2:56.05 | The kubelet decides when it leaves. |
+| 6 | 0:20.32 | 0:26.83 | And when a node runs short of memory, the kubelet may take checkout away. |
+| 7 | 0:26.83 | 0:29.61 | Let's follow both halves. |
+| 8 | 0:30.99 | 0:34.71 | Checkout enters the scheduling queue, ordered by priority. |
+| 9 | 0:34.71 | 0:37.03 | Then Filter checks every node. |
+| 10 | 0:37.03 | 0:42.62 | node-a has 300 millicores free; checkout requests 500, so node-a is out. |
+| 11 | 0:42.62 | 0:44.94 | node-b and node-c are feasible. |
+| 12 | 0:44.94 | 0:48.20 | Score ranks them: node-b 61, node-c 88. |
+| 13 | 0:48.20 | 0:50.99 | Highest wins, ties break at random. |
+| 14 | 0:50.99 | 0:57.03 | Reserve and Permit then hold that choice, so no other Pod claims it. |
+| 15 | 0:57.03 | 1:02.62 | Bind writes node-c into spec.nodeName, and the kubelet there starts the container. |
+| 16 | 1:02.62 | 1:07.72 | Had no node passed Filter, PostFilter would try preemption. |
+| 17 | 1:09.10 | 1:12.36 | Three different forces can remove a Pod. |
+| 18 | 1:12.36 | 1:17.47 | Preemption: the scheduler evicts lower-priority victims so a higher-priority Pod fits, |
+| 19 | 1:17.47 | 1:20.26 | and records the target in nominatedNodeName. |
+| 20 | 1:20.26 | 1:24.45 | Victims get their grace period, 30 seconds by default, |
+| 21 | 1:24.45 | 1:26.78 | and PodDisruptionBudgets are best effort. |
+| 22 | 1:26.78 | 1:31.89 | Node-pressure eviction: the kubelet sees a signal, like memory.available under 100Mi. |
+| 23 | 1:31.89 | 1:36.54 | It ignores budgets, and a hard threshold means zero grace. |
+| 24 | 1:36.54 | 1:44.44 | API-initiated eviction, used by kubectl drain, respects budgets and returns 429 when one would break. |
+| 25 | 1:45.82 | 1:47.21 | Four edge cases. |
+| 26 | 1:47.22 | 1:51.87 | Eviction order: Pods using more than they request go first, |
+| 27 | 1:51.87 | 1:55.12 | by priority, then by how far over. |
+| 28 | 1:55.12 | 1:59.77 | BestEffort Pods request nothing, so any usage counts as over. |
+| 29 | 1:59.77 | 2:03.03 | QoS class is not the ranking key. |
+| 30 | 2:03.03 | 2:09.54 | nominatedNodeName is a hint, not a reservation; a higher-priority Pod can take that node. |
+| 31 | 2:09.54 | 2:14.66 | MemoryPressure becomes a NoSchedule taint, so new Pods stop landing there. |
+| 32 | 2:14.66 | 2:21.62 | And the transition period, five minutes by default, stops that condition from flapping. |
+| 33 | 2:23.00 | 2:26.72 | The whole loop: Queue, Filter, Score, Bind, Running. |
+| 34 | 2:26.72 | 2:30.91 | Then Pressure, and Evicted: the Pod is marked Failed, |
+| 35 | 2:30.91 | 2:35.56 | and its ReplicaSet creates a replacement that rejoins the queue. |
+| 36 | 2:35.56 | 2:40.68 | Three habits keep you in control: set requests, use a PriorityClass, |
+| 37 | 2:40.68 | 2:42.07 | add a PodDisruptionBudget. |
+| 38 | 2:42.07 | 2:47.19 | To watch both halves, read the events: FailedScheduling from the scheduler, |
+| 39 | 2:47.19 | 2:49.05 | Evicted from the kubelet. |
+| 40 | 2:49.05 | 2:52.31 | The scheduler decides where a Pod lands. |
+| 41 | 2:52.31 | 2:56.05 | The kubelet decides when it leaves. |
