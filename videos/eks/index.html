@@ -63,11 +63,11 @@
       .bg-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 26%, transparent 44%, rgba(2, 4, 8, 0.92) 100%); }
 
       /* ---------- chrome ---------- */
-      .topbar { position: absolute; left: 108px; right: 108px; top: 44px; height: 36px; display: flex; justify-content: space-between; align-items: center; z-index: 40; }
+      .topbar { position: absolute; left: 80px; right: 80px; top: 44px; height: 36px; display: flex; justify-content: space-between; align-items: center; z-index: 40; }
       .brand { display: flex; align-items: center; gap: 10px; font: 700 17px/1 var(--mono); letter-spacing: 0.14em; }
       .brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
       .chapters { display: flex; gap: 10px; }
-      .chap { width: 78px; font: 700 11px/1 var(--mono); letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; text-align: center; }
+      .chap { width: 96px; font: 700 11px/1 var(--mono); letter-spacing: 0.08em; color: var(--dim); text-transform: uppercase; text-align: center; }
       .chap b { display: block; height: 3px; border-radius: 2px; margin-top: 6px; background: rgba(255,255,255,0.1); overflow: hidden; }
       .chap b u { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; }
 
@@ -217,22 +217,22 @@
           </div>
           <div class="stage" id="s2-stage">
             <!-- AWS namespace -->
-            <div class="ns" id="s2-ns-aws" style="left: 130px; top: 400px; width: 820px; height: 150px"></div>
-            <div class="bound" id="s2-bound-aws" style="left: 180px; top: 430px; width: 720px; height: 90px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="88" rx="12" /></svg>
+            <div class="ns" id="s2-ns-aws" style="left: 130px; top: 380px; width: 820px; height: 230px"></div>
+            <div class="bound" id="s2-bound-aws" style="left: 160px; top: 400px; width: 760px; height: 190px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="758" height="188" rx="14" /></svg>
               <div class="bl">AWS · EKS control plane</div>
             </div>
-            <div class="card" id="s2-eks" style="--ind: var(--k8s-blue); left: 180px; top: 405px; width: 720px; height: 40px"><h3 class="m">Amazon EKS · managed control plane</h3></div>
-            <div class="card" id="s2-cp" style="--ind: var(--k8s-blue); left: 230px; top: 490px; width: 300px; height: 70px"><h3 class="m">API server · etcd</h3><div class="sw"><span class="a t-ok">managed · multi-AZ</span></div></div>
-            <div class="card" id="s2-ha" style="--ind: var(--k8s-blue); left: 590px; top: 490px; width: 300px; height: 70px"><h3 class="m">scheduler + ctrl</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
+            <div class="card" id="s2-eks" style="--ind: var(--k8s-blue); left: 190px; top: 435px; width: 700px; height: 42px"><h3 class="m">Amazon EKS · managed control plane</h3></div>
+            <div class="card" id="s2-cp" style="--ind: var(--k8s-blue); left: 190px; top: 495px; width: 335px; height: 74px"><h3 class="m">API server · etcd</h3><div class="sw"><span class="a t-ok">managed · multi-AZ</span></div></div>
+            <div class="card" id="s2-ha" style="--ind: var(--k8s-blue); left: 555px; top: 495px; width: 335px; height: 74px"><h3 class="m">scheduler + ctrl</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
             <!-- Customer namespace -->
-            <div class="ns" id="s2-ns-customer" style="left: 130px; top: 610px; width: 820px; height: 150px"></div>
-            <div class="bound" id="s2-bound-customer" style="left: 180px; top: 640px; width: 720px; height: 90px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="88" rx="12" /></svg>
+            <div class="ns" id="s2-ns-customer" style="left: 130px; top: 645px; width: 820px; height: 180px"></div>
+            <div class="bound" id="s2-bound-customer" style="left: 160px; top: 665px; width: 760px; height: 140px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="758" height="138" rx="14" /></svg>
               <div class="bl">customer VPC · worker nodes</div>
             </div>
-            <div class="card" id="s2-nodes" style="--ind: var(--aws-orange); left: 230px; top: 650px; width: 300px; height: 70px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">kubelet · kube-proxy</span></div></div>
-            <div class="card" id="s2-vpc" style="--ind: var(--aws-orange); left: 590px; top: 650px; width: 300px; height: 70px"><h3 class="m">VPC · subnets · SG</h3><div class="sw"><span class="a">you configure</span></div></div>
+            <div class="card" id="s2-nodes" style="--ind: var(--aws-orange); left: 190px; top: 700px; width: 335px; height: 74px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">kubelet · kube-proxy</span></div></div>
+            <div class="card" id="s2-vpc" style="--ind: var(--aws-orange); left: 555px; top: 700px; width: 335px; height: 74px"><h3 class="m">VPC · subnets · SG</h3><div class="sw"><span class="a">you configure</span></div></div>
             <svg class="wires" aria-hidden="true">
               <path class="wire" data-from="s2-cp" data-to="s2-nodes" data-on="s2-cp" data-axis="y" />
             </svg>
@@ -248,22 +248,22 @@
             <h2><span class="hw">Two</span> <span class="hw">clear</span> <span class="hw">boundaries.</span></h2>
           </div>
           <div class="stage" id="s3-stage">
-            <div class="bound" id="s3-bound-cp" style="left: 130px; top: 400px; width: 360px; height: 320px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="358" height="318" rx="16" /></svg>
+            <div class="bound" id="s3-bound-cp" style="left: 130px; top: 380px; width: 380px; height: 430px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="378" height="428" rx="16" /></svg>
               <div class="bl">AWS · control plane</div>
             </div>
-            <div class="card" id="s3-api" style="--ind: var(--k8s-blue); left: 180px; top: 430px; width: 260px; height: 90px"><h3 class="m">API server</h3><div class="sw"><span class="a t-ok">AWS managed</span></div></div>
-            <div class="card" id="s3-etcd" style="--ind: var(--k8s-blue); left: 180px; top: 540px; width: 260px; height: 90px"><h3 class="m">etcd</h3><div class="sw"><span class="a t-ok">AWS rotated</span></div></div>
-            <div class="card" id="s3-sched" style="--ind: var(--k8s-blue); left: 180px; top: 650px; width: 260px; height: 80px"><h3 class="m">scheduler</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
-            <div class="bound" id="s3-bound-nodes" style="left: 590px; top: 400px; width: 360px; height: 320px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="358" height="318" rx="16" /></svg>
+            <div class="card" id="s3-api" style="--ind: var(--k8s-blue); left: 165px; top: 430px; width: 310px; height: 86px"><h3 class="m">API server</h3><div class="sw"><span class="a t-ok">AWS managed</span></div></div>
+            <div class="card" id="s3-etcd" style="--ind: var(--k8s-blue); left: 165px; top: 535px; width: 310px; height: 86px"><h3 class="m">etcd</h3><div class="sw"><span class="a t-ok">AWS rotated</span></div></div>
+            <div class="card" id="s3-sched" style="--ind: var(--k8s-blue); left: 165px; top: 640px; width: 310px; height: 86px"><h3 class="m">scheduler</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
+            <div class="bound" id="s3-bound-nodes" style="left: 570px; top: 380px; width: 380px; height: 490px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="378" height="488" rx="16" /></svg>
               <div class="bl">customer · worker nodes</div>
             </div>
-            <div class="card" id="s3-worker" style="--ind: var(--aws-orange); left: 640px; top: 405px; width: 260px; height: 48px"><h3 class="m">Worker nodes</h3></div>
-            <div class="card" id="s3-kubelet" style="--ind: var(--aws-orange); left: 640px; top: 500px; width: 260px; height: 90px"><h3 class="m">kubelet</h3><div class="sw"><span class="a">you run</span></div></div>
-            <div class="card" id="s3-proxy" style="--ind: var(--aws-orange); left: 640px; top: 630px; width: 260px; height: 90px"><h3 class="m">kube-proxy</h3><div class="sw"><span class="a">you run</span></div></div>
-            <div class="card" id="s3-ec2" style="--ind: var(--aws-orange); left: 640px; top: 760px; width: 260px; height: 80px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">your VPC</span></div></div>
-            <div class="badge" id="s3-personas" style="left: 130px; top: 780px; background: var(--k8s-blue);">two clean boundaries</div>
+            <div class="card" id="s3-worker" style="--ind: var(--aws-orange); left: 605px; top: 430px; width: 310px; height: 46px"><h3 class="m">Worker nodes</h3></div>
+            <div class="card" id="s3-kubelet" style="--ind: var(--aws-orange); left: 605px; top: 495px; width: 310px; height: 86px"><h3 class="m">kubelet</h3><div class="sw"><span class="a">you run</span></div></div>
+            <div class="card" id="s3-proxy" style="--ind: var(--aws-orange); left: 605px; top: 600px; width: 310px; height: 86px"><h3 class="m">kube-proxy</h3><div class="sw"><span class="a">you run</span></div></div>
+            <div class="card" id="s3-ec2" style="--ind: var(--aws-orange); left: 605px; top: 705px; width: 310px; height: 86px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">your VPC</span></div></div>
+            <div class="badge" id="s3-personas" style="left: 130px; top: 835px; background: var(--k8s-blue);">two clean boundaries</div>
             <svg class="wires" aria-hidden="true">
               <path class="wire" data-from="s3-api" data-to="s3-kubelet" data-on="s3-api" data-axis="x" />
             </svg>
