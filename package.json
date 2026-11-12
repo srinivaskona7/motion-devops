@@ -9,6 +9,8 @@
     "render:1080": "node scripts/render-video.mjs $npm_config_slug 1080",
     "render:1440": "node scripts/render-video.mjs $npm_config_slug 1440",
     "render:4k": "node scripts/render-video.mjs $npm_config_slug 4k",
+    "thumbnails": "node scripts/generate-thumbnails.mjs",
+    "prores": "node scripts/export-prores.mjs",
     "check": "npm run build && cd videos/k8s-pod-scheduling && npx --yes hyperframes@0.9.37 check && cd ../k8s-pod-scheduling-reel && npx --yes hyperframes@0.9.37 check",
     "test": "node scripts/verify-video.mjs k8s-pod-scheduling",
     "build:dr": "node scripts/build-video.mjs k8s-disaster-recovery",
