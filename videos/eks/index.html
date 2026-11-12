@@ -98,6 +98,9 @@
       .bound rect { fill: rgba(50, 108, 229, 0.03); stroke: rgba(50, 108, 229, 0.45); stroke-width: 2; stroke-dasharray: 10 8; }
       .bound .bl { position: absolute; left: 18px; top: -13px; padding: 4px 12px; background: var(--k8s-blue); color: #fff; font: 700 13px/26px var(--mono); letter-spacing: 0.08em; border-radius: 6px; text-transform: uppercase; }
 
+      /* namespace isolation band */
+      .ns { position: absolute; z-index: 1; border-radius: 16px; border: 1px dashed var(--line); background: rgba(255,255,255,0.02); }
+
       /* glassmorphic cards */
       .card {
         position: absolute; z-index: 2; padding: 14px 18px 14px 26px; border-radius: 14px;
@@ -119,7 +122,6 @@
       .card.chip { padding: 0 20px; border-radius: 30px; flex-direction: row; align-items: center; gap: 10px; font: 700 20px/1 var(--mono); }
       .card.chip::before { display: none; }
       .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 9px var(--ok); flex: none; }
-      .ns { position: absolute; z-index: 1; border-radius: 16px; border: 1px dashed var(--line); background: rgba(255,255,255,0.02); }
 
       /* terminal boxes */
       .term { position: absolute; z-index: 3; padding: 14px 24px 16px; border-radius: 14px; background: rgba(6, 9, 16, 0.9); border: 1px solid var(--line);
@@ -147,7 +149,7 @@
       body.standalone { width: 100vw; height: 100vh; display: grid; place-items: center; background: #03050a; }
       body.standalone #root { flex: none; transform-origin: 50% 50%; box-shadow: 0 30px 120px rgba(0, 0, 0, 0.6); }
       .player { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 99; display: flex; gap: 10px; align-items: center;
-        padding: 8px 12px; border-radius: 12px; background: rgba(15, 20, 32, 0.92); border: 1px solid var(--line); backdrop-filter: blur(14px);
+        padding: 8px 12px; border-radius: 12px; background: rgba(15, 20, 32, 0.92); border: 1px solid var(--line); backdrop-filter: blur(20px);
         font: 400 13px var(--mono); color: var(--ink); width: min(620px, 94vw); }
       .player button { font: inherit; color: var(--ink); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
       .player button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent); }
@@ -162,7 +164,7 @@
     </style>
   </head>
   <body>
-    <div id="root" class="port" data-composition-id="main" data-start="0" data-duration="60" data-width="1080" data-height="1920">
+    <div id="root" class="port" data-composition-id="main" data-start="0" data-duration="180" data-width="1080" data-height="1920">
       <div class="bg-glow"></div>
       <div class="bg-stars"></div>
       <div class="bg-vignette"></div>
@@ -171,60 +173,66 @@
         <div class="brand"><i id="brand-dot"></i>EKS · AWS</div>
         <div class="chapters">
           <div class="chap">Breaking<b><u id="ch-s1"></u></b></div>
-          <div class="chap">Architecture<b><u id="ch-s2"></u></b></div>
-          <div class="chap">Networking<b><u id="ch-s3"></u></b></div>
-          <div class="chap">Troubleshoot<b><u id="ch-s4"></u></b></div>
-          <div class="chap">Recap<b><u id="ch-s5"></u></b></div>
+          <div class="chap">What is EKS<b><u id="ch-s2"></u></b></div>
+          <div class="chap">Control Plane<b><u id="ch-s3"></u></b></div>
+          <div class="chap">Networking<b><u id="ch-s4"></u></b></div>
+          <div class="chap">Identity<b><u id="ch-s5"></u></b></div>
+          <div class="chap">Troubleshoot<b><u id="ch-s6"></u></b></div>
+          <div class="chap">Recap<b><u id="ch-s7"></u></b></div>
         </div>
       </div>
 
       <!-- ===================== S1 · BREAKING POINT ===================== -->
-      <section id="s1" class="scene clip" data-start="0" data-duration="13.257" data-track-index="1" data-track-kind="graphics">
+      <section id="s1" class="scene clip" data-start="0" data-duration="22.375" data-track-index="1" data-track-kind="graphics">
         <div class="cam" id="s1-cam">
           <div class="head">
             <div class="kicker hx" id="s1-kick" style="--kc: var(--bad)">01 · The Breaking Point</div>
             <h2><span class="hw">Self</span> <span class="hw">managed</span> <span class="hw">K8s</span> <span class="hw">is</span> <span class="hw">a</span> <span class="hw">burden.</span></h2>
           </div>
           <div class="stage" id="s1-stage">
-            <div class="card" id="s1-client" style="left: 130px; top: 390px; width: 260px; height: 110px"><h3>client</h3><div class="sw"><span class="a t-ok">1.2k rps</span></div></div>
-            <div class="card" id="s1-eks" style="--ind: var(--bad); left: 410px; top: 390px; width: 340px; height: 200px"><h3 class="m">self-managed K8s</h3><div class="sw"><span class="a">etcd · API server · certs</span><span class="b t-bad">you patch it all</span></div></div>
-            <div class="card s1-pod" id="s1-web" style="left: 130px; top: 700px; width: 200px; height: 94px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
-            <div class="card s1-pod" id="s1-api" style="left: 370px; top: 700px; width: 200px; height: 94px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
-            <div class="card s1-pod" id="s1-pay" style="left: 610px; top: 700px; width: 200px; height: 94px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">CrashLoop</span></div></div>
-            <div class="badge" id="s1-fail" style="left: 765px; top: 400px; background: var(--bad);">etcd quorum lost</div>
-            <div class="badge" id="s1-burden" style="left: 130px; top: 820px; background: var(--warn);">undifferentiated toil</div>
+            <div class="card" id="s1-client" style="left: 130px; top: 400px; width: 260px; height: 110px"><h3>client</h3><div class="sw"><span class="a t-ok">1.2k rps</span></div></div>
+            <div class="card" id="s1-kops" style="--ind: var(--bad); left: 410px; top: 400px; width: 340px; height: 200px"><h3 class="m">self-managed K8s</h3><div class="sw"><span class="a">etcd · API server · certs</span><span class="b t-bad">you patch it all</span></div></div>
+            <div class="card" id="s1-etcd" style="--ind: var(--bad); left: 410px; top: 615px; width: 340px; height: 94px"><h3 class="m">etcd cluster</h3><div class="sw"><span class="a t-bad">quorum lost</span></div></div>
+            <div class="badge" id="s1-fail" style="left: 770px; top: 410px; background: var(--bad);">etcd quorum lost</div>
+            <div class="badge" id="s1-burden" style="left: 130px; top: 640px; background: var(--warn);">undifferentiated toil</div>
+            <div class="card s1-pod" id="s1-web" style="left: 130px; top: 780px; width: 200px; height: 94px"><h3>web</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+            <div class="card s1-pod" id="s1-api" style="left: 370px; top: 780px; width: 200px; height: 94px"><h3>api</h3><div class="sw"><span class="a t-ok">Running</span></div></div>
+            <div class="card s1-pod" id="s1-pay" style="left: 610px; top: 780px; width: 200px; height: 94px"><h3>payments</h3><div class="sw"><span class="a t-ok">Running</span><span class="b t-bad">CrashLoop</span></div></div>
             <svg class="wires" aria-hidden="true">
-              <path class="wire" data-from="s1-client" data-to="s1-eks" data-on="s1-eks" data-axis="x" />
-              <path class="wire" data-from="s1-eks" data-to="s1-web" data-on="s1-eks" data-axis="x" />
-              <path class="wire" data-from="s1-eks" data-to="s1-api" data-on="s1-eks" data-axis="x" />
-              <path class="wire bad" data-from="s1-eks" data-to="s1-pay" data-on="s1-eks" data-axis="x" data-fail="s1-fail" />
+              <path class="wire" data-from="s1-client" data-to="s1-kops" data-on="s1-kops" data-axis="x" />
+              <path class="wire" data-from="s1-kops" data-to="s1-web" data-on="s1-kops" data-axis="x" />
+              <path class="wire" data-from="s1-kops" data-to="s1-api" data-on="s1-kops" data-axis="x" />
+              <path class="wire bad" data-from="s1-kops" data-to="s1-pay" data-on="s1-kops" data-axis="x" data-fail="s1-fail" />
             </svg>
           </div>
         </div>
       </section>
 
-      <!-- ===================== S2 · EKS ARCHITECTURE ===================== -->
-      <section id="s2" class="scene clip" data-start="13.257" data-duration="10.972" data-track-index="2" data-track-kind="graphics">
+      <!-- ===================== S2 · WHAT EKS IS ===================== -->
+      <section id="s2" class="scene clip" data-start="22.375" data-duration="25.5" data-track-index="2" data-track-kind="graphics">
         <div class="cam" id="s2-cam">
           <div class="head">
-            <div class="kicker hx" id="s2-kick" style="--kc: var(--k8s-blue)">02 · EKS Architecture</div>
-            <h2><span class="hw">AWS</span> <span class="hw">owns</span> <span class="hw">the</span> <span class="hw">control</span> <span class="hw">plane.</span></h2>
+            <div class="kicker hx" id="s2-kick" style="--kc: var(--k8s-blue)">02 · What EKS Is</div>
+            <h2><span class="hw">AWS</span> <span class="hw">runs</span> <span class="hw">the</span> <span class="hw">control</span> <span class="hw">plane.</span></h2>
           </div>
           <div class="stage" id="s2-stage">
-            <div class="ns" id="s2-ns-aws" style="left: 130px; top: 400px; width: 820px; height: 210px"></div>
-            <div class="bound" id="s2-bound-aws" style="left: 180px; top: 440px; width: 720px; height: 130px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="128" rx="16" /></svg>
+            <!-- AWS namespace -->
+            <div class="ns" id="s2-ns-aws" style="left: 130px; top: 400px; width: 820px; height: 150px"></div>
+            <div class="bound" id="s2-bound-aws" style="left: 180px; top: 430px; width: 720px; height: 90px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="88" rx="12" /></svg>
               <div class="bl">AWS · EKS control plane</div>
             </div>
-            <div class="card" id="s2-cp" style="--ind: var(--k8s-blue); left: 230px; top: 460px; width: 300px; height: 90px"><h3 class="m">API server · etcd</h3><div class="sw"><span class="a t-ok">managed · multi-AZ</span></div></div>
-            <div class="card" id="s2-ha" style="--ind: var(--k8s-blue); left: 530px; top: 460px; width: 360px; height: 90px"><h3 class="m">scheduler · controller</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
-            <div class="ns" id="s2-ns-customer" style="left: 130px; top: 660px; width: 820px; height: 210px"></div>
-            <div class="bound" id="s2-bound-customer" style="left: 180px; top: 700px; width: 720px; height: 130px">
-              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="128" rx="16" /></svg>
+            <div class="card" id="s2-eks" style="--ind: var(--k8s-blue); left: 180px; top: 405px; width: 720px; height: 40px"><h3 class="m">Amazon EKS · managed control plane</h3></div>
+            <div class="card" id="s2-cp" style="--ind: var(--k8s-blue); left: 230px; top: 490px; width: 300px; height: 70px"><h3 class="m">API server · etcd</h3><div class="sw"><span class="a t-ok">managed · multi-AZ</span></div></div>
+            <div class="card" id="s2-ha" style="--ind: var(--k8s-blue); left: 590px; top: 490px; width: 300px; height: 70px"><h3 class="m">scheduler + ctrl</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
+            <!-- Customer namespace -->
+            <div class="ns" id="s2-ns-customer" style="left: 130px; top: 610px; width: 820px; height: 150px"></div>
+            <div class="bound" id="s2-bound-customer" style="left: 180px; top: 640px; width: 720px; height: 90px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="718" height="88" rx="12" /></svg>
               <div class="bl">customer VPC · worker nodes</div>
             </div>
-            <div class="card" id="s2-nodes" style="--ind: var(--aws-orange); left: 230px; top: 720px; width: 300px; height: 90px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">kubelet · kube-proxy</span></div></div>
-            <div class="card" id="s2-vpc" style="--ind: var(--aws-orange); left: 570px; top: 720px; width: 300px; height: 90px"><h3 class="m">VPC · subnets · SG</h3><div class="sw"><span class="a">you configure</span></div></div>
+            <div class="card" id="s2-nodes" style="--ind: var(--aws-orange); left: 230px; top: 650px; width: 300px; height: 70px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">kubelet · kube-proxy</span></div></div>
+            <div class="card" id="s2-vpc" style="--ind: var(--aws-orange); left: 590px; top: 650px; width: 300px; height: 70px"><h3 class="m">VPC · subnets · SG</h3><div class="sw"><span class="a">you configure</span></div></div>
             <svg class="wires" aria-hidden="true">
               <path class="wire" data-from="s2-cp" data-to="s2-nodes" data-on="s2-cp" data-axis="y" />
             </svg>
@@ -232,59 +240,108 @@
         </div>
       </section>
 
-      <!-- ===================== S3 · NETWORKING & IDENTITY ===================== -->
-      <section id="s3" class="scene clip" data-start="24.229" data-duration="14.971" data-track-index="3" data-track-kind="graphics">
+      <!-- ===================== S3 · CONTROL PLANE VS NODES ===================== -->
+      <section id="s3" class="scene clip" data-start="47.875" data-duration="25.5" data-track-index="3" data-track-kind="graphics">
         <div class="cam" id="s3-cam">
           <div class="head">
-            <div class="kicker hx" id="s3-kick" style="--kc: var(--aws-orange)">03 · Networking & Identity</div>
-            <h2><span class="hw">VPC</span> <span class="hw">CNI</span> <span class="hw">·</span> <span class="hw">IRSA</span> <span class="hw">·</span> <span class="hw">ALB</span> <span class="hw">Controller.</span></h2>
+            <div class="kicker hx" id="s3-kick" style="--kc: var(--k8s-blue)">03 · Control Plane vs Nodes</div>
+            <h2><span class="hw">Two</span> <span class="hw">clear</span> <span class="hw">boundaries.</span></h2>
           </div>
           <div class="stage" id="s3-stage">
-            <div class="card" id="s3-cni" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 120px"><h3 class="m">VPC CNI</h3><div class="sw"><span class="a t-acc">pod → VPC IP</span><span class="b t-ok">ENI per pod</span></div></div>
-            <div class="card" id="s3-irsa" style="--ind: var(--aws-orange); left: 550px; top: 400px; width: 340px; height: 120px"><h3 class="m">IRSA</h3><div class="sw"><span class="a t-acc">OIDC trust</span><span class="b t-ok">no long-lived keys</span></div></div>
-            <div class="card" id="s3-alb" style="--ind: var(--aws-orange); left: 130px; top: 560px; width: 340px; height: 120px"><h3 class="m">ALB Controller</h3><div class="sw"><span class="a">AWS Load Balancer · NLB</span><span class="b t-ok">ACM TLS · ingress</span></div></div>
-            <div class="card" id="s3-addons" style="--ind: var(--aws-orange); left: 550px; top: 560px; width: 340px; height: 120px"><h3 class="m">EKS add-ons</h3><div class="sw"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI</span></div></div>
+            <div class="bound" id="s3-bound-cp" style="left: 130px; top: 400px; width: 360px; height: 320px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="358" height="318" rx="16" /></svg>
+              <div class="bl">AWS · control plane</div>
+            </div>
+            <div class="card" id="s3-api" style="--ind: var(--k8s-blue); left: 180px; top: 430px; width: 260px; height: 90px"><h3 class="m">API server</h3><div class="sw"><span class="a t-ok">AWS managed</span></div></div>
+            <div class="card" id="s3-etcd" style="--ind: var(--k8s-blue); left: 180px; top: 540px; width: 260px; height: 90px"><h3 class="m">etcd</h3><div class="sw"><span class="a t-ok">AWS rotated</span></div></div>
+            <div class="card" id="s3-sched" style="--ind: var(--k8s-blue); left: 180px; top: 650px; width: 260px; height: 80px"><h3 class="m">scheduler</h3><div class="sw"><span class="a t-ok">AWS patched</span></div></div>
+            <div class="bound" id="s3-bound-nodes" style="left: 590px; top: 400px; width: 360px; height: 320px">
+              <svg aria-hidden="true"><rect x="1" y="1" width="358" height="318" rx="16" /></svg>
+              <div class="bl">customer · worker nodes</div>
+            </div>
+            <div class="card" id="s3-worker" style="--ind: var(--aws-orange); left: 640px; top: 405px; width: 260px; height: 48px"><h3 class="m">Worker nodes</h3></div>
+            <div class="card" id="s3-kubelet" style="--ind: var(--aws-orange); left: 640px; top: 500px; width: 260px; height: 90px"><h3 class="m">kubelet</h3><div class="sw"><span class="a">you run</span></div></div>
+            <div class="card" id="s3-proxy" style="--ind: var(--aws-orange); left: 640px; top: 630px; width: 260px; height: 90px"><h3 class="m">kube-proxy</h3><div class="sw"><span class="a">you run</span></div></div>
+            <div class="card" id="s3-ec2" style="--ind: var(--aws-orange); left: 640px; top: 760px; width: 260px; height: 80px"><h3 class="m">EC2 / Fargate</h3><div class="sw"><span class="a">your VPC</span></div></div>
+            <div class="badge" id="s3-personas" style="left: 130px; top: 780px; background: var(--k8s-blue);">two clean boundaries</div>
             <svg class="wires" aria-hidden="true">
-              <path class="wire cni" data-from="s3-cni" data-to="s3-alb" data-on="s3-cni" data-axis="x" data-label="CNI" />
-              <path class="wire" data-from="s3-irsa" data-to="s3-addons" data-on="s3-irsa" data-axis="x" data-label="OIDC" />
+              <path class="wire" data-from="s3-api" data-to="s3-kubelet" data-on="s3-api" data-axis="x" />
             </svg>
           </div>
         </div>
       </section>
 
-      <!-- ===================== S4 · TROUBLESHOOTING ===================== -->
-      <section id="s4" class="scene clip" data-start="39.2" data-duration="9.829" data-track-index="4" data-track-kind="graphics">
+      <!-- ===================== S4 · NETWORKING ===================== -->
+      <section id="s4" class="scene clip" data-start="73.375" data-duration="28" data-track-index="4" data-track-kind="graphics">
         <div class="cam" id="s4-cam">
           <div class="head">
-            <div class="kicker hx" id="s4-kick" style="--kc: var(--bad)">04 · Troubleshooting</div>
-            <h2><span class="hw">kubectl</span> <span class="hw">describe</span> <span class="hw">tells</span> <span class="hw">you</span> <span class="hw">why.</span></h2>
+            <div class="kicker hx" id="s4-kick" style="--kc: var(--aws-orange)">04 · Networking</div>
+            <h2><span class="hw">Real</span> <span class="hw">VPC</span> <span class="hw">IPs.</span> <span class="hw">No</span> <span class="hw">overlay.</span></h2>
           </div>
           <div class="stage" id="s4-stage">
-            <div class="term" id="s4-term" style="left: 130px; top: 400px; width: 820px; height: 220px">
-              <div class="bar"><i></i><i></i><i></i><span>admin-laptop · zsh</span></div>
-              <div class="ln"><span class="pr">$ </span><span id="s4-c1" data-text="kubectl describe pod payments-7x9m2"></span><i class="caret" id="s4-caret"></i></div>
-              <div class="ln out" id="s4-out1">Events:</div>
-              <div class="ln out" id="s4-out2">  Warning  FailedScheduling  2m  0/3 nodes available</div>
-              <div class="ln out s4-crash-out" id="s4-out3">  Warning  FailedCreatePodSandBox  1m  IP exhaustion</div>
-            </div>
-            <div class="card" id="s4-pending" style="--ind: var(--bad); left: 130px; top: 660px; width: 380px; height: 100px"><h3 class="m">Pending</h3><div class="sw"><span class="a t-bad">0/3 nodes available</span></div></div>
-            <div class="card" id="s4-crash" style="--ind: var(--bad); left: 550px; top: 660px; width: 380px; height: 100px"><h3 class="m">CrashLoopBackOff</h3><div class="sw"><span class="a t-bad">exit code 1</span></div></div>
-            <div class="card" id="s4-cni" style="--ind: var(--warn); left: 130px; top: 800px; width: 380px; height: 100px"><h3 class="m">IP exhaustion</h3><div class="sw"><span class="a t-warn">ENI limit reached</span></div></div>
+            <div class="card" id="s4-cni" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 130px"><h3 class="m">VPC CNI</h3><div class="sw"><span class="a t-acc">pod → VPC IP</span><span class="b t-ok">ENI per pod</span></div></div>
+            <div class="card" id="s4-alb" style="--ind: var(--aws-orange); left: 610px; top: 400px; width: 340px; height: 130px"><h3 class="m">ALB Controller</h3><div class="sw"><span class="a">AWS Load Balancer · NLB</span><span class="b t-ok">ACM TLS · ingress</span></div></div>
+            <div class="card" id="s4-addons" style="--ind: var(--aws-orange); left: 130px; top: 570px; width: 340px; height: 130px"><h3 class="m">EKS add-ons</h3><div class="sw"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI · version-pinned</span></div></div>
+            <div class="card" id="s4-overlay" style="--ind: var(--bad); left: 610px; top: 570px; width: 340px; height: 130px"><h3 class="m">No overlay</h3><div class="sw"><span class="a t-ok">no VXLAN · no Geneve</span><span class="b t-ok">security groups apply</span></div></div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire cni" data-from="s4-cni" data-to="s4-alb" data-on="s4-cni" data-axis="x" data-label="CNI" />
+            </svg>
           </div>
         </div>
       </section>
 
-      <!-- ===================== S5 · RECAP ===================== -->
-      <section id="s5" class="scene clip" data-start="49.029" data-duration="10.971" data-track-index="5" data-track-kind="graphics">
+      <!-- ===================== S5 · IDENTITY ===================== -->
+      <section id="s5" class="scene clip" data-start="101.375" data-duration="26.75" data-track-index="5" data-track-kind="graphics">
         <div class="cam" id="s5-cam">
           <div class="head">
-            <div class="kicker hx" id="s5-kick" style="--kc: var(--ok)">05 · Recap & Migration</div>
-            <h2><span class="hw">Move</span> <span class="hw">to</span> <span class="hw">EKS.</span></h2>
+            <div class="kicker hx" id="s5-kick" style="--kc: var(--aws-orange)">05 · Identity</div>
+            <h2><span class="hw">IRSA.</span> <span class="hw">No</span> <span class="hw">long-lived</span> <span class="hw">keys.</span></h2>
           </div>
           <div class="stage" id="s5-stage">
-            <div class="card" id="s5-aws" style="--ind: var(--ok); left: 130px; top: 400px; width: 820px; height: 100px"><h3 class="m">AWS owns control plane</h3><div class="sw"><span class="a t-ok">managed · patched · multi-AZ</span></div></div>
-            <div class="card" id="s5-customer" style="--ind: var(--aws-orange); left: 130px; top: 540px; width: 820px; height: 100px"><h3 class="m">You own nodes & workloads</h3><div class="sw"><span class="a t-ok">VPC · IRSA · add-ons · apps</span></div></div>
-            <div class="card chip" id="s5-migrate" style="left: 130px; top: 700px; width: 820px; height: 60px"><i class="dot"></i>eksctl create cluster — stop patching etcd</div>
+            <div class="card" id="s5-irsa" style="--ind: var(--aws-orange); left: 130px; top: 400px; width: 340px; height: 130px"><h3 class="m">IRSA</h3><div class="sw"><span class="a t-acc">OIDC trust</span><span class="b t-ok">pod assumes IAM role</span></div></div>
+            <div class="card" id="s5-keys" style="--ind: var(--bad); left: 610px; top: 400px; width: 340px; height: 130px"><h3 class="m">No long-lived keys</h3><div class="sw"><span class="a t-ok">rotated by STS</span><span class="b t-ok">short-lived tokens</span></div></div>
+            <div class="card" id="s5-addons" style="--ind: var(--aws-orange); left: 130px; top: 570px; width: 340px; height: 130px"><h3 class="m">EKS add-ons</h3><div class="sw"><span class="a">CoreDNS · kube-proxy</span><span class="b t-ok">EBS CSI · version-pinned</span></div></div>
+            <svg class="wires" aria-hidden="true">
+              <path class="wire" data-from="s5-irsa" data-to="s5-addons" data-on="s5-irsa" data-axis="x" data-label="OIDC" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S6 · TROUBLESHOOTING ===================== -->
+      <section id="s6" class="scene clip" data-start="128.125" data-duration="27.375" data-track-index="6" data-track-kind="graphics">
+        <div class="cam" id="s6-cam">
+          <div class="head">
+            <div class="kicker hx" id="s6-kick" style="--kc: var(--bad)">06 · Troubleshooting</div>
+            <h2><span class="hw">kubectl</span> <span class="hw">describe</span> <span class="hw">tells</span> <span class="hw">you</span> <span class="hw">why.</span></h2>
+          </div>
+          <div class="stage" id="s6-stage">
+            <div class="card" id="s6-describe" style="--ind: var(--bad); left: 130px; top: 365px; width: 300px; height: 30px"><h3 class="m">kubectl describe pod</h3></div>
+            <div class="term" id="s6-term" style="left: 130px; top: 415px; width: 820px; height: 220px">
+              <div class="bar"><i></i><i></i><i></i><span>admin-laptop · zsh</span></div>
+              <div class="ln"><span class="pr">$ </span><span id="s6-c1" data-text="kubectl describe pod payments-7x9m2"></span><i class="caret" id="s6-caret"></i></div>
+              <div class="ln out" id="s6-out1">Events:</div>
+              <div class="ln out" id="s6-out2">  Warning  FailedScheduling  2m  0/3 nodes available</div>
+              <div class="ln out s6-crash-out" id="s6-out3">  Warning  FailedCreatePodSandBox  1m  IP exhaustion</div>
+            </div>
+            <div class="card" id="s6-pending" style="--ind: var(--bad); left: 130px; top: 660px; width: 380px; height: 100px"><h3 class="m">Pending</h3><div class="sw"><span class="a t-bad">0/3 nodes available</span></div></div>
+            <div class="card" id="s6-crash" style="--ind: var(--bad); left: 550px; top: 660px; width: 380px; height: 100px"><h3 class="m">CrashLoopBackOff</h3><div class="sw"><span class="a t-bad">exit code 1</span></div></div>
+            <div class="card" id="s6-eni" style="--ind: var(--warn); left: 130px; top: 800px; width: 380px; height: 100px"><h3 class="m">IP exhaustion</h3><div class="sw"><span class="a t-warn">ENI limit reached</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== S7 · RECAP ===================== -->
+      <section id="s7" class="scene clip" data-start="155.5" data-duration="24.5" data-track-index="7" data-track-kind="graphics">
+        <div class="cam" id="s7-cam">
+          <div class="head">
+            <div class="kicker hx" id="s7-kick" style="--kc: var(--ok)">07 · Recap & Migration</div>
+            <h2><span class="hw">Move</span> <span class="hw">to</span> <span class="hw">EKS.</span></h2>
+          </div>
+          <div class="stage" id="s7-stage">
+            <div class="card" id="s7-aws" style="--ind: var(--ok); left: 130px; top: 400px; width: 820px; height: 100px"><h3 class="m">AWS owns control plane</h3><div class="sw"><span class="a t-ok">managed · patched · multi-AZ</span></div></div>
+            <div class="card" id="s7-you" style="--ind: var(--aws-orange); left: 130px; top: 540px; width: 820px; height: 100px"><h3 class="m">You own nodes & workloads</h3><div class="sw"><span class="a t-ok">VPC · IRSA · add-ons · apps</span></div></div>
+            <div class="card chip" id="s7-migrate" style="left: 130px; top: 700px; width: 820px; height: 60px"><i class="dot"></i>eksctl create cluster — stop patching etcd</div>
           </div>
         </div>
       </section>
@@ -293,30 +350,54 @@
       <div class="hud" id="hud">
         <div class="cc"><span>CC</span></div>
         <div id="captions" data-track-kind="captions">
-        <p id="cue-01" class="cue clip" data-start="0.88" data-duration="5.143" data-track-index="20" data-say="Self-managed K8s on EC2 means you run etcd yourself."><span class="w" data-t="1">Self-managed</span> <span class="w kw" data-t="1.571">K8s</span> <span class="w" data-t="2.143">on</span> <span class="w kw" data-t="2.714">EC2</span> <span class="w" data-t="3.286">means</span> <span class="w" data-t="3.857">you</span> <span class="w" data-t="4.429">run</span> <span class="w kw" data-t="5">etcd</span> <span class="w" data-t="5.571">yourself.</span></p>
-        <p id="cue-02" class="cue clip" data-start="6.023" data-duration="4" data-track-index="20" data-say="Then etcd loses quorum at 3 AM."><span class="w" data-t="6.143">Then</span> <span class="w kw" data-t="6.714">etcd</span> <span class="w kw" data-t="7.286">loses</span> <span class="w kw" data-t="7.857">quorum</span> <span class="w" data-t="8.429">at</span> <span class="w" data-t="9">3</span> <span class="w" data-t="9.571">AM.</span></p>
-        <p id="cue-03" class="cue clip" data-start="10.023" data-duration="2.563" data-track-index="20" data-say="That's undifferentiated toil."><span class="w" data-t="10.143">That's</span> <span class="w kw" data-t="10.714">undifferentiated</span> <span class="w kw" data-t="11.286">toil.</span></p>
-        <p id="cue-04" class="cue clip" data-start="14.137" data-duration="4.572" data-track-index="20" data-say="AWS runs the control plane, multi-AZ and managed."><span class="w kw" data-t="14.257">AWS</span> <span class="w kw" data-t="14.829">runs</span> <span class="w kw" data-t="15.4">the</span> <span class="w kw" data-t="15.971">control</span> <span class="w kw" data-t="16.543">plane,</span> <span class="w kw" data-t="17.114">multi-AZ</span> <span class="w kw" data-t="17.686">and</span> <span class="w kw" data-t="18.257">managed.</span></p>
-        <p id="cue-05" class="cue clip" data-start="18.709" data-duration="4.848" data-track-index="20" data-say="You own worker nodes inside your VPC."><span class="w kw" data-t="18.829">You</span> <span class="w kw" data-t="19.4">own</span> <span class="w kw" data-t="19.971">worker</span> <span class="w kw" data-t="20.543">nodes</span> <span class="w" data-t="21.114">inside</span> <span class="w kw" data-t="21.686">your</span> <span class="w kw" data-t="22.257">VPC.</span></p>
-        <p id="cue-06" class="cue clip" data-start="25.109" data-duration="5.142" data-track-index="20" data-say="Pods get V P C C N I addresses — real VPC IPs."><span class="w" data-t="25.229">Pods</span> <span class="w" data-t="25.8">get</span> <span class="w kw" data-t="26.371">VPC</span> <span class="w kw" data-t="26.943">CNI</span> <span class="w" data-t="27.514">addresses</span> <span class="w" data-t="28.086">—</span> <span class="w" data-t="28.657">real</span> <span class="w" data-t="29.229">VPC</span> <span class="w" data-t="29.8">IPs.</span></p>
-        <p id="cue-07" class="cue clip" data-start="30.251" data-duration="4" data-track-index="20" data-say="Identity via I R S A — no long-lived keys."><span class="w" data-t="30.371">Identity</span> <span class="w" data-t="30.943">via</span> <span class="w kw" data-t="31.514">IRSA</span> <span class="w" data-t="32.086">—</span> <span class="w" data-t="32.657">no</span> <span class="w" data-t="33.229">long-lived</span> <span class="w" data-t="33.8">keys.</span></p>
-        <p id="cue-08" class="cue clip" data-start="34.251" data-duration="4.278" data-track-index="20" data-say="AWS Load Balancer Controller handles ingress."><span class="w kw" data-t="34.371">AWS</span> <span class="w kw" data-t="34.943">Load</span> <span class="w kw" data-t="35.514">Balancer</span> <span class="w kw" data-t="36.086">Controller</span> <span class="w" data-t="36.657">handles</span> <span class="w" data-t="37.229">ingress.</span></p>
-        <p id="cue-09" class="cue clip" data-start="40.08" data-duration="2.857" data-track-index="20" data-say="kube control describe pod for Pending."><span class="w kw" data-t="40.2">kubectl</span> <span class="w kw" data-t="40.771">describe</span> <span class="w kw" data-t="41.343">pod</span> <span class="w" data-t="41.914">for</span> <span class="w kw" data-t="42.486">Pending.</span></p>
-        <p id="cue-10" class="cue clip" data-start="42.937" data-duration="0.572" data-track-index="20" data-say="Crash Loop Back Off?"><span class="w kw" data-t="43.057">CrashLoopBackOff?</span></p>
-        <p id="cue-11" class="cue clip" data-start="43.509" data-duration="1.142" data-track-index="20" data-say="Check logs."><span class="w" data-t="43.629">Check</span> <span class="w" data-t="44.2">logs.</span></p>
-        <p id="cue-12" class="cue clip" data-start="44.651" data-duration="1.143" data-track-index="20" data-say="IP exhaustion?"><span class="w kw" data-t="44.771">IP</span> <span class="w kw" data-t="45.343">exhaustion?</span></p>
-        <p id="cue-13" class="cue clip" data-start="45.794" data-duration="2.563" data-track-index="20" data-say="Check E N I limits."><span class="w" data-t="45.914">Check</span> <span class="w" data-t="46.486">ENI</span> <span class="w" data-t="47.057">limits.</span></p>
-        <p id="cue-14" class="cue clip" data-start="49.909" data-duration="4.571" data-track-index="20" data-say="Recap: AWS owns control plane, you own nodes."><span class="w" data-t="50.029">Recap:</span> <span class="w kw" data-t="50.6">AWS</span> <span class="w kw" data-t="51.171">owns</span> <span class="w kw" data-t="51.743">control</span> <span class="w kw" data-t="52.314">plane,</span> <span class="w kw" data-t="52.886">you</span> <span class="w kw" data-t="53.457">own</span> <span class="w kw" data-t="54.029">nodes.</span></p>
-        <p id="cue-15" class="cue clip" data-start="54.48" data-duration="4.849" data-track-index="20" data-say="Move to E K S and stop patching etcd."><span class="w kw" data-t="54.6">Move</span> <span class="w kw" data-t="55.171">to</span> <span class="w kw" data-t="55.743">EKS</span> <span class="w" data-t="56.314">and</span> <span class="w" data-t="56.886">stop</span> <span class="w" data-t="57.457">patching</span> <span class="w" data-t="58.029">etcd.</span></p>
+        <p id="cue-01" class="cue clip" data-start="1.08" data-duration="3.75" data-track-index="20" data-say="You run Kubernetes on EC2 yourself."><span class="w" data-t="1.2">You</span> <span class="w" data-t="1.825">run</span> <span class="w kw" data-t="2.45">Kubernetes</span> <span class="w kw" data-t="3.075">on</span> <span class="w kw" data-t="3.7">EC2</span> <span class="w" data-t="4.325">yourself.</span></p>
+        <p id="cue-02" class="cue clip" data-start="4.83" data-duration="3.125" data-track-index="20" data-say="etcd lives on your nodes."><span class="w kw" data-t="4.95">etcd</span> <span class="w" data-t="5.575">lives</span> <span class="w" data-t="6.2">on</span> <span class="w" data-t="6.825">your</span> <span class="w" data-t="7.45">nodes.</span></p>
+        <p id="cue-03" class="cue clip" data-start="7.955" data-duration="5" data-track-index="20" data-say="Then etcd loses quorum at three A M."><span class="w" data-t="8.075">Then</span> <span class="w kw" data-t="8.7">etcd</span> <span class="w kw" data-t="9.325">loses</span> <span class="w kw" data-t="9.95">quorum</span> <span class="w" data-t="10.575">at</span> <span class="w" data-t="11.2">three</span> <span class="w" data-t="11.825">A</span> <span class="w" data-t="12.45">M.</span></p>
+        <p id="cue-04" class="cue clip" data-start="12.955" data-duration="2.5" data-track-index="20" data-say="That is undifferentiated toil."><span class="w" data-t="13.075">That</span> <span class="w" data-t="13.7">is</span> <span class="w kw" data-t="14.325">undifferentiated</span> <span class="w kw" data-t="14.95">toil.</span></p>
+        <p id="cue-05" class="cue clip" data-start="15.455" data-duration="5.795" data-track-index="20" data-say="You patch, you upgrade, you are on call."><span class="w" data-t="15.575">You</span> <span class="w" data-t="16.2">patch,</span> <span class="w" data-t="16.825">you</span> <span class="w" data-t="17.45">upgrade,</span> <span class="w" data-t="18.075">you</span> <span class="w" data-t="18.7">are</span> <span class="w" data-t="19.325">on</span> <span class="w" data-t="19.95">call.</span></p>
+        <p id="cue-06" class="cue clip" data-start="23.455" data-duration="5" data-track-index="20" data-say="Amazon E K S runs the control plane for you."><span class="w" data-t="23.575">Amazon</span> <span class="w kw" data-t="24.2">EKS</span> <span class="w" data-t="24.825">runs</span> <span class="w" data-t="25.45">the</span> <span class="w kw" data-t="26.075">control</span> <span class="w kw" data-t="26.7">plane</span> <span class="w" data-t="27.325">for</span> <span class="w" data-t="27.95">you.</span></p>
+        <p id="cue-07" class="cue clip" data-start="28.455" data-duration="3.75" data-track-index="20" data-say="Multi-AZ and fully managed by AWS."><span class="w kw" data-t="28.575">Multi-AZ</span> <span class="w kw" data-t="29.2">and</span> <span class="w kw" data-t="29.825">fully</span> <span class="w kw" data-t="30.45">managed</span> <span class="w" data-t="31.075">by</span> <span class="w" data-t="31.7">AWS.</span></p>
+        <p id="cue-08" class="cue clip" data-start="32.205" data-duration="3.75" data-track-index="20" data-say="Automated patching, certificate rotation, etcd replacement."><span class="w" data-t="32.325">Automated</span> <span class="w" data-t="32.95">patching,</span> <span class="w" data-t="33.575">certificate</span> <span class="w" data-t="34.2">rotation,</span> <span class="w" data-t="34.825">etcd</span> <span class="w" data-t="35.45">replacement.</span></p>
+        <p id="cue-09" class="cue clip" data-start="35.955" data-duration="4.375" data-track-index="20" data-say="You own worker nodes inside your VPC."><span class="w kw" data-t="36.075">You</span> <span class="w kw" data-t="36.7">own</span> <span class="w kw" data-t="37.325">worker</span> <span class="w kw" data-t="37.95">nodes</span> <span class="w" data-t="38.575">inside</span> <span class="w kw" data-t="39.2">your</span> <span class="w kw" data-t="39.825">VPC.</span></p>
+        <p id="cue-10" class="cue clip" data-start="40.33" data-duration="3.125" data-track-index="20" data-say="AWS owns the control plane."><span class="w" data-t="40.45">AWS</span> <span class="w" data-t="41.075">owns</span> <span class="w" data-t="41.7">the</span> <span class="w" data-t="42.325">control</span> <span class="w" data-t="42.95">plane.</span></p>
+        <p id="cue-11" class="cue clip" data-start="43.455" data-duration="3.295" data-track-index="20" data-say="You own the nodes."><span class="w" data-t="43.575">You</span> <span class="w" data-t="44.2">own</span> <span class="w" data-t="44.825">the</span> <span class="w" data-t="45.45">nodes.</span></p>
+        <p id="cue-12" class="cue clip" data-start="48.955" data-duration="6.25" data-track-index="20" data-say="A P I server and etcd — AWS patches and rotates certificates."><span class="w kw" data-t="49.075">API</span> <span class="w kw" data-t="49.7">server</span> <span class="w kw" data-t="50.325">and</span> <span class="w kw" data-t="50.95">etcd</span> <span class="w" data-t="51.575">—</span> <span class="w" data-t="52.2">AWS</span> <span class="w" data-t="52.825">patches</span> <span class="w" data-t="53.45">and</span> <span class="w" data-t="54.075">rotates</span> <span class="w" data-t="54.7">certificates.</span></p>
+        <p id="cue-13" class="cue clip" data-start="55.205" data-duration="5.625" data-track-index="20" data-say="Scheduler and controller manager — fully managed by AWS."><span class="w kw" data-t="55.325">Scheduler</span> <span class="w kw" data-t="55.95">and</span> <span class="w kw" data-t="56.575">controller</span> <span class="w kw" data-t="57.2">manager</span> <span class="w" data-t="57.825">—</span> <span class="w" data-t="58.45">fully</span> <span class="w" data-t="59.075">managed</span> <span class="w" data-t="59.7">by</span> <span class="w" data-t="60.325">AWS.</span></p>
+        <p id="cue-14" class="cue clip" data-start="60.83" data-duration="6.875" data-track-index="20" data-say="Worker nodes run kubelet and kube-proxy on your EC2 or Fargate."><span class="w kw" data-t="60.95">Worker</span> <span class="w kw" data-t="61.575">nodes</span> <span class="w" data-t="62.2">run</span> <span class="w" data-t="62.825">kubelet</span> <span class="w" data-t="63.45">and</span> <span class="w" data-t="64.075">kube-proxy</span> <span class="w" data-t="64.7">on</span> <span class="w" data-t="65.325">your</span> <span class="w" data-t="65.95">EC2</span> <span class="w" data-t="66.575">or</span> <span class="w" data-t="67.2">Fargate.</span></p>
+        <p id="cue-15" class="cue clip" data-start="67.705" data-duration="1.875" data-track-index="20" data-say="Two clear personas."><span class="w" data-t="67.825">Two</span> <span class="w" data-t="68.45">clear</span> <span class="w kw" data-t="69.075">personas.</span></p>
+        <p id="cue-16" class="cue clip" data-start="69.58" data-duration="2.67" data-track-index="20" data-say="Two clean boundaries."><span class="w" data-t="69.7">Two</span> <span class="w" data-t="70.325">clean</span> <span class="w" data-t="70.95">boundaries.</span></p>
+        <p id="cue-17" class="cue clip" data-start="74.455" data-duration="5.625" data-track-index="20" data-say="Pods get V P C C N I addresses — real VPC IPs."><span class="w" data-t="74.575">Pods</span> <span class="w" data-t="75.2">get</span> <span class="w kw" data-t="75.825">VPC</span> <span class="w kw" data-t="76.45">CNI</span> <span class="w" data-t="77.075">addresses</span> <span class="w" data-t="77.7">—</span> <span class="w" data-t="78.325">real</span> <span class="w" data-t="78.95">VPC</span> <span class="w" data-t="79.575">IPs.</span></p>
+        <p id="cue-18" class="cue clip" data-start="80.08" data-duration="1.875" data-track-index="20" data-say="No overlay network."><span class="w" data-t="80.2">No</span> <span class="w" data-t="80.825">overlay</span> <span class="w" data-t="81.45">network.</span></p>
+        <p id="cue-19" class="cue clip" data-start="81.955" data-duration="2.5" data-track-index="20" data-say="No VXLAN, no Geneve."><span class="w" data-t="82.075">No</span> <span class="w" data-t="82.7">VXLAN,</span> <span class="w" data-t="83.325">no</span> <span class="w" data-t="83.95">Geneve.</span></p>
+        <p id="cue-20" class="cue clip" data-start="84.455" data-duration="5" data-track-index="20" data-say="Standard VPC security groups apply to every pod."><span class="w" data-t="84.575">Standard</span> <span class="w" data-t="85.2">VPC</span> <span class="w" data-t="85.825">security</span> <span class="w" data-t="86.45">groups</span> <span class="w" data-t="87.075">apply</span> <span class="w" data-t="87.7">to</span> <span class="w" data-t="88.325">every</span> <span class="w" data-t="88.95">pod.</span></p>
+        <p id="cue-21" class="cue clip" data-start="89.455" data-duration="6.25" data-track-index="20" data-say="AWS Load Balancer Controller provisions A L B and N L B for ingress."><span class="w kw" data-t="89.575">AWS</span> <span class="w kw" data-t="90.2">Load</span> <span class="w kw" data-t="90.825">Balancer</span> <span class="w kw" data-t="91.45">Controller</span> <span class="w" data-t="92.075">provisions</span> <span class="w" data-t="92.7">ALB</span> <span class="w" data-t="93.325">and</span> <span class="w" data-t="93.95">NLB</span> <span class="w" data-t="94.575">for</span> <span class="w" data-t="95.2">ingress.</span></p>
+        <p id="cue-22" class="cue clip" data-start="95.705" data-duration="4.545" data-track-index="20" data-say="T L S termination through AWS Certificate Manager."><span class="w" data-t="95.825">TLS</span> <span class="w" data-t="96.45">termination</span> <span class="w" data-t="97.075">through</span> <span class="w" data-t="97.7">AWS</span> <span class="w" data-t="98.325">Certificate</span> <span class="w" data-t="98.95">Manager.</span></p>
+        <p id="cue-23" class="cue clip" data-start="102.455" data-duration="6.25" data-track-index="20" data-say="I R S A lets pods assume AWS I A M roles through O I D C federation."><span class="w kw" data-t="102.575">IRSA</span> <span class="w" data-t="103.2">lets</span> <span class="w" data-t="103.825">pods</span> <span class="w" data-t="104.45">assume</span> <span class="w" data-t="105.075">AWS</span> <span class="w" data-t="105.7">IAM</span> <span class="w" data-t="106.325">roles</span> <span class="w" data-t="106.95">through</span> <span class="w" data-t="107.575">OIDC</span> <span class="w" data-t="108.2">federation.</span></p>
+        <p id="cue-24" class="cue clip" data-start="108.705" data-duration="3.75" data-track-index="20" data-say="No long-lived keys on worker nodes."><span class="w kw" data-t="108.825">No</span> <span class="w kw" data-t="109.45">long-lived</span> <span class="w kw" data-t="110.075">keys</span> <span class="w" data-t="110.7">on</span> <span class="w" data-t="111.325">worker</span> <span class="w" data-t="111.95">nodes.</span></p>
+        <p id="cue-25" class="cue clip" data-start="112.455" data-duration="2.5" data-track-index="20" data-say="Short-lived tokens from S T S."><span class="w" data-t="112.575">Short-lived</span> <span class="w" data-t="113.2">tokens</span> <span class="w" data-t="113.825">from</span> <span class="w" data-t="114.45">STS.</span></p>
+        <p id="cue-26" class="cue clip" data-start="114.955" data-duration="6.875" data-track-index="20" data-say="E K S add-ons — CoreDNS, kube-proxy, EBS C S I — version-pinned by AWS."><span class="w kw" data-t="115.075">EKS</span> <span class="w kw" data-t="115.7">add-ons</span> <span class="w" data-t="116.325">—</span> <span class="w" data-t="116.95">CoreDNS,</span> <span class="w" data-t="117.575">kube-proxy,</span> <span class="w" data-t="118.2">EBS</span> <span class="w" data-t="118.825">CSI</span> <span class="w" data-t="119.45">—</span> <span class="w" data-t="120.075">version-pinned</span> <span class="w" data-t="120.7">by</span> <span class="w" data-t="121.325">AWS.</span></p>
+        <p id="cue-27" class="cue clip" data-start="121.83" data-duration="5.17" data-track-index="20" data-say="Your cluster identity is federated and auditable."><span class="w" data-t="121.95">Your</span> <span class="w" data-t="122.575">cluster</span> <span class="w" data-t="123.2">identity</span> <span class="w" data-t="123.825">is</span> <span class="w" data-t="124.45">federated</span> <span class="w" data-t="125.075">and</span> <span class="w" data-t="125.7">auditable.</span></p>
+        <p id="cue-28" class="cue clip" data-start="129.205" data-duration="1.875" data-track-index="20" data-say="Pod stuck Pending?"><span class="w" data-t="129.325">Pod</span> <span class="w" data-t="129.95">stuck</span> <span class="w kw" data-t="130.575">Pending?</span></p>
+        <p id="cue-29" class="cue clip" data-start="131.08" data-duration="2.5" data-track-index="20" data-say="Run kube control describe pod."><span class="w" data-t="131.2">Run</span> <span class="w kw" data-t="131.825">kubectl</span> <span class="w kw" data-t="132.45">describe</span> <span class="w kw" data-t="133.075">pod.</span></p>
+        <p id="cue-30" class="cue clip" data-start="133.58" data-duration="4.375" data-track-index="20" data-say="Check the Events section for scheduling failures."><span class="w" data-t="133.7">Check</span> <span class="w" data-t="134.325">the</span> <span class="w" data-t="134.95">Events</span> <span class="w" data-t="135.575">section</span> <span class="w" data-t="136.2">for</span> <span class="w" data-t="136.825">scheduling</span> <span class="w" data-t="137.45">failures.</span></p>
+        <p id="cue-31" class="cue clip" data-start="137.955" data-duration="0.625" data-track-index="20" data-say="Crash Loop Back Off?"><span class="w kw" data-t="138.075">CrashLoopBackOff?</span></p>
+        <p id="cue-32" class="cue clip" data-start="138.58" data-duration="4.375" data-track-index="20" data-say="Check the container logs and exit codes."><span class="w" data-t="138.7">Check</span> <span class="w" data-t="139.325">the</span> <span class="w" data-t="139.95">container</span> <span class="w" data-t="140.575">logs</span> <span class="w" data-t="141.2">and</span> <span class="w" data-t="141.825">exit</span> <span class="w" data-t="142.45">codes.</span></p>
+        <p id="cue-33" class="cue clip" data-start="142.955" data-duration="1.25" data-track-index="20" data-say="IP exhaustion?"><span class="w kw" data-t="143.075">IP</span> <span class="w kw" data-t="143.7">exhaustion?</span></p>
+        <p id="cue-34" class="cue clip" data-start="144.205" data-duration="3.75" data-track-index="20" data-say="Check E N I limits and subnet size."><span class="w" data-t="144.325">Check</span> <span class="w" data-t="144.95">ENI</span> <span class="w" data-t="145.575">limits</span> <span class="w" data-t="146.2">and</span> <span class="w" data-t="146.825">subnet</span> <span class="w" data-t="147.45">size.</span></p>
+        <p id="cue-35" class="cue clip" data-start="147.955" data-duration="6.42" data-track-index="20" data-say="Most E K S issues show up in kube control describe first."><span class="w" data-t="148.075">Most</span> <span class="w" data-t="148.7">EKS</span> <span class="w" data-t="149.325">issues</span> <span class="w" data-t="149.95">show</span> <span class="w" data-t="150.575">up</span> <span class="w" data-t="151.2">in</span> <span class="w" data-t="151.825">kubectl</span> <span class="w" data-t="152.45">describe</span> <span class="w" data-t="153.075">first.</span></p>
+        <p id="cue-36" class="cue clip" data-start="156.58" data-duration="6.875" data-track-index="20" data-say="Recap: AWS owns the control plane, you own nodes and workloads."><span class="w" data-t="156.7">Recap:</span> <span class="w kw" data-t="157.325">AWS</span> <span class="w kw" data-t="157.95">owns</span> <span class="w kw" data-t="158.575">the</span> <span class="w kw" data-t="159.2">control</span> <span class="w kw" data-t="159.825">plane,</span> <span class="w kw" data-t="160.45">you</span> <span class="w kw" data-t="161.075">own</span> <span class="w kw" data-t="161.7">nodes</span> <span class="w kw" data-t="162.325">and</span> <span class="w kw" data-t="162.95">workloads.</span></p>
+        <p id="cue-37" class="cue clip" data-start="163.455" data-duration="5.625" data-track-index="20" data-say="eksctl create cluster creates the cluster and node groups."><span class="w kw" data-t="163.575">eksctl</span> <span class="w kw" data-t="164.2">create</span> <span class="w kw" data-t="164.825">cluster</span> <span class="w" data-t="165.45">creates</span> <span class="w" data-t="166.075">the</span> <span class="w" data-t="166.7">cluster</span> <span class="w" data-t="167.325">and</span> <span class="w" data-t="167.95">node</span> <span class="w" data-t="168.575">groups.</span></p>
+        <p id="cue-38" class="cue clip" data-start="169.08" data-duration="5" data-track-index="20" data-say="Add V P C C N I, CoreDNS, AWS Load Balancer Controller."><span class="w" data-t="169.2">Add</span> <span class="w" data-t="169.825">VPC</span> <span class="w" data-t="170.45">CNI,</span> <span class="w" data-t="171.075">CoreDNS,</span> <span class="w" data-t="171.7">AWS</span> <span class="w" data-t="172.325">Load</span> <span class="w" data-t="172.95">Balancer</span> <span class="w" data-t="173.575">Controller.</span></p>
+        <p id="cue-39" class="cue clip" data-start="174.08" data-duration="3.92" data-track-index="20" data-say="Configure I R S A for pod identity."><span class="w" data-t="174.2">Configure</span> <span class="w" data-t="174.825">IRSA</span> <span class="w" data-t="175.45">for</span> <span class="w" data-t="176.075">pod</span> <span class="w" data-t="176.7">identity.</span></p>
         </div>
       </div>
     </div>
 
     <script>
       (function () {
-        const REVEAL = {"s1-eks":1.571,"s1-ec2":2.714,"s1-etcd":5,"s1-fail":6.714,"s1-burden":10.714,"s2-cp":14.257,"s2-ha":17.114,"s2-nodes":18.829,"s2-vpc":21.686,"s3-cni":26.371,"s3-irsa":31.514,"s3-alb":34.371,"s4-pending":40.2,"s4-pending-text":42.486,"s4-crash":43.057,"s4-cni":44.771,"s5-aws":50.6,"s5-customer":52.886,"s5-migrate":54.6};
-        const SCENES = [{"id":"s1","start":0,"duration":13.257},{"id":"s2","start":13.257,"duration":10.972},{"id":"s3","start":24.229,"duration":14.971},{"id":"s4","start":39.2,"duration":9.829},{"id":"s5","start":49.029,"duration":10.971}];
-        const TOTAL = 60;
+        const REVEAL = {"s1-kops":2.45,"s1-etcd":4.95,"s1-fail":8.7,"s1-burden":14.325,"s2-eks":24.2,"s2-cp":26.075,"s2-ha":28.575,"s2-nodes":36.075,"s2-vpc":39.2,"s3-api":49.075,"s3-sched":55.325,"s3-worker":60.95,"s3-personas":69.075,"s4-cni":75.825,"s4-alb":89.575,"s5-irsa":102.575,"s5-keys":108.825,"s5-addons":115.075,"s6-pending":130.575,"s6-describe":131.825,"s6-crash":138.075,"s6-eni":143.075,"s7-aws":157.325,"s7-you":160.45,"s7-migrate":163.575};
+        const SCENES = [{"id":"s1","start":0,"duration":22.375},{"id":"s2","start":22.375,"duration":25.5},{"id":"s3","start":47.875,"duration":25.5},{"id":"s4","start":73.375,"duration":28},{"id":"s5","start":101.375,"duration":26.75},{"id":"s6","start":128.125,"duration":27.375},{"id":"s7","start":155.5,"duration":24.5}];
+        const TOTAL = 180;
         const $ = (s, r = document) => r.querySelector(s);
         const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
         const at = (id) => {
@@ -341,7 +422,7 @@
         };
         const hit = (id, t, color) =>
           tl.fromTo("#" + id, { boxShadow: "0 0 0 0px " + color }, { boxShadow: "0 0 0 4px " + color + ", 0 0 46px -4px " + color, duration: 0.22, ease: "power2.out", yoyo: true, repeat: 1 }, t);
-        const type = (id, t0, cps = 26) => {
+        const type = (id, t0, cps = 22) => {
           const el = $("#" + id), text = el.dataset.text, o = { n: 0 };
           const dur = text.length / cps;
           tl.fromTo(o, { n: 0 }, { n: text.length, duration: dur, ease: "none", onUpdate: () => { el.textContent = text.slice(0, Math.round(o.n)); } }, t0);
@@ -375,24 +456,25 @@
 
         // ---- S1 · breaking point ----
         gsap.set(["#s1-fail", "#s1-burden"], { opacity: 0 });
-        reveal("#s1-client", at("s1-eks"));
-        reveal("#s1-eks", at("s1-eks"));
-        reveal(".s1-pod", at("s1-eks"), { stagger: 0.1 });
+        reveal("#s1-client", at("s1-kops"));
+        reveal("#s1-kops", at("s1-kops"));
+        reveal("#s1-etcd", at("s1-etcd"));
+        reveal(".s1-pod", at("s1-kops"), { stagger: 0.12 });
         const f1 = at("s1-fail");
-        state("s1-eks", f1, C.bad, "b");
-        hit("s1-eks", f1, C.bad);
+        state("s1-kops", f1, C.bad, "b");
+        hit("s1-kops", f1, C.bad);
         tl.fromTo("#s1-fail", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, f1);
         tl.fromTo("#s1-burden", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, at("s1-burden"));
-        // cursor taps etcd
         tl.to(cursorEl, { left: 530, top: 480, duration: 0.7, ease: "power3.out" }, f1);
         tl.to(cursorEl, { scale: 0.82, duration: 0.08, ease: "power2.in" }, f1 + 0.7);
         tl.to(cursorEl, { scale: 1.0, duration: 0.18, ease: "power2.out" }, f1 + 0.78);
         tl.to(cursorEl, { top: "115%", duration: 0.5, ease: "power2.in" }, f1 + 1.2);
 
-        // ---- S2 · EKS architecture ----
+        // ---- S2 · what EKS is ----
         const s2 = sc.s2.start;
         reveal(["#s2-ns-aws", "#s2-ns-customer"], s2 + 0.4);
         reveal(["#s2-bound-aws", "#s2-bound-customer"], s2 + 0.6, { stagger: 0.1 });
+        reveal("#s2-eks", at("s2-eks"));
         reveal("#s2-cp", at("s2-cp"));
         reveal("#s2-ha", at("s2-ha"));
         reveal("#s2-nodes", at("s2-nodes"));
@@ -402,43 +484,71 @@
         tl.fromTo("#s2-nodes .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s2-nodes"));
         tl.fromTo("#s2-vpc .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s2-vpc"));
 
-        // ---- S3 · networking & identity ----
+        // ---- S3 · control plane vs nodes ----
         const s3 = sc.s3.start;
-        reveal("#s3-cni", at("s3-cni"));
-        reveal("#s3-irsa", at("s3-irsa"));
-        reveal("#s3-alb", at("s3-alb"));
-        reveal("#s3-addons", at("s3-alb") + 0.3);
-        tl.fromTo("#s3-cni .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-cni") + 0.15);
-        tl.fromTo("#s3-irsa .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-irsa") + 0.15);
-        tl.fromTo("#s3-alb .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-alb") + 0.15);
-        tl.fromTo("#s3-addons .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s3-alb") + 0.45);
+        reveal(["#s3-bound-cp", "#s3-bound-nodes"], s3 + 0.4);
+        reveal("#s3-api", at("s3-api"));
+        reveal("#s3-etcd", at("s3-api"));
+        reveal("#s3-sched", at("s3-sched"));
+        reveal("#s3-worker", at("s3-worker"));
+        reveal("#s3-kubelet", at("s3-worker") + 0.1);
+        reveal("#s3-proxy", at("s3-worker") + 0.2);
+        reveal("#s3-ec2", at("s3-worker") + 0.3);
+        reveal("#s3-personas", at("s3-personas"));
+        tl.fromTo("#s3-api .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s3-api"));
+        tl.fromTo("#s3-etcd .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s3-api"));
+        tl.fromTo("#s3-sched .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s3-sched"));
+        tl.fromTo("#s3-kubelet .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s3-worker"));
+        tl.fromTo("#s3-proxy .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s3-worker") + 0.15);
+        tl.fromTo("#s3-ec2 .sw .a", { opacity: 0 }, { opacity: 1, duration: 0.3 }, at("s3-worker") + 0.3);
 
-        // ---- S4 · troubleshooting ----
+        // ---- S4 · networking ----
         const s4 = sc.s4.start;
-        gsap.set(["#s4-out1", "#s4-out2", "#s4-out3", "#s4-caret"], { opacity: 0 });
-        reveal("#s4-term", s4 + 0.45);
-        const t1 = type("s4-c1", at("s4-pending"), 20);
-        tl.to("#s4-caret", { opacity: 0, duration: 0.01 }, t1 + 0.35);
-        tl.fromTo(["#s4-out1", "#s4-out2"], { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.1 }, t1 + 0.4);
-        reveal("#s4-pending", at("s4-pending"));
-        state("s4-pending", at("s4-pending"), C.bad, "b");
-        hit("s4-pending", at("s4-pending"), C.bad);
-        const t2 = at("s4-crash");
-        tl.fromTo("#s4-out3", { opacity: 0 }, { opacity: 1, duration: 0.2 }, t2);
-        reveal("#s4-crash", t2);
-        state("s4-crash", t2, C.bad, "b");
-        hit("s4-crash", t2, C.bad);
         reveal("#s4-cni", at("s4-cni"));
-        state("s4-cni", at("s4-cni"), C.warn, "b");
-        hit("s4-cni", at("s4-cni"), C.warn);
+        reveal("#s4-alb", at("s4-alb"));
+        reveal("#s4-addons", at("s4-alb") + 0.3);
+        reveal("#s4-overlay", at("s4-alb") + 0.6);
+        tl.fromTo("#s4-cni .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s4-cni") + 0.15);
+        tl.fromTo("#s4-alb .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s4-alb") + 0.15);
+        tl.fromTo("#s4-addons .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s4-alb") + 0.45);
+        tl.fromTo("#s4-overlay .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s4-alb") + 0.75);
 
-        // ---- S5 · recap ----
+        // ---- S5 · identity ----
         const s5 = sc.s5.start;
-        reveal("#s5-aws", s5 + 0.4);
-        reveal("#s5-customer", at("s5-customer"));
-        reveal("#s5-migrate", at("s5-migrate"));
-        const fin = at("s5-migrate") + 0.6;
-        tl.fromTo("#s5-migrate .dot", { boxShadow: "0 0 0 0px var(--ok)" }, { boxShadow: "0 0 0 6px var(--ok), 0 0 30px -4px var(--ok)", duration: 0.4, ease: "power2.out", yoyo: true, repeat: 1 }, fin);
+        reveal("#s5-irsa", at("s5-irsa"));
+        reveal("#s5-keys", at("s5-irsa") + 0.3);
+        reveal("#s5-addons", at("s5-addons"));
+        tl.fromTo("#s5-irsa .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s5-irsa") + 0.15);
+        tl.fromTo("#s5-keys .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s5-irsa") + 0.45);
+        tl.fromTo("#s5-addons .sw .b", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.3 }, at("s5-addons") + 0.15);
+
+        // ---- S6 · troubleshooting ----
+        const s6 = sc.s6.start;
+        gsap.set(["#s6-out1", "#s6-out2", "#s6-out3", "#s6-caret"], { opacity: 0 });
+        reveal("#s6-term", s6 + 0.45);
+        reveal("#s6-describe", at("s6-describe"));
+        const t1 = type("s6-c1", at("s6-describe"), 20);
+        tl.to("#s6-caret", { opacity: 0, duration: 0.01 }, t1 + 0.35);
+        tl.fromTo(["#s6-out1", "#s6-out2"], { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.1 }, t1 + 0.4);
+        reveal("#s6-pending", at("s6-pending"));
+        state("s6-pending", at("s6-pending"), C.bad, "b");
+        hit("s6-pending", at("s6-pending"), C.bad);
+        const t2 = at("s6-crash");
+        tl.fromTo("#s6-out3", { opacity: 0 }, { opacity: 1, duration: 0.2 }, t2);
+        reveal("#s6-crash", t2);
+        state("s6-crash", t2, C.bad, "b");
+        hit("s6-crash", t2, C.bad);
+        reveal("#s6-eni", at("s6-eni"));
+        state("s6-eni", at("s6-eni"), C.warn, "b");
+        hit("s6-eni", at("s6-eni"), C.warn);
+
+        // ---- S7 · recap ----
+        const s7 = sc.s7.start;
+        reveal("#s7-aws", at("s7-aws"));
+        reveal("#s7-you", at("s7-you"));
+        reveal("#s7-migrate", at("s7-migrate"));
+        const fin = at("s7-migrate") + 0.6;
+        tl.fromTo("#s7-migrate .dot", { boxShadow: "0 0 0 0px var(--ok)" }, { boxShadow: "0 0 0 6px var(--ok), 0 0 30px -4px var(--ok)", duration: 0.4, ease: "power2.out", yoyo: true, repeat: 1 }, fin);
 
         // ---- wires fade in at their marks ----
         const wires = $$("path.wire");

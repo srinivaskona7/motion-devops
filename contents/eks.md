@@ -1,8 +1,8 @@
-# Amazon EKS: Why Managed Kubernetes Matters
+# Amazon EKS: Managed Kubernetes on AWS
 
 **Slug:** `eks`
 **Format:** 9:16 vertical motion explainer (`1080x1920`) — YouTube Shorts / Reels
-**Duration:** 60s
+**Duration:** 180s (3 minutes)
 **Cloned Voice:** Devops (VoiceStudio ID: 51c11ae3)
 **Companion:** `src/eks/` (storyboard + template) → `videos/eks/`
 
@@ -10,9 +10,9 @@
 
 ## Executive Summary
 
-Amazon EKS (Elastic Kubernetes Service) is AWS's managed Kubernetes control plane. Running Kubernetes on AWS without EKS means self-managing etcd, API servers, scheduler, controller-manager, cert rotation, and HA across availability zones — undifferentiated heavy lifting that distracts from shipping applications. EKS abstracts the control plane into a fully managed, highly available AWS service while customer workloads run on customer-owned worker nodes inside their own VPC.
+Amazon EKS (Elastic Kubernetes Service) is AWS's fully managed Kubernetes control plane. Before EKS, teams ran Kubernetes on EC2 with kops or kubeadm and had to self-manage etcd, the API server, scheduler, controller-manager, certificate rotation, and multi-AZ high availability — undifferentiated heavy lifting that pulled engineers away from shipping applications.
 
-EKS separates concerns cleanly: AWS owns the control plane (API server, etcd, scheduler), the customer owns worker nodes, CNI networking, IAM integration, add-ons, and application workloads. This role separation maps directly to RBAC boundaries and makes EKS the production-grade choice for Kubernetes on AWS.
+EKS removes that burden. AWS runs the control plane across multiple Availability Zones with automated patching, certificate rotation, and etcd replacement. Customer workloads run on customer-owned worker nodes inside the customer's own VPC. This clean separation of concerns — AWS owns the control plane, the customer owns nodes and workloads — maps directly to RBAC boundaries and makes EKS the production-grade choice for Kubernetes on AWS.
 
 ---
 
@@ -20,10 +20,10 @@ EKS separates concerns cleanly: AWS owns the control plane (API server, etcd, sc
 
 Before EKS, teams ran Kubernetes on EC2 using kops or kubeadm. The breaking points:
 
-- **Control plane HA**: etcd quorum, API server multi-AZ deployment, load balancer fronting — all manual, all failure-prone.
-- **Patching & upgrades**: Control plane binary upgrades, cert rotation, security patches on the control plane nodes — undifferentiated toil.
-- **No native AWS integration**: IAM auth for Kubernetes required workarounds; VPC networking, security groups, ELB integration, and CloudWatch required custom glue.
-- **SLA burden**: The team is on-call for the control plane at 3 AM when etcd loses quorum or the API server cert expires.
+- **Control plane high availability**: etcd quorum, multi-AZ API server deployment, and load-balancer fronting were all manual and failure-prone.
+- **Patching and upgrades**: Control plane binary upgrades, certificate rotation, and security patches on control plane nodes were undifferentiated toil.
+- **No native AWS integration**: IAM authentication for Kubernetes required workarounds; VPC networking, security groups, Elastic Load Balancing, and CloudWatch needed custom glue code.
+- **3 AM on-call burden**: The team owned the control plane. When etcd lost quorum or an API server certificate expired at 3 AM, the team paged out.
 
 EKS removes this undifferentiated heavy lifting: AWS runs a multi-AZ control plane with automated patching, cert rotation, and etcd replacement.
 
@@ -32,17 +32,17 @@ EKS removes this undifferentiated heavy lifting: AWS runs a multi-AZ control pla
 ## 2. EKS Architecture & Persona Separation
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    AWS (EKS Control Plane)                  │
-│  API Server · etcd · Scheduler · Controller-Manager         │
-│    Multi-AZ · Managed · Patched · Cert-rotated by AWS       │
-└──────────────────────┬──────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    AWS — EKS Control Plane                      │
+│  API Server · etcd · Scheduler · Controller-Manager             │
+│   Multi-AZ · Managed · Patched · Cert-rotated by AWS            │
+└──────────────────────┬──────────────────────────────────────────┘
                        │ HTTPS (public or private endpoint)
-┌──────────────────────▼──────────────────────────────────────┐
-│              Customer VPC (Worker Nodes)                    │
-│  EC2 / Fargate nodes · kubelet · kube-proxy · VPC CNI ·     │
-│  CoreDNS · EBS CSI · AWS Load Balancer Controller           │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────▼──────────────────────────────────────────┐
+│              Customer VPC — Worker Nodes                        │
+│  EC2 / Fargate nodes · kubelet · kube-proxy · VPC CNI ·         │
+│  CoreDNS · EBS CSI · AWS Load Balancer Controller               │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 | Persona | Responsibility | Scope |
@@ -53,9 +53,9 @@ EKS removes this undifferentiated heavy lifting: AWS runs a multi-AZ control pla
 
 ### Key EKS Components
 
-**EKS Control Plane** — Managed by AWS across multiple AZs. Includes API server, etcd, scheduler, controller-manager. Customers never SSH into control plane nodes.
+**EKS Control Plane** — Managed by AWS across multiple AZs. Includes API server, etcd, scheduler, and controller-manager. Customers never SSH into control plane nodes.
 
-**Worker Nodes** — Customer-owned EC2 instances or Fargate. Run kubelet, kube-proxy, and the EKS add-ons. Can be self-managed node groups or managed node groups.
+**Worker Nodes** — Customer-owned EC2 instances or Fargate. Run kubelet, kube-proxy, and EKS add-ons. Can be self-managed node groups or managed node groups.
 
 **EKS Add-ons** — Officially supported, version-pinned add-ons:
 - `vpc-cni` — Amazon VPC CNI plugin for pod networking
@@ -122,15 +122,17 @@ eksctl utils associate-iam-oidc-provider --cluster my-cluster --approve
 
 ---
 
-## 5. Scene Reference (motion video)
+## 5. Scene Reference (motion video — 3 minutes)
 
-| Scene | Chapter | Marks (element → spoken word) |
-|-------|---------|-------------------------------|
-| s1 | The Breaking Point | `s1-eks` → EKS control plane; `s1-fail` → etcd quorum lost; `s1-burden` → undifferentiated toil |
-| s2 | Architecture | `s2-cp` → AWS managed control plane; `s2-nodes` → customer worker nodes; `s2-vpc` → customer VPC |
-| s3 | Networking & IRSA | `s3-cni` → VPC CNI; `s3-irsa` → IAM Roles for Service Accounts; `s3-alb` → AWS Load Balancer Controller |
-| s4 | Troubleshooting | `s4-pending` → Pod stuck Pending; `s4-crash` → CrashLoopBackOff; `s4-cni` → IP exhaustion |
-| s5 | Recap | `s5-aws` → AWS owns control plane; `s5-customer` → customer owns nodes/workloads; `s5-migrate` → move to EKS |
+| Scene | Chapter | Content |
+|-------|---------|---------|
+| s1 | The Breaking Point | Self-managed K8s on EC2; etcd quorum lost at 3 AM; undifferentiated toil |
+| s2 | What EKS Is | AWS runs the control plane; multi-AZ and managed; customer owns worker nodes |
+| s3 | Control Plane vs Nodes | API server + etcd managed by AWS; EC2/Fargate worker nodes in customer VPC |
+| s4 | Networking | VPC CNI gives pods real VPC IPs; no overlay; ALB Controller for ingress |
+| s5 | Identity | IRSA via OIDC; no long-lived AWS keys; EKS add-ons (CoreDNS, kube-proxy, EBS CSI) |
+| s6 | Troubleshooting | kubectl describe pod; CrashLoopBackOff; IP exhaustion; ENI limits |
+| s7 | Recap & Migration | AWS owns control plane; you own nodes and workloads; eksctl create cluster |
 
 ---
 

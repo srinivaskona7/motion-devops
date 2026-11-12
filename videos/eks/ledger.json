@@ -3,7 +3,7 @@
   "seams": [
     {
       "id": "s1→s2",
-      "cut": 13.257,
+      "cut": 22.375,
       "technique": "cut-the-curve LEFT",
       "exit": {
         "selector": "#s1-cam",
@@ -18,7 +18,7 @@
     },
     {
       "id": "s2→s3",
-      "cut": 24.229,
+      "cut": 47.875,
       "technique": "cut-the-curve LEFT",
       "exit": {
         "selector": "#s2-cam",
@@ -33,7 +33,7 @@
     },
     {
       "id": "s3→s4",
-      "cut": 39.2,
+      "cut": 73.375,
       "technique": "cut-the-curve LEFT",
       "exit": {
         "selector": "#s3-cam",
@@ -48,15 +48,45 @@
     },
     {
       "id": "s4→s5",
-      "cut": 49.029,
-      "technique": "cut-the-curve UP",
+      "cut": 101.375,
+      "technique": "cut-the-curve LEFT",
       "exit": {
         "selector": "#s4-cam",
-        "axis": "y",
+        "axis": "x",
         "dir": -1
       },
       "entry": {
         "selector": "#s5-cam",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s5→s6",
+      "cut": 128.125,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s5-cam",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s6-cam",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s6→s7",
+      "cut": 155.5,
+      "technique": "cut-the-curve UP",
+      "exit": {
+        "selector": "#s6-cam",
+        "axis": "y",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s7-cam",
         "axis": "y",
         "dir": -1
       }

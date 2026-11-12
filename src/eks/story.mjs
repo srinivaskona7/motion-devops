@@ -24,11 +24,11 @@ export const meta = {
   formats: ["port"], // 9:16 only, written to videos/eks/
   inline: true, // self-contained index.html
   gsap: "src/shared/vendor/gsap-3.12.5.min.js",
-  seams: { s5: "y" }, // all seams cut LEFT except the rise into the recap
-  wps: 1.75, // narration rate, words per second (calm, educational pacing)
-  lead: 1.0, // entry seam before the first word of each scene
-  pad: 1.4, // padding after the last word of each scene
-  total: 60, // target runtime; the last scene holds to fill it
+  seams: { s7: "y" }, // all seams cut LEFT except the rise into the recap
+  wps: 1.6, // calm educational pacing (words per second)
+  lead: 1.2, // entry seam before the first word of each scene
+  pad: 1.8, // padding after the last word of each scene
+  total: 180, // 3-minute runtime
 };
 
 export const scenes = [
@@ -36,38 +36,66 @@ export const scenes = [
     id: "s1",
     chapter: "The Breaking Point",
     narration:
-      "Self-managed [[s1-eks|K8s]] on [[s1-ec2|EC2]] means you run [[s1-etcd|etcd]] yourself. " +
-      "Then [[s1-fail|etcd loses quorum]] at 3 AM. That's [[s1-burden|undifferentiated toil]].",
+      "You run [[s1-kops|Kubernetes on EC2]] yourself. [[s1-etcd|etcd]] lives on your nodes. " +
+      "Then [[s1-fail|etcd loses quorum]] at three A M. " +
+      "That is [[s1-burden|undifferentiated toil]]. You patch, you upgrade, you are on call.",
   },
   {
     id: "s2",
-    chapter: "EKS Architecture",
+    chapter: "What EKS Is",
     narration:
-      "[[s2-cp|AWS runs the control plane]], [[s2-ha|multi-AZ and managed]]. " +
-      "[[s2-nodes|You own worker nodes]] inside [[s2-vpc|your VPC]].",
+      "Amazon [[s2-eks|EKS]] runs the [[s2-cp|control plane]] for you. " +
+      "[[s2-ha|Multi-AZ and fully managed]] by AWS. " +
+      "Automated patching, certificate rotation, etcd replacement. " +
+      "[[s2-nodes|You own worker nodes]] inside [[s2-vpc|your VPC]]. " +
+      "AWS owns the control plane. You own the nodes.",
   },
   {
     id: "s3",
-    chapter: "Networking & Identity",
+    chapter: "Control Plane vs Nodes",
     narration:
-      "Pods get [[s3-cni|VPC CNI]] addresses — real VPC IPs. " +
-      "Identity via [[s3-irsa|IRSA]] — no long-lived keys. " +
-      "[[s3-alb|AWS Load Balancer Controller]] handles ingress.",
+      "[[s3-api|API server and etcd]] — AWS patches and rotates certificates. " +
+      "[[s3-sched|Scheduler and controller manager]] — fully managed by AWS. " +
+      "[[s3-worker|Worker nodes]] run kubelet and kube-proxy on your EC2 or Fargate. " +
+      "Two clear [[s3-personas|personas]]. Two clean boundaries.",
   },
   {
     id: "s4",
-    chapter: "Troubleshooting",
+    chapter: "Networking",
     narration:
-      "[[s4-pending|kubectl describe pod]] for [[s4-pending-text|Pending]]. " +
-      "[[s4-crash|CrashLoopBackOff]]? Check logs. " +
-      "[[s4-cni|IP exhaustion]]? Check ENI limits.",
+      "Pods get [[s4-cni|VPC CNI]] addresses — real VPC IPs. " +
+      "No overlay network. No VXLAN, no Geneve. " +
+      "Standard VPC security groups apply to every pod. " +
+      "[[s4-alb|AWS Load Balancer Controller]] provisions ALB and NLB for ingress. " +
+      "TLS termination through AWS Certificate Manager.",
   },
   {
     id: "s5",
+    chapter: "Identity",
+    narration:
+      "[[s5-irsa|IRSA]] lets pods assume AWS IAM roles through OIDC federation. " +
+      "[[s5-keys|No long-lived keys]] on worker nodes. Short-lived tokens from STS. " +
+      "[[s5-addons|EKS add-ons]] — CoreDNS, kube-proxy, EBS CSI — version-pinned by AWS. " +
+      "Your cluster identity is federated and auditable.",
+  },
+  {
+    id: "s6",
+    chapter: "Troubleshooting",
+    narration:
+      "Pod stuck [[s6-pending|Pending]]? Run [[s6-describe|kubectl describe pod]]. " +
+      "Check the Events section for scheduling failures. " +
+      "[[s6-crash|CrashLoopBackOff]]? Check the container logs and exit codes. " +
+      "[[s6-eni|IP exhaustion]]? Check ENI limits and subnet size. " +
+      "Most EKS issues show up in kubectl describe first.",
+  },
+  {
+    id: "s7",
     chapter: "Recap & Migration",
     narration:
-      "Recap: [[s5-aws|AWS owns control plane]], [[s5-customer|you own nodes]]. " +
-      "[[s5-migrate|Move to EKS]] and stop patching etcd.",
+      "Recap: [[s7-aws|AWS owns the control plane]], [[s7-you|you own nodes and workloads]]. " +
+      "[[s7-migrate|eksctl create cluster]] creates the cluster and node groups. " +
+      "Add VPC CNI, CoreDNS, AWS Load Balancer Controller. " +
+      "Configure IRSA for pod identity.",
   },
 ];
 
@@ -86,4 +114,7 @@ export const say = [
   [/\bAPI\b/g, "A P I"],
   [/\bTLS\b/g, "T L S"],
   [/\bIAM\b/g, "I A M"],
+  [/\bOIDC\b/g, "O I D C"],
+  [/\bSTS\b/g, "S T S"],
+  [/\b3 AM\b/g, "three A M"],
 ];
